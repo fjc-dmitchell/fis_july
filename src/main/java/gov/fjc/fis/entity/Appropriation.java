@@ -16,6 +16,7 @@ import java.util.List;
 
 import static gov.fjc.fis.fisUtilities.getCreatedModifiedString;
 import static gov.fjc.fis.fisUtilities.getTotalNullAllowed;
+import static java.util.Objects.requireNonNullElse;
 
 @JmixEntity
 @Table(name = "FIS_APPROPRIATION", uniqueConstraints = {
@@ -143,7 +144,7 @@ public class Appropriation {
     }
 
     public void setOneYearAmount(BigDecimal oneYearAmount) {
-        this.oneYearAmount = oneYearAmount;
+        this.oneYearAmount = requireNonNullElse(oneYearAmount, BigDecimal.ZERO);
     }
 
     public BigDecimal getTwoYearAmount() {
@@ -151,7 +152,7 @@ public class Appropriation {
     }
 
     public void setTwoYearAmount(BigDecimal twoYearAmount) {
-        this.twoYearAmount = twoYearAmount;
+        this.twoYearAmount = requireNonNullElse(twoYearAmount, BigDecimal.ZERO);
     }
 
     public String getBudgetFiscalYear() {
