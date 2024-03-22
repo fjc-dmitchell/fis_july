@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Date;
 
-import static gov.fjc.fis.fisUtilities.getCreatedModifiedString;
+import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
 import static java.util.Objects.requireNonNullElse;
 
 @JmixEntity

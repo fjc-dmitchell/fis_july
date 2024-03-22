@@ -15,8 +15,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.OffsetDateTime;
 
-import static gov.fjc.fis.fisUtilities.getCreatedModifiedString;
-import static gov.fjc.fis.fisUtilities.toUpperNullAllowed;
+import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
+import static gov.fjc.fis.FisUtilities.toUpperNullAllowed;
 
 @JmixEntity
 @Table(name = "FIS_FUND", uniqueConstraints = {

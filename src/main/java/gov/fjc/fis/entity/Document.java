@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Date;
 
-import static gov.fjc.fis.fisUtilities.getLoadedByString;
+import static gov.fjc.fis.FisUtilities.getLoadedByString;
 
 @JmixEntity
 @Table(name = "FIS_DOCUMENT")

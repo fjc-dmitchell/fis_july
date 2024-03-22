@@ -17,8 +17,8 @@ import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.List;
 
-import static gov.fjc.fis.fisUtilities.getCreatedModifiedString;
-import static gov.fjc.fis.fisUtilities.toUpperNullAllowed;
+import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
+import static gov.fjc.fis.FisUtilities.toUpperNullAllowed;
 
 @JmixEntity
 @Table(name = "FIS_POSITION", uniqueConstraints = {

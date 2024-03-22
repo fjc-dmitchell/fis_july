@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Date;
 
-import static gov.fjc.fis.fisUtilities.*;
+import static gov.fjc.fis.FisUtilities.*;
 
 @JmixEntity
 @Table(name = "FIS_FCN", indexes = {

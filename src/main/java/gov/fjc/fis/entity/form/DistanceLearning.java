@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Date;
 
-import static gov.fjc.fis.fisUtilities.getCreatedModifiedString;
+import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
 
 @JmixEntity
 @Table(name = "FIS_DISTANCE_LEARNING", indexes = {

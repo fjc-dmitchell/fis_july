@@ -17,8 +17,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
-import static gov.fjc.fis.fisUtilities.getCreatedModifiedString;
-import static gov.fjc.fis.fisUtilities.getTotalNullAllowed;
+import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
+import static gov.fjc.fis.FisUtilities.getTotalNullAllowed;
 
 @JmixEntity
 @Table(name = "FIS_POSITION_ACTION", indexes = {

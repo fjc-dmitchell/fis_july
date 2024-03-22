@@ -16,7 +16,7 @@ import java.time.OffsetDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
-import static gov.fjc.fis.fisUtilities.getCreatedModifiedString;
+import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
 
 @JmixEntity
 @Table(name = "FIS_PAY_PERIOD", uniqueConstraints = {
