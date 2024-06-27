@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="Budget Object Classes"
+      focusComponent="objectClassesDataGrid">
+    <data>
+        <collection id="objectClassesDc"
+                    class="gov.fjc.fis.entity.ObjectClass">
+            <fetchPlan extends="_base">
+                <property name="category" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader id="objectClassesDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from fis_ObjectClass e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="createBtn" action="objectClassesDataGrid.create"/>
+            <button id="editBtn" action="objectClassesDataGrid.edit"/>
+            <button id="excelExportBtn" action="objectClassesDataGrid.excelExport"/>
+            <button id="removeBtn" action="objectClassesDataGrid.remove"/>
+            <simplePagination id="pagination" dataLoader="objectClassesDl" autoLoad="true"/>
+        </hbox>
+        <dataGrid id="objectClassesDataGrid"
+                  width="900px"
+                  minHeight="20em"
+                  dataContainer="objectClassesDc"
+                  columnReorderingAllowed="true"
+                  selectionMode="SINGLE" themeNames="column-borders compact row-stripes">
+            <actions>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="excelExport" type="grdexp_excelExport"/>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns resizable="true">
+                <column property="category.appropriation.budgetFiscalYear" header="BFY" width="70px"/>
+                <column property="category.masterObjectClass" width="90px" header="MOC" textAlign="CENTER"/>
+                <column property="category.title" width="450px" visible="false"/>
+                <column property="budgetObjectClass" width="90px" header="BOC" textAlign="CENTER"/>
+                <column property="title" width="650px"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

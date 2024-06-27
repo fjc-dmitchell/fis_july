@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://divisionDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="divisionDc"
+                  class="gov.fjc.fis.entity.Division">
+            <fetchPlan extends="_base">
+                <property fetchPlan="_base" name="allocations"/>
+                <property fetchPlan="_base" name="branches">
+                    <property name="activities" fetchPlan="_instance_name"/>
+                </property>
+                <property fetchPlan="_base" name="groups">
+                    <property fetchPlan="_instance_name" name="activities"/>
+                </property>
+                <property fetchPlan="_base" name="activities"/>
+                <property name="totalAmount"/>
+                <property name="createdByString"/>
+                <property fetchPlan="_base" name="fund"/>
+            </fetchPlan>
+            <loader/>
+            <collection id="allocationsDc" property="allocations"/>
+            <collection id="branchesDc" property="branches"/>
+            <collection id="groupsDc" property="groups"/>
+            <collection id="activitiesDc" property="activities"/>
+        </instance>
+        <collection id="fundsDc" class="gov.fjc.fis.entity.Fund">
+            <loader id="fundsDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from fis_Fund e]]>
+                </query>
+            </loader>
+            <fetchPlan extends="_base"/>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="divisionDc">
+            <vbox width="100%" colspan="2" padding="false" spacing="false">
+                <hbox>
+                    <textField id="budgetFiscalYearField" property="appropriation" width="10em"
+                               label="Budget Fiscal Year"/>
+                </hbox>
+                <hbox>
+                    <textField id="divisionCodeField" property="divisionCode" label="Division Code"
+                               datatype="char" width="7em"/>
+                    <textField id="titleField" property="title" label="Title" width="30em"/>
+                </hbox>
+                <hbox>
+                    <entityComboBox id="fundsComboBox" itemsContainer="fundsDc" property="fund" label="Default Fund"
+                                    width="16em"/>
+                    <textField id="budgetOrgField" property="budgetOrg" label="Budget Org" width="7em"/>
+                    <textField id="sortCodeField" property="sortCode" label="Sort Code" width="6em"/>
+                </hbox>
+                <hbox>
+                    <textField id="oneYearAmountField" property="oneYearAmount" label="One Year Allocation"
+                               datatype="decimal"/>
+                    <textField id="twoYearAmountField" property="twoYearAmount" label="Two Year Allocation"
+                               datatype="decimal"/>
+                    <textField id="totalAmountField" property="totalAmount" label="Total Allocated" readOnly="true"
+                               tabIndex="-1"/>
+                </hbox>
+<!--                <hbox classNames="border border-error" padding="true" width="100%" margin="true">-->
+                    <p id="allocWarning" text="Warning: division allocations do not equal category allocations"
+                       classNames="text-error"/>
+<!--                </hbox>-->
+            </vbox>
+        </formLayout>
+
+        <tabSheet width="100%">
+
+            <tab id="allocations" label="Allocations">
+                <vbox>
+                    <hbox id="allocButtonsPanel" classNames="buttons-panel">
+                        <button action="allocationsDataGrid.create"/>
+                        <button action="allocationsDataGrid.edit"/>
+                        <button action="allocationsDataGrid.remove"/>
+                    </hbox>
+                    <dataGrid id="allocationsDataGrid" dataContainer="allocationsDc" width="750px"
+                              themeNames="column-borders compact row-stripes" allRowsVisible="true">
+                        <actions>
+                            <action id="create" type="list_create">
+                                <properties>
+                                    <property name="openMode" value="DIALOG"/>
+                                </properties>
+                            </action>
+                            <action id="edit" type="list_edit">
+                                <properties>
+                                    <property name="openMode" value="DIALOG"/>
+                                </properties>
+                            </action>
+                            <action id="remove" type="list_remove"/>
+                        </actions>
+                        <columns>
+                            <!--                            <column property="division"/>-->
+                            <!--                            <column property="category"/>-->
+                            <column property="category.masterObjectClass" header="MOC" sortable="false"
+                                    visible="false"/>
+                            <column property="category.titleAndCode" header="Category" sortable="false"
+                                    width="375px"/>
+                            <column property="oneYearAmount" header="One Year" textAlign="END" sortable="false"
+                                    width="125px"/>
+                            <column property="twoYearAmount" header="Two Year" textAlign="END" sortable="false"
+                                    width="125px"/>
+                            <column property="totalAmount" header="Total" textAlign="END" sortable="false"
+                                    width="125px"/>
+
+                        </columns>
+                    </dataGrid>
+                </vbox>
+            </tab>
+
+            <tab id="branches" label="Branches">
+                <vbox>
+                    <hbox id="branchesButtonsPanel" classNames="buttons-panel">
+                        <button action="branchesDataGrid.branchCreate"/>
+                        <button action="branchesDataGrid.branchEdit"/>
+                        <button action="branchesDataGrid.branchRemove"/>
+                    </hbox>
+                    <dataGrid id="branchesDataGrid" dataContainer="branchesDc" width="100%" minHeight="20em"
+                              themeNames="column-borders compact row-stripes">
+                        <actions>
+                            <action id="branchCreate" type="list_create">
+                                <properties>
+                                    <property name="openMode" value="DIALOG"/>
+                                </properties>
+                            </action>
+                            <action id="branchEdit" type="list_edit">
+                                <properties>
+                                    <property name="openMode" value="DIALOG"/>
+                                </properties>
+                            </action>
+                            <action id="branchRemove" type="list_remove"/>
+                        </actions>
+                        <columns>
+                            <column property="titleAndCode" header="Branch" width="70%"/>
+                            <column property="numberActivities" header="# Activities" width="15%" textAlign="CENTER"/>
+                            <column property="sortCode" width="15%" textAlign="CENTER"/>
+                        </columns>
+                    </dataGrid>
+                </vbox>
+            </tab>
+
+            <tab id="groups" label="Groups">
+                <vbox>
+                    <!--                    <hbox id="groupsButtonsPanel" classNames="buttons-panel">-->
+                    <!--                        <button action="groupsDataGrid.create"/>-->
+                    <!--                        <button action="groupsDataGrid.edit"/>-->
+                    <!--                        <button action="groupsDataGrid.remove"/>-->
+                    <!--                    </hbox>-->
+                    <dataGrid id="groupsDataGrid" dataContainer="groupsDc" width="100%" minHeight="20em"
+                              themeNames="column-borders compact row-stripes">
+                        <!--                        <actions>-->
+                        <!--                            <action id="create" type="list_create">-->
+                        <!--                                <properties>-->
+                        <!--                                    <property name="openMode" value="DIALOG"/>-->
+                        <!--                                </properties>-->
+                        <!--                            </action>-->
+                        <!--                            <action id="edit" type="list_edit">-->
+                        <!--                                <properties>-->
+                        <!--                                    <property name="openMode" value="DIALOG"/>-->
+                        <!--                                </properties>-->
+                        <!--                            </action>-->
+                        <!--                            <action id="remove" type="list_remove"/>-->
+                        <!--                        </actions>-->
+                        <columns>
+                            <column property="titleAndCode" header="Group" width="70%"/>
+                            <column property="numberActivities" header="# Activities" width="15%" textAlign="CENTER"/>
+                            <column property="sortCode" width="15%" textAlign="CENTER"/>
+                        </columns>
+                    </dataGrid>
+                </vbox>
+            </tab>
+
+            <tab id="activities" label="Activities">
+                <vbox>
+                    <!--                    <hbox id="activitiesButtonsPanel" classNames="buttons-panel">-->
+                    <!--                        <button action="activitiesDataGrid.create"/>-->
+                    <!--                        <button action="activitiesDataGrid.edit"/>-->
+                    <!--                        <button action="activitiesDataGrid.remove"/>-->
+                    <!--                    </hbox>-->
+                    <gridColumnVisibility dataGrid="activitiesDataGrid"
+                                          alignSelf="END"
+                                          icon="COG"/>
+                    <dataGrid id="activitiesDataGrid" dataContainer="activitiesDc" width="100%" minHeight="20em"
+                              themeNames="column-borders compact row-stripes">
+                        <!--                        <actions>-->
+                        <!--                            <action id="create" type="list_create">-->
+                        <!--                                <properties>-->
+                        <!--                                    <property name="openMode" value="DIALOG"/>-->
+                        <!--                                </properties>-->
+                        <!--                            </action>-->
+                        <!--                            <action id="edit" type="list_edit">-->
+                        <!--                                <properties>-->
+                        <!--                                    <property name="openMode" value="DIALOG"/>-->
+                        <!--                                </properties>-->
+                        <!--                            </action>-->
+                        <!--                            <action id="remove" type="list_remove"/>-->
+                        <!--                        </actions>-->
+                        <columns>
+
+                            <column property="titleAndCode" width="40%" header="Activity" frozen="true"/>
+                            <column property="city" width="15%"/>
+                            <column property="state" width="5%"/>
+                            <column property="startDate" width="10%"/>
+                            <column property="endDate" width="10%"/>
+                            <column property="programDirector" width="20%"/>
+                            <column property="projectedAmount" width="20%" visible="false" textAlign="END"/>
+                            <column property="reimbursedAmount" width="20%" visible="false" textAlign="END"/>
+<!--                            <column property="sortCode"/>-->
+<!--                            <column property="memo"/>-->
+<!--                            <column property="note"/>-->
+<!--                            <column property="trainingProject"/>-->
+<!--                            <column property="projectedAmount"/>-->
+<!--                            <column property="reimbursedAmount"/>-->
+<!--                            <column property="reportNote"/>-->
+                        </columns>
+                    </dataGrid>
+                </vbox>
+            </tab>
+        </tabSheet>
+
+        <p id="createdByString"/>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="msg://fundControlNoticeListView.title"
+      focusComponent="fundControlNoticesDataGrid">
+    <data>
+        <collection id="fundControlNoticesDc"
+                    class="gov.fjc.fis.entity.FundControlNotice">
+            <fetchPlan extends="_base">
+                <property name="obligation" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader id="fundControlNoticesDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from fis_FundControlNotice e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="createBtn" action="fundControlNoticesDataGrid.create"/>
+            <button id="editBtn" action="fundControlNoticesDataGrid.edit"/>
+            <button id="excelExportBtn" action="fundControlNoticesDataGrid.excelExport"/>
+            <button id="removeBtn" action="fundControlNoticesDataGrid.remove"/>
+            <simplePagination id="pagination" dataLoader="fundControlNoticesDl" autoLoad="true"
+                              itemsPerPageDefaultValue="250"
+                              itemsPerPageVisible="true" itemsPerPageItems="250,500,1000"/>
+        </hbox>
+        <dataGrid id="fundControlNoticesDataGrid"
+                  width="1290px"
+                  minHeight="20em"
+                  dataContainer="fundControlNoticesDc"
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
+            <actions>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="excelExport" type="grdexp_excelExport"/>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns resizable="true">
+                <column property="obligation.activity.division.appropriation.budgetFiscalYear" header="BFY"
+                        width="70px"/>
+                <column property="obligation.activity.division.divisionCode" header="Division"
+                        width="90px" textAlign="CENTER"/>
+                <column property="obligation.documentNumber" header="Document ID" width="130px"/>
+                <column property="obligation.objectClass.budgetObjectClass" header="BOC" width="90px"/>
+                <column property="fcnDate" header="FCN Date" textAlign="END" width="115px"/>
+                <column property="amount" textAlign="END" width="140px"/>
+                <column property="travelStartDate" width="130px" textAlign="END" header="Travel Start"/>
+                <column property="travelEndDate" width="130px" textAlign="END" header="Travel End"/>
+                <column property="obligation.vendor" header="Vendor" width="395px"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

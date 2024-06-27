@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://categoryDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="categoryDc"
+                  class="gov.fjc.fis.entity.Category">
+            <fetchPlan extends="_base">
+                <property name="budgetObjectClasses" fetchPlan="_base"/>
+                <property name="createdByString"/>
+            </fetchPlan>
+            <loader/>
+            <collection id="budgetObjectClassesDc" property="budgetObjectClasses"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="categoryDc">
+            <entityPicker id="appropriationField" property="appropriation">
+                <actions>
+                    <action id="entityLookup" type="entity_lookup"/>
+                    <action id="entityClear" type="entity_clear"/>
+                </actions>
+            </entityPicker>
+            <textField id="masterObjectClassField" property="masterObjectClass"/>
+            <textField id="titleField" property="title"/>
+            <textField id="createdByStringField" property="createdByString"/>
+        </formLayout>
+        <h4 text="msg://gov.fjc.fis.entity/Category.budgetObjectClasses"/>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button action="budgetObjectClassesDataGrid.create"/>
+            <button action="budgetObjectClassesDataGrid.edit"/>
+            <button action="budgetObjectClassesDataGrid.remove"/>
+        </hbox>
+        <dataGrid id="budgetObjectClassesDataGrid" dataContainer="budgetObjectClassesDc" width="100%" minHeight="20em">
+            <actions>
+                <action id="create" type="list_create">
+                    <properties>
+                        <property name="openMode" value="DIALOG"/>
+                    </properties>
+                </action>
+                <action id="edit" type="list_edit">
+                    <properties>
+                        <property name="openMode" value="DIALOG"/>
+                    </properties>
+                </action>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns>
+                <column property="title"/>
+                <column property="budgetObjectClass"/>
+            </columns>
+        </dataGrid>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

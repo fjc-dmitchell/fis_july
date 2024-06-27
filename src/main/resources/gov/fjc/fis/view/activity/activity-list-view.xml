@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="msg://activityListView.title"
+      focusComponent="activitiesDataGrid">
+    <data>
+        <collection id="activitiesDc"
+                    class="gov.fjc.fis.entity.Activity">
+            <fetchPlan extends="_base">
+                <property name="division" fetchPlan="_instance_name">
+                    <property name="fund" fetchPlan="_base"/>
+                </property>
+                <property name="branch" fetchPlan="_base"/>
+                <property name="group" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader id="activitiesDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from fis_Activity e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="createBtn" action="activitiesDataGrid.create"/>
+            <button id="editBtn" action="activitiesDataGrid.edit"/>
+            <button id="excelExportBtn" action="activitiesDataGrid.excelExport"/>
+            <button id="removeBtn" action="activitiesDataGrid.remove"/>
+            <simplePagination id="pagination" dataLoader="activitiesDl" autoLoad="true" itemsPerPageDefaultValue="250"
+                              itemsPerPageVisible="true" itemsPerPageItems="250,500,1000"/>
+        </hbox>
+        <dataGrid id="activitiesDataGrid"
+                  width="100%"
+                  minHeight="20em"
+                  dataContainer="activitiesDc"
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
+            <actions>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="excelExport" type="grdexp_excelExport"/>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns resizable="true">
+                <column property="division.appropriation.budgetFiscalYear" header="BFY" textAlign="END" width="70px"/>
+                <column property="division.divisionCode" header="Division" textAlign="CENTER" width="90px"/>
+                <column property="activityNumber" textAlign="CENTER" header="Activity"/>
+                <column property="title" width="350px"/>
+                <column property="projectedAmount" textAlign="END" width="120px" header="Projected">
+                    <numberRenderer numberFormat="#,##0"/>
+                </column>
+                <column property="reimbursedAmount" textAlign="END" width="120px" header="Reimbursed">
+                    <numberRenderer numberFormat="#,##0"/>
+                </column>
+                <column property="branch.branchCode" header="Branch" textAlign="CENTER"/>
+                <column property="group.groupCode" header="Group" textAlign="CENTER"/>
+                <column property="startDate" textAlign="END" width="120px"/>
+                <column property="endDate" textAlign="END" width="120px"/>
+                <column property="city" width="160px"/>
+                <column property="state" width="70px"/>
+                <column property="sortCode"/>
+                <column property="programDirector"/>
+                <column property="numberParticipants" header="# Participants"/>
+                <column property="numberFaculty" header="# Faculty"/>
+                <column property="numberPrograms" header="# Programs"/>
+                <column property="participantFinal" header="Final Participant Count"/>
+                <column property="initialProjection" header="Initial Projection" width="120px">
+                    <numberRenderer numberFormat="#,##0"/>
+                </column>
+                <column property="addedToPlan"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

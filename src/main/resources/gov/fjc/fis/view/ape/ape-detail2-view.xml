@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="Authorization for Program Expenditure"
+      focusComponent="form">
+    <data>
+        <collection id="appropriationsDc" class="gov.fjc.fis.entity.Appropriation">
+            <loader id="appropriationsDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from fis_Appropriation e order by e.budgetFiscalYear desc]]>
+                </query>
+            </loader>
+            <fetchPlan extends="_base"/>
+        </collection>
+        <instance id="apeDc"
+                  class="gov.fjc.fis.entity.form.Ape">
+            <fetchPlan extends="_base">
+                <property name="createdByString"/>
+            </fetchPlan>
+            <loader/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <!--        <tabSheet themeNames="bordered" width="100%">-->
+        <tabSheet width="100%">
+            <tab id="programTab" label="Program">
+                <formLayout dataContainer="apeDc">
+                    <!--                    <entityComboBox label="Budget Fiscal Year" dataContainer="appropriationsDc"/>-->
+                    <textField id="activityNumberField" property="activityNumber"/>
+                    <textField id="titleField" property="title"/>
+                    <hbox>
+                        <datePicker id="startDateField" property="startDate" width="30%" label="Start Date"/>
+                        <datePicker id="endDateField" property="endDate" width="30%" label="End Date"/>
+                        <!--                        <textField id="durationField" property="duration" width="35%" label="Duration (# days)"-->
+                        <!--                                   datatype="int"/>-->
+                        <integerField id="durationField" property="duration" width="35%" label="Duration (# days)"/>
+                    </hbox>
+                    <hbox>
+                        <textField id="programLeaderField" property="programLeader" label="Program Leader" width="50%"/>
+                        <textField id="programSupportField" property="programSupport" label="Support Staff"
+                                   width="50%"/>
+                    </hbox>
+                    <hbox>
+                        <textField id="cityField" property="city" label="City" width="70%"/>
+                        <textField id="stateField" property="state" label="State" width="30%"/>
+                    </hbox>
+                    <hbox colspan="1">
+                        <integerField id="numberParticipantsField" property="numberParticipants"
+                                      label="Est. Participants"/>
+                        <integerField id="numberFacultyField" property="numberFaculty"
+                                      label="Est. Faculty"/>
+                        <!--                    <textField id="numberParticipantsField" property="numberParticipants"/>-->
+                        <!--                    <textField id="numberFacultyField" property="numberFaculty"/>-->
+                    </hbox>
+                    <!--                    <textArea id="objectivesField" height="9.5em" property="objectives" colspan="2"/>-->
+                    <richTextEditor dataContainer="apeDc" property="objectives" themeNames="compact"
+                                    label="Objectives" colspan="2"/>
+                </formLayout>
+            </tab>
+            <tab id="rationaleTab" label="Rationale">
+                <formLayout dataContainer="apeDc">
+                    <checkbox property="compliance"
+                              label="Program Leader/Support Staff, please check the box to confirm the site and hotel selection are in compliance with the Guide to Judiciary Policy Vol. 19, Chapter 9, &#167; 920.20 and  &#167; 920.30."
+                              colspan="2"/>
+                    <textArea id="deliveryRationaleField" minHeight="9.5em" property="deliveryRationale" colspan="2"
+                              label="Rationale for Delivery Mode"/>
+                    <textArea id="siteRationaleField" minHeight="9.5em" property="siteRationale" colspan="2"
+                              label="Site and Hotel rationale"/>
+                </formLayout>
+            </tab>
+            <tab id="costsTab" label="Costs">
+                <vbox>
+                <tabSheet>
+                    <tab id="fjcCosts" label="FJC Costs">
+                        <formLayout dataContainer="apeDc">
+                            <vbox themeNames="spacing-xs" colspan="2" classNames="bordered-panel">
+                                <nativeLabel text="FJC Costs"/>
+                                <hbox>
+                                    <textField id="fjc_boc_2125_lodgingField" property="fjc_boc_2125_lodging"
+                                               themeNames="align-right" width="8em" autofocus="true"/>
+                                    <nativeLabel text="Lodging (2125)" alignSelf="CENTER"/>
+                                </hbox>
+                                <hbox>
+                                    <textField id="fjc_boc_2125_travelField" property="fjc_boc_2125_travel"
+                                               themeNames="align-right" width="8em"/>
+                                    <nativeLabel text="Travel (2125)" setFor="fjc_boc_2125_travelField"
+                                                 alignSelf="CENTER"/>
+                                </hbox>
+                                <hbox>
+                                    <textField id="fjc_boc_2125_subsistenceField" property="fjc_boc_2125_subsistence"
+                                               themeNames="align-right" width="8em"/>
+                                    <nativeLabel text="Subsistence (2125)" alignSelf="CENTER"/>
+                                </hbox>
+                                <hbox>
+                                    <textField id="fjc_boc_2359Field" property="fjc_boc_2359"
+                                               themeNames="align-right" width="8em"/>
+                                    <nativeLabel text="A/V and/or Meeting Room Rentals (2359)" alignSelf="CENTER"/>
+                                </hbox>
+                                <hbox>
+                                    <textField id="fjc_boc_2529Field" property="fjc_boc_2529"
+                                               themeNames="align-right" width="8em"/>
+                                    <nativeLabel text="Consultant Costs (2529 &amp; 2125)" alignSelf="CENTER"/>
+                                </hbox>
+                                <hbox>
+                                    <textField id="fjc_boc_2543Field" property="fjc_boc_2543"
+                                               themeNames="align-right" width="8em"/>
+                                    <nativeLabel text="Tuition/Educational Services/On-line Assessments (2543)"
+                                                 alignSelf="CENTER"/>
+                                </hbox>
+                                <hbox>
+                                    <textField id="fjc_boc_2601Field" property="fjc_boc_2601"
+                                               themeNames="align-right" width="8em"/>
+                                    <nativeLabel text="Light Refreshments (2601)" alignSelf="CENTER"/>
+                                </hbox>
+                                <hbox>
+                                    <textField id="fjc_boc_2603Field" property="fjc_boc_2603"
+                                               themeNames="align-right" width="8em"/>
+                                    <nativeLabel text="Educational Supplies (2603)" alignSelf="CENTER"/>
+                                </hbox>
+                                <hbox>
+                                    <textField id="fjc_boc_otherField" property="fjc_boc_other"
+                                               themeNames="align-right" width="8em"/>
+                                    <nativeLabel text="Other Expenses:" alignSelf="CENTER"/>
+                                    <textField id="fjc_boc_other_descriptionField" property="fjc_boc_other_description"
+                                               width="25em"/>
+                                </hbox>
+                                <hbox>
+                                    <textField id="fjc_totalField" property="fjc_total"
+                                               themeNames="align-right" width="8em" readOnly="true"/>
+                                    <nativeLabel text="Total FJC Program/Meeting Costs" alignSelf="CENTER"/>
+                                </hbox>
+                            </vbox>
+                        </formLayout>
+                    </tab>
+
+                    <tab id="sponsorCosts" label="Sponsor Costs">
+                        <formLayout dataContainer="apeDc">
+                            <vbox themeNames="spacing-xs" colspan="2" classNames="bordered-panel">
+                                <nativeLabel text="Sponsor Costs"/>
+                                <hbox>
+                                    <textField id="sponsor_aoField" property="sponsor_ao" themeNames="align-right"
+                                               width="8em"/>
+                                    <nativeLabel text="AO" alignSelf="CENTER"/>
+                                </hbox>
+                                <hbox>
+                                    <textField id="sponsor_usscField" property="sponsor_ussc" themeNames="align-right"
+                                               width="8em"/>
+                                    <nativeLabel text="USSC" alignSelf="CENTER"/>
+                                </hbox>
+                                <hbox>
+                                    <textField id="sponsor_dojField" property="sponsor_doj" themeNames="align-right"
+                                               width="8em"/>
+                                    <nativeLabel text="DOJ" alignSelf="CENTER"/>
+                                </hbox>
+                                <hbox>
+                                    <textField id="sponsor_otherField" property="sponsor_other" themeNames="align-right"
+                                               width="8em"/>
+                                    <nativeLabel text="Other: " alignSelf="CENTER"/>
+                                    <textField id="sponsor_other_descriptionField" property="sponsor_other_description"
+                                               width="25em"/>
+                                </hbox>
+                                <hbox>
+                                    <textField id="sponsor_totalField" property="sponsor_total" width="8em"
+                                               readOnly="true"
+                                               themeNames="align-right"/>
+                                    <nativeLabel text="Total Estimated Costs paid by other entities"
+                                                 alignSelf="CENTER"/>
+                                </hbox>
+                            </vbox>
+                        </formLayout>
+                    </tab>
+                </tabSheet>
+                <formLayout dataContainer="apeDc">
+                    <vbox themeNames="spacing-xs" colspan="2" classNames="bordered-panel">
+                        <hbox>
+                            <textField id="ape_totalField" property="ape_total" colspan="2" themeNames="align-right"
+                                       width="8em" readOnly="true"/>
+                            <nativeLabel text="Total Cost" alignSelf="CENTER"/>
+                        </hbox>
+                    </vbox>
+                </formLayout>
+                </vbox>
+                <!--                    <vbox colspan="1" classNames="bordered-panel">-->
+                <!--                        <h4 text="FJC Costs"/>-->
+                <!--                        <textField id="fjc_boc_2125_lodgingField" property="fjc_boc_2125_lodging"-->
+                <!--                                   label="Lodging (2125)" themeNames="align-right"/>-->
+                <!--                        <textField id="fjc_boc_2125_travelField" property="fjc_boc_2125_travel" label="Travel (2125)"-->
+                <!--                                   themeNames="align-right"/>-->
+                <!--                        <textField id="fjc_boc_2125_subsistenceField" property="fjc_boc_2125_subsistence"-->
+                <!--                                   label="Subsistence (2125)" themeNames="align-right"/>-->
+                <!--                        <textField id="fjc_boc_2359Field" property="fjc_boc_2359"-->
+                <!--                                   label="A/V and/or Meeting Room Rentals (2359)" themeNames="align-right"/>-->
+                <!--                        <textField id="fjc_boc_2529Field" property="fjc_boc_2529"-->
+                <!--                                   label="Consultant Costs (2529 &amp; 2125)" themeNames="align-right"/>-->
+                <!--                        <textField id="fjc_boc_2543Field" property="fjc_boc_2543"-->
+                <!--                                   label="Tuition/Educational Services/On-line Assessments (2543)"-->
+                <!--                                   themeNames="align-right"/>-->
+                <!--                        <textField id="fjc_boc_2601Field" property="fjc_boc_2601" label="Light Refreshments (2601)"-->
+                <!--                                   themeNames="align-right"/>-->
+                <!--                        <textField id="fjc_boc_2603Field" property="fjc_boc_2603" label="Educational Supplies (2603)"-->
+                <!--                                   themeNames="align-right"/>-->
+                <!--                        <hbox>-->
+                <!--                        <textField id="fjc_boc_otherField" property="fjc_boc_other" label="Other Expenses:"-->
+                <!--                                   themeNames="align-right"/>-->
+                <!--                        <textField id="fjc_boc_other_descriptionField" property="fjc_boc_other_description" label="Description"-->
+                <!--                                   themeNames="align-right"/>-->
+                <!--                        </hbox>-->
+                <!--                        <textField id="fjc_totalField" property="fjc_total" label="Total FJC Program/Meeting Costs"-->
+                <!--                                   themeNames="align-right"/>-->
+                <!--                    </vbox>-->
+                <!--                    <vbox colspan="1" classNames="bordered-panel">-->
+                <!--                        <h4 text="Sponsor Costs"/>-->
+                <!--                        <textField id="sponsor_aoField" property="sponsor_ao" label="AO" themeNames="align-right"/>-->
+                <!--                        <textField id="sponsor_usscField" property="sponsor_ussc" label="USSC"-->
+                <!--                                   themeNames="align-right"/>-->
+                <!--                        <textField id="sponsor_dojField" property="sponsor_doj" label="DOJ" themeNames="align-right"/>-->
+                <!--                        <textField id="sponsor_otherField" property="sponsor_other" label="Other"-->
+                <!--                                   themeNames="align-right"/>-->
+                <!--                        <textField id="sponsor_other_descriptionField" property="sponsor_other_description"-->
+                <!--                                   label="Other Entity"/>-->
+                <!--                        <textField id="sponsor_totalField" property="sponsor_total" themeNames="align-right"/>-->
+                <!--                    </vbox>-->
+                <!--                    <vbox colspan="2" classNames="bordered-panel">-->
+                <!--                        <textField id="ape_totalField" property="ape_total" colspan="2" themeNames="align-right"/>-->
+                <!--                    </vbox>-->
+            </tab>
+            <tab id="commentsTab" label="Comments">
+                <formLayout dataContainer="apeDc">
+                    <textArea id="apeCommentField" property="apeComment"
+                              colspan="2" label="Comments" minHeight="15em"/>
+                    <textArea id="directorStatementField" minHeight="15em" property="directorStatement"
+                              label="Director's Approval Statement (for programs exceeding $500K)" colspan="2"/>
+                </formLayout>
+            </tab>
+        </tabSheet>
+        <p id="createdByString"/>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

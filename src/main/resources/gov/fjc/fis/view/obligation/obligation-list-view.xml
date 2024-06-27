@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="msg://obligationListView.title"
+      focusComponent="obligationsDataGrid">
+    <data>
+        <collection id="obligationsDc"
+                    class="gov.fjc.fis.entity.Obligation">
+            <fetchPlan extends="_base">
+                <property name="activity" fetchPlan="_base"/>
+                <property name="objectClass" fetchPlan="_base">
+                    <property name="category" fetchPlan="_base"/>
+                </property>
+            </fetchPlan>
+            <loader id="obligationsDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from fis_Obligation e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+        <action id="showDivisionAction"/>
+    </actions>
+    <layout>
+
+        <tabSheet>
+            <tab id="quickSearch" label="Quick Find">
+                <hbox spacing="true" classNames="bordered-panel">
+                    <button id="bfySearch" text="BFY Search"/>
+                    <button id="showDiv1Btn" text="Show GA" action="showDivisionAction"/>
+                    <button id="showDiv2Btn" text="Show Education" action="showDivisionAction"/>
+                    <button id="showDiv3Btn" text="Show EIS" action="showDivisionAction"/>
+                    <button id="showDiv4Btn" text="Show Research" action="showDivisionAction"/>
+                    <button id="showDiv5Btn" text="Show ITO" action="showDivisionAction"/>
+                    <button id="showDiv6Btn" text="Show JED" action="showDivisionAction" visible="false"/>
+                    <button id="showDiv7Btn" text="Show MPO" action="showDivisionAction" visible="false"/>
+                    <button id="showDiv8Btn" text="Show JITF" action="showDivisionAction"/>
+
+                </hbox>
+            </tab>
+        </tabSheet>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="createBtn" action="obligationsDataGrid.create"/>
+            <button id="editBtn" action="obligationsDataGrid.edit"/>
+            <button id="excelExportBtn" action="obligationsDataGrid.excelExport"/>
+            <button id="removeBtn" action="obligationsDataGrid.remove"/>
+            <simplePagination id="pagination" dataLoader="obligationsDl" autoLoad="true" itemsPerPageDefaultValue="250"
+                              itemsPerPageVisible="true" itemsPerPageItems="250,500,1000"/>
+        </hbox>
+        <gridColumnVisibility dataGrid="obligationsDataGrid"
+                              alignSelf="END"
+                              icon="COG"/>
+        <dataGrid id="obligationsDataGrid"
+                  width="100%"
+                  minHeight="20em"
+                  dataContainer="obligationsDc"
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
+            <actions>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="excelExport" type="grdexp_excelExport"/>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns resizable="true">
+                <column property="activity.division.appropriation.budgetFiscalYear" header="BFY" width="70px"/>
+                <column property="activity.division.divisionCode" header="Division" width="90px" textAlign="CENTER"/>
+                <column property="objectClass.budgetObjectClass" header="BOC"/>
+                <column property="documentNumber" header="Document ID" width="130px"/>
+                <column property="activity.activityNumber" header="Activity"/>
+                <column property="activity.title" visible="false" width="350px" header="Activity Title"/>
+                <column property="vendor" width="350px"/>
+                <column property="statusString" header="Status"/>
+                <column property="amount" textAlign="END" width="130px">
+                    <numberRenderer numberFormat="#,##0.00"/>
+                </column>
+                <column property="documentDate" width="140px" textAlign="END"/>
+                <column property="processDate" width="140px" textAlign="END"/>
+                <column property="travelStartDate" width="140px" textAlign="END" header="Travel Start"/>
+                <column property="travelEndDate" width="140px" textAlign="END" header="Travel End"/>
+                <column property="bpoString" header="BPO"/>
+                <column property="budgetOrg"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

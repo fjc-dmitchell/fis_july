@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      xmlns:quicksearch="http://gov.fjc.fis/quick-search-component.xsd"
+      title="msg://divisionListView.title"
+      focusComponent="divisionsDataGrid">
+    <data>
+        <collection id="divisionsDc"
+                    class="gov.fjc.fis.entity.Division">
+            <fetchPlan extends="_base">
+                <property name="totalAmount"/>
+                <property name="fund" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader id="divisionsDl" readOnly="true">
+
+                <query>
+                    <![CDATA[select e from fis_Division e order by e.appropriation.budgetFiscalYear desc, e.divisionCode asc]]>
+                    <condition>
+                        <and>
+                            <c:jpql>
+                                <!--                                <c:where>e.fund in :fundFilterField</c:where>-->
+                                <c:where>e.fund.fundCode = '092800'</c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <!--                                <c:where>e.appropriation in :bfyFilterField</c:where>-->
+                                <c:where>e.appropriation.budgetFiscalYear >= '2020'</c:where>
+                            </c:jpql>
+                            <c:jpql>
+                                <c:where>e.divisionCode = :divCodeFilterField</c:where>
+                            </c:jpql>
+                        </and>
+                    </condition>
+                </query>
+            </loader>
+        </collection>
+
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="createBtn" action="divisionsDataGrid.create"/>
+            <button id="editBtn" action="divisionsDataGrid.edit"/>
+            <button id="excelExportBtn" action="divisionsDataGrid.excelExport"/>
+            <button id="removeBtn" action="divisionsDataGrid.remove"/>
+            <simplePagination id="pagination" dataLoader="divisionsDl" autoLoad="true" itemsPerPageDefaultValue="250"/>
+        </hbox>
+        <!--        <hbox>-->
+        <!--            <quicksearch:buttons dataContainer="divisionsDc"/>-->
+        <!--        </hbox>-->
+        <dataGrid id="divisionsDataGrid"
+                  minHeight="20em"
+                  dataContainer="divisionsDc"
+                  selectionMode="SINGLE" themeNames="column-borders compact row-stripes" width="1180px">
+            <actions>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="excelExport" type="grdexp_excelExport"/>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns resizable="true">
+                <column property="appropriation" header="BFY" width="70px"/>
+                <column property="divisionCode" header="Division" textAlign="CENTER" width="90px"/>
+                <column property="title" width="350px"/>
+                <column property="fund.fundCode" header="Fund" width="90px"/>
+                <column property="budgetOrg" width="120px"/>
+                <column property="oneYearAmount" header="One Year" textAlign="END" width="120px">
+                    <numberRenderer numberFormat="#,##0"/>
+                </column>
+                <column property="twoYearAmount" header="Two Year" textAlign="END" width="120px">
+                    <numberRenderer numberFormat="#,##0"/>
+                </column>
+                <column property="totalAmount" header="Total" textAlign="END" width="120px">
+                    <numberRenderer numberFormat="#,##0"/>
+                </column>
+                <column property="sortCode" textAlign="END" width="100px"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

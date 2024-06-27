@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://appropriationDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="appropriationDc"
+                  class="gov.fjc.fis.entity.Appropriation">
+            <fetchPlan extends="_base">
+                <property name="divisions" fetchPlan="_base"/>
+                <property name="adjustments" fetchPlan="_base"/>
+                <property name="createdByString"/>
+                <property name="totalAmount"/>
+            </fetchPlan>
+            <loader/>
+            <collection id="adjustmentsDc" property="adjustments"/>
+        </instance>
+        <collection id="divisionsDc" class="gov.fjc.fis.entity.Division">
+            <loader id="divisionsDl"/>
+        </collection>
+        <collection id="amountsDtoesDc" class="gov.fjc.fis.entity.dto.AmountsDto"/>
+        <collection id="categoryDtoDc" class="gov.fjc.fis.entity.dto.CategoryDto">
+            <loader id="categoryDtoDl"/>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="appropriationDc">
+            <vbox themeNames="spacing-xs">
+                <hbox alignItems="BASELINE">
+                    <textField id="budgetFiscalYearField" property="budgetFiscalYear" label="Budget Fiscal Year"
+                               width="9em" datatype="string"/>
+                    <textField id="oneYearAmountField" property="oneYearAmount" themeNames="align-right"
+                               label="One year"
+                               datatype="decimal" width="9em"/>
+                    <textField id="twoYearAmountField" property="twoYearAmount" themeNames="align-right"
+                               label="Two year" width="9em"/>
+                    <textField id="totalAmountField" property="totalAmount" themeNames="align-right"
+                               label="Total appropriation" width="9em"/>
+
+                    <checkbox id="statusField" property="status" label="Open-replace with Enum?"/>
+                </hbox>
+                <!--                <hbox alignItems="BASELINE" themeNames="spacing-xs">-->
+                <!--                    <p text="Appropriation" width="10em"/>-->
+                <!--                    <textField id="oneYearAmountField" property="oneYearAmount" themeNames="align-right"-->
+                <!--                               label="One year"-->
+                <!--                               datatype="decimal" width="9em"/>-->
+                <!--                    <textField id="twoYearAmountField" property="twoYearAmount" themeNames="align-right"-->
+                <!--                               label="Two year" width="9em"/>-->
+                <!--                    <textField id="totalAmountField" property="totalAmount" themeNames="align-right"-->
+                <!--                               label="Total appropriation" width="9em"/>-->
+                <!--                </hbox>-->
+                <!--                <hbox alignItems="BASELINE" themeNames="spacing-xs">-->
+                <!--                    <p text="Reimbursements" width="10em"/>-->
+                <!--                    <textField id="oneYearReimbursements" themeNames="align-right" datatype="decimal" width="9em"-->
+                <!--                               readOnly="true"/>-->
+                <!--                    <textField id="twoYearReimbursements" themeNames="align-right" datatype="decimal" width="9em"-->
+                <!--                               readOnly="true"/>-->
+                <!--                    <textField id="totalReimbursements" themeNames="align-right" datatype="decimal" width="9em"-->
+                <!--                               readOnly="true"/>-->
+                <!--                </hbox>-->
+                <!--                <hbox alignItems="BASELINE" themeNames="spacing-xs">-->
+                <!--                    <p text="Adjustments" width="10em"/>-->
+                <!--                    <textField id="oneYearAdjustments" themeNames="align-right" datatype="decimal" width="9em"-->
+                <!--                               readOnly="true"/>-->
+                <!--                    <textField id="twoYearAdjustments" themeNames="align-right" datatype="decimal" width="9em"-->
+                <!--                               readOnly="true"/>-->
+                <!--                    <textField id="totalAdjustments" themeNames="align-right" datatype="decimal" width="9em"-->
+                <!--                               readOnly="true"/>-->
+                <!--                </hbox>-->
+                <!--                <hbox alignItems="BASELINE" themeNames="spacing-xs">-->
+                <!--                    <p text="Spending Authority" width="10em"/>-->
+                <!--                    <textField id="oneYearSpending" themeNames="align-right" datatype="decimal" width="9em"-->
+                <!--                               readOnly="true"/>-->
+                <!--                    <textField id="twoYearSpending" themeNames="align-right" datatype="decimal" width="9em"-->
+                <!--                               readOnly="true"/>-->
+                <!--                    <textField id="totalSpending" themeNames="align-right" datatype="decimal" width="9em"-->
+                <!--                               readOnly="true"/>-->
+                <!--                </hbox>-->
+            </vbox>
+        </formLayout>
+
+        <!--        <vbox id="testing"/>-->
+
+        <dataGrid id="amountsDtoesDataGrid" metaClass="fis_AmountsDto" allRowsVisible="true" width="700px"
+                  themeNames="column-borders compact row-stripes">
+            <actions/>
+            <columns>
+                <column property="title" width="280px"/>
+                <column property="oneYearAmount" header="One Year" textAlign="END" width="140px"/>
+                <column property="twoYearAmount" textAlign="END" header="Two Year" width="140px"/>
+                <column property="totalAmount" header="Total" textAlign="END" width="140px"/>
+            </columns>
+        </dataGrid>
+
+
+        <tabSheet>
+            <tab id="statusOfFunds" label="Status of Funds">
+                <vbox>
+                    <dataGrid id="oneYearStatusGrid" dataContainer="categoryDtoDc" aggregatable="true" height="100%"
+                              width="100%" themeNames="column-borders compact row-stripes">
+                        <columns>
+                            <column property="titleAndCode" header="Object Class"/>
+                            <column property="totalOneYearAllocations" header="Allocations" textAlign="END">
+                                <aggregation type="SUM"/>
+                            </column>
+                            <column property="totalOneYearProjections" header="Projections" textAlign="END">
+                                <aggregation type="SUM"/>
+                            </column>
+                            <column property="totalOneYearObligations" header="Obligatations" textAlign="END">
+                                <aggregation type="SUM"/>
+                            </column>
+                            <column property="totalOneYearReimbursements" header="Reimbursements" textAlign="END">
+                                <aggregation type="SUM"/>
+                            </column>
+                        </columns>
+                    </dataGrid>
+                    <dataGrid id="twoYearStatusGrid" dataContainer="categoryDtoDc" aggregatable="true" width="100%"
+                              themeNames="column-borders compact row-stripes">
+                        <columns>
+                            <column property="titleAndCode" header="Object Class"/>
+                            <column property="totalTwoYearAllocations" header="Allocations" textAlign="END">
+                                <aggregation type="SUM"/>
+                            </column>
+                            <column property="totalTwoYearProjections" header="Projections" textAlign="END">
+                                <aggregation type="SUM"/>
+                            </column>
+                            <column property="totalTwoYearObligations" header="Obligatations" textAlign="END">
+                                <aggregation type="SUM"/>
+                            </column>
+                            <column property="totalTwoYearReimbursements" header="Reimbursements" textAlign="END">
+                                <aggregation type="SUM"/>
+                            </column>
+                        </columns>
+                    </dataGrid>
+                </vbox>
+            </tab>
+            <tab id="divisions" label="Divisions">
+                <vbox>
+                    <h4 text="msg://gov.fjc.fis.entity/Appropriation.divisions"/>
+                    <dataGrid id="divisionsDataGrid" dataContainer="divisionsDc" width="100%" minHeight="20em"
+                              themeNames="column-borders compact row-stripes"
+                              aggregatable="true">
+                        <!--            <actions>-->
+                        <!--                <action id="create" type="list_create">-->
+                        <!--                    <properties>-->
+                        <!--                        <property name="openMode" value="DIALOG"/>-->
+                        <!--                    </properties>-->
+                        <!--                </action>-->
+                        <!--                <action id="edit" type="list_edit">-->
+                        <!--                    <properties>-->
+                        <!--                        <property name="openMode" value="DIALOG"/>-->
+                        <!--                    </properties>-->
+                        <!--                </action>-->
+                        <!--                <action id="remove" type="list_remove"/>-->
+                        <!--            </actions>-->
+                        <columns>
+                            <column property="budgetOrg" sortable="false"/>
+                            <column property="titleAndCode" header="Division" sortable="false"/>
+                            <column property="oneYearAmount" textAlign="END" header="One Year" sortable="false">
+                                <aggregation type="SUM"/>
+                            </column>
+                            <column property="twoYearAmount" textAlign="END" header="Two Year" sortable="false">
+                                <aggregation type="SUM"/>
+                            </column>
+                            <column property="totalAmount" textAlign="END" header="Total" sortable="false">
+                                <aggregation type="SUM"/>
+                            </column>
+                        </columns>
+                    </dataGrid>
+                </vbox>
+            </tab>
+            <tab id="adjustments" label="Appropriation Adjustments">
+                <vbox>
+                    <h4 text="msg://gov.fjc.fis.entity/Appropriation.adjustments"/>
+                    <hbox id="buttonsPanel2" classNames="buttons-panel">
+                        <button action="adjustmentsDataGrid.create"/>
+                        <button id="adjustEdit" action="adjustmentsDataGrid.edit" visible="false"/>
+                        <button id="adjustDelete" action="adjustmentsDataGrid.remove" visible="false"/>
+                    </hbox>
+                    <dataGrid id="adjustmentsDataGrid" dataContainer="adjustmentsDc" width="100%" visible="false"
+                              minHeight="1em">
+                        <actions>
+                            <action id="create" type="list_create">
+                                <properties>
+                                    <property name="openMode" value="DIALOG"/>
+                                </properties>
+                            </action>
+                            <action id="edit" type="list_edit">
+                                <properties>
+                                    <property name="openMode" value="DIALOG"/>
+                                </properties>
+                            </action>
+                            <action id="remove" type="list_remove"/>
+                        </actions>
+                        <columns>
+                            <column property="appropriation"/>
+                            <column property="title"/>
+                            <column property="adjustmentDate"/>
+                            <column property="oneYearAmount"/>
+                            <column property="twoYearAmount"/>
+                        </columns>
+                    </dataGrid>
+                </vbox>
+            </tab>
+        </tabSheet>
+
+
+        <p id="createdByString"/>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

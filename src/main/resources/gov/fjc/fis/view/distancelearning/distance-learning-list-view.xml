@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="Proposal for Distance Learning"
+      focusComponent="distanceLearningsDataGrid">
+    <data>
+        <collection id="distanceLearningsDc"
+                    class="gov.fjc.fis.entity.form.DistanceLearning">
+            <fetchPlan extends="_base">
+                <property name="division" fetchPlan="_base"/>
+                <property name="activity" fetchPlan="_base">
+                    <property name="fund" fetchPlan="_base"/>
+                    <property name="branch" fetchPlan="_base"/>
+                    <property name="group" fetchPlan="_base"/>
+                </property>
+            </fetchPlan>
+            <loader id="distanceLearningsDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from fis_DistanceLearning e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="createBtn" action="distanceLearningsDataGrid.create"/>
+            <button id="editBtn" action="distanceLearningsDataGrid.edit"/>
+            <button id="excelExportBtn" action="distanceLearningsDataGrid.excelExport"/>
+            <button id="removeBtn" action="distanceLearningsDataGrid.remove"/>
+            <simplePagination id="pagination" dataLoader="distanceLearningsDl" autoLoad="true"/>
+        </hbox>
+        <dataGrid id="distanceLearningsDataGrid"
+                  width="100%"
+                  minHeight="20em"
+                  dataContainer="distanceLearningsDc"
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
+            <actions>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="excelExport" type="grdexp_excelExport"/>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns resizable="true">
+                <column property="division.appropriation.budgetFiscalYear" header="BFY" width="90px" textAlign="END"/>
+                <column property="activity.activityNumber" header="Proj. #" textAlign="CENTER"/>
+<!--                <column property="title" header="Program/Meeting Title"/>-->
+                <column property="title" header="msg://column.header" width="500px" autoWidth="true"/>
+                <column property="programLeader" width="450px"/>
+                <column property="startDate" textAlign="END" width="120px" header="Start Date"/>
+                <column property="endDate" textAlign="END" width="120px" header="End Date"/>
+                <column property="costTotal" textAlign="END"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://branchDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="branchDc"
+                  class="gov.fjc.fis.entity.Branch">
+            <fetchPlan extends="_base">
+                <property name="activities" fetchPlan="_base">
+                    <property name="branch" fetchPlan="_base">
+                        <property name="titleAndCode"/>
+                    </property>
+                </property>
+                <property name="createdByString"/>
+            </fetchPlan>
+            <loader/>
+            <collection id="activitiesDc" property="activities"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="branchDc">
+            <entityPicker id="divisionField" property="division">
+                <actions>
+                    <action id="entityLookup" type="entity_lookup"/>
+                    <action id="entityClear" type="entity_clear"/>
+                </actions>
+            </entityPicker>
+            <textField id="branchCodeField" property="branchCode"/>
+            <textField id="titleField" property="title"/>
+            <textField id="sortCodeField" property="sortCode"/>
+            <textField id="createdByStringField" property="createdByString"/>
+        </formLayout>
+        <h4 text="msg://gov.fjc.fis.entity/Branch.activities"/>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button action="activitiesDataGrid.create"/>
+            <button action="activitiesDataGrid.edit"/>
+            <button action="activitiesDataGrid.remove"/>
+        </hbox>
+        <dataGrid id="activitiesDataGrid" dataContainer="activitiesDc" width="100%" minHeight="20em">
+            <actions>
+                <action id="create" type="list_create">
+                    <properties>
+                        <property name="openMode" value="DIALOG"/>
+                    </properties>
+                </action>
+                <action id="edit" type="list_edit">
+                    <properties>
+                        <property name="openMode" value="DIALOG"/>
+                    </properties>
+                </action>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns>
+                <column property="activityNumber"/>
+                <column property="branch"/>
+            </columns>
+        </dataGrid>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

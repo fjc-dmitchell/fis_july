@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="msg://documentListView.title"
+      focusComponent="documentsDataGrid">
+    <data>
+        <collection id="documentsDc"
+                    class="gov.fjc.fis.entity.Document">
+            <fetchPlan extends="_base">
+                <property name="bfyString"/>
+            </fetchPlan>
+            <loader id="documentsDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from fis_Document e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="createBtn" action="documentsDataGrid.create"/>
+            <button id="editBtn" action="documentsDataGrid.edit"/>
+            <button id="excelExportBtn" action="documentsDataGrid.excelExport"/>
+            <button id="removeBtn" action="documentsDataGrid.remove"/>
+            <simplePagination id="pagination" dataLoader="documentsDl" autoLoad="true"/>
+        </hbox>
+        <dataGrid id="documentsDataGrid"
+                  width="100%"
+                  minHeight="20em"
+                  dataContainer="documentsDc"
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes" selectionMode="NONE">
+            <actions>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="excelExport" type="grdexp_excelExport"/>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns resizable="true">
+                <column property="doctype"/>
+                <column property="fund"/>
+                <column property="bfyString" width="135px"/>
+                <column property="budgetorg" width="120px"/>
+                <column property="docnumber" width="175px"/>
+                <column property="boc"/>
+                <column property="title" width="450px"/>
+                <column property="vendorName" width="570px"/>
+                <column property="project"/>
+                <column property="docdate" textAlign="END" width="150px"/>
+                <column property="amount" textAlign="END" width="150px"/>
+                <column property="closedAmount" textAlign="END" width="150px"/>
+                <column property="expendedAmount" textAlign="END" width="160px"/>
+                <column property="travelStartDate" textAlign="END" width="150px"/>
+                <column property="travelEndDate" textAlign="END" width="150px"/>
+                <column property="linenumber" width="90px" textAlign="END"/>
+                <column property="closedDate" textAlign="END" width="130px"/>
+                <column property="taxid" width="130px"/>
+                <column property="taxidType" width="125px"/>
+                <column property="addressCode" width="130px"/>
+                <column property="vendorCode"/>
+                <column property="costorg"/>
+                <column property="createdate" textAlign="END"/>
+                <column property="moduser" width="200px"/>
+                <column property="fjc"/>
+                <column property="orderedAmount" textAlign="END" width="160px"/>
+                <column property="outstandingAmount" textAlign="END" width="165px"/>
+                <column property="prepaidAmount" textAlign="END" width="160px"/>
+                <column property="refundedAmount" textAlign="END" width="160px"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

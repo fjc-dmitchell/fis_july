@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://apeDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="apeDc"
+                  class="gov.fjc.fis.entity.form.Ape">
+            <fetchPlan extends="_base">
+            </fetchPlan>
+            <loader/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+
+        <tabSheet themeNames="bordered" width="100%">
+            <tab id="program" label="Program">
+                <vbox id="programInfo" padding="false">
+                    <hbox>
+                        <nativeLabel text="Budget Fiscal Year" alignSelf="CENTER"/>
+                        <nativeLabel text="Division" alignSelf="CENTER"/>
+                    </hbox>
+                    <hbox>
+                        <nativeLabel text="Project #" alignSelf="CENTER"/>
+                        <nativeLabel text="FIS Activity" alignSelf="CENTER"/>
+                        <nativeLabel text="Fund" alignSelf="CENTER"/>
+                    </hbox>
+                    <hbox id="title">
+                        <textField id="titleField" property="title" dataContainer="apeDc" width="600px"
+                                   label="Program/Meeting Final Title"/>
+                    </hbox>
+                    <hbox>
+                        <textField id="programLeaderField" property="programLeader" dataContainer="apeDc"
+                                   width="270px" label="Program Leader"/>
+                        <textField id="programSupportField" property="programSupport" dataContainer="apeDc"
+                                   width="270px" label="Support Staff"/>
+                    </hbox>
+                    <hbox>
+                        <textField id="cityField" property="city" dataContainer="apeDc" width="25em" label="City"/>
+                        <textField id="stateField" property="state" dataContainer="apeDc" width="3em" label="State"/>
+                    </hbox>
+                    <hbox>
+                        <datePicker id="startDateField" property="startDate" dataContainer="apeDc" label="Start Date"/>
+                        <datePicker id="endDateField" property="endDate" dataContainer="apeDc" label="End Date"/>
+                        <integerField property="duration" dataContainer="apeDc" label="Duration (# days)"/>
+                    </hbox>
+                    <hbox>
+                        <nativeLabel text="Est. Participants" alignSelf="CENTER"/>
+                        <integerField property="numberParticipants" dataContainer="apeDc"/>
+                        <nativeLabel text="Est. Faculty" alignSelf="CENTER"/>
+                        <integerField property="numberFaculty" dataContainer="apeDc"/>
+                    </hbox>
+                    <nativeLabel text="Objectives:"/>
+                    <richTextEditor dataContainer="apeDc" property="objectives" themeNames="compact"
+                                    label="Objectives"/>
+                </vbox>
+            </tab>
+
+            <tab id="rationale" label="Rationale">
+                <vbox>
+                    <checkbox dataContainer="apeDc" property="compliance"
+                              label="Program Leader/Support Staff, please check the box to confirm the site and hotel selection are in compliance with the Guide to Judiciary Policy Vol. 19, Chapter 9, &#167; 920.20 and  &#167; 920.30."/>
+                    <textArea label="Rationale for Delivery Mode" dataContainer="apeDc" property="deliveryRationale" width="100%"
+                              minHeight="10em"/>
+                    <textArea label="Site and Hotel rationale" dataContainer="apeDc" property="siteRationale" width="100%"
+                              minHeight="10em"/>
+                </vbox>
+            </tab>
+
+            <tab id="costs" label="Costs">
+                <vbox>
+                   <hbox width="100%">
+                       <vbox classNames="bordered-panel" width="50%">
+                           <p text="FJC costs"/>
+                               <bigDecimalField id="fjc_boc_2125_lodgingField" dataContainer="apeDc" property="fjc_boc_2125_lodging"
+                                                label="msg://gov.fjc.fis.entity.form/Ape.fjc_boc_2125_lodging"
+                               />
+                               <bigDecimalField id="fjc_boc_2125_travelField" dataContainer="apeDc" property="fjc_boc_2125_travel"
+                                                label="msg://gov.fjc.fis.entity.form/Ape.fjc_boc_2125_travel"/>
+                               <bigDecimalField id="fjc_boc_2125_subsistenceField" dataContainer="apeDc" property="fjc_boc_2125_subsistence"
+                                                label="msg://gov.fjc.fis.entity.form/Ape.fjc_boc_2125_subsistence"/>
+                               <bigDecimalField id="fjc_boc_2359Field" dataContainer="apeDc" property="fjc_boc_2359"
+                                                label="msg://gov.fjc.fis.entity.form/Ape.fjc_boc_2359"/>
+                               <bigDecimalField id="fjc_boc_2601Field" dataContainer="apeDc" property="fjc_boc_2601"
+                               />
+                               <bigDecimalField id="fjc_boc_2529Field" dataContainer="apeDc" property="fjc_boc_2529"
+                               />
+                               <bigDecimalField id="fjc_boc_2603Field" dataContainer="apeDc" property="fjc_boc_2603"
+                               />
+                               <bigDecimalField id="fjc_boc_2543Field" dataContainer="apeDc" property="fjc_boc_2543"
+                               />
+                               <bigDecimalField id="fjc_boc_otherField" dataContainer="apeDc" property="fjc_boc_other"
+                                                label="Lodging (2125)"/>
+                               <textField id="fjc_boc_other_descriptionField" dataContainer="apeDc" property="fjc_boc_other_description"
+                                          label="Other Description" visible="false"/>
+                       </vbox>
+                       <vbox classNames="bordered-panel" width="50%" themeNames="spacing-xs">
+                           <p text="Sponsor costs"/>
+                           <bigDecimalField id="sponsor_aoField" dataContainer="apeDc" property="sponsor_ao" label="AO"/>
+                           <bigDecimalField id="sponsor_usscField" dataContainer="apeDc" property="sponsor_ussc" label="USSC"/>
+                          <bigDecimalField id="sponsor_dojField" dataContainer="apeDc" property="sponsor_doj" label="DOJ"/>
+                           <bigDecimalField id="sponsor_otherField" dataContainer="apeDc" property="sponsor_other" label="Other Expenses"/>
+                           <textField id="sponsor_other_descriptionField" dataContainer="apeDc" property="sponsor_other_description"
+                                      label="Other Description" visible="false"/>
+                       </vbox>
+
+                   </hbox>
+                </vbox>
+            </tab>
+
+<!--                        <tab id="costs" caption="Costs" spacing="true">
+                <groupBox id="fjc_costs" spacing="true" caption="FJC costs">
+                    <gridLayout spacing="true">
+                        <columns count="3"/>
+                        <rows>
+
+                            <row>
+                                <currencyField id="fjc_boc_2125_travelField" property="fjc_boc_2125_travel"
+                                               width="100px"
+                                               dataContainer="apeDc"/>
+                                <label value="msg://gov.fjc.fis.entity.form/Ape.fjc_boc_2125_travel"
+                                       align="MIDDLE_LEFT" colspan="2"/>
+                            </row>
+                            <row>
+                                <currencyField id="fjc_boc_2125_subsistenceField"
+                                               width="100px"
+                                               property="fjc_boc_2125_subsistence"
+                                               dataContainer="apeDc"/>
+                                <label value="msg://gov.fjc.fis.entity.form/Ape.fjc_boc_2125_subsistence"
+                                       align="MIDDLE_LEFT" colspan="2"/>
+                            </row>
+
+                            <row>
+                                <currencyField id="fjc_boc_2359Field" property="fjc_boc_2359"
+                                               width="100px"
+                                               dataContainer="apeDc"/>
+                                <label value="msg://gov.fjc.fis.entity.form/Ape.fjc_boc_2359" align="MIDDLE_LEFT"
+                                       colspan="2"/>
+                            </row>
+                            <row>
+                                <currencyField id="fjc_boc_2601Field" property="fjc_boc_2601"
+                                               width="100px"
+                                               dataContainer="apeDc"/>
+                                <label value="msg://gov.fjc.fis.entity.form/Ape.fjc_boc_2601" colspan="2"
+                                       align="MIDDLE_LEFT"/>
+                            </row>
+                            <row>
+                                <currencyField id="fjc_boc_2529Field" property="fjc_boc_2529"
+                                               width="100px"
+                                               dataContainer="apeDc"/>
+                                <label value="msg://gov.fjc.fis.entity.form/Ape.fjc_boc_2529" align="MIDDLE_LEFT"
+                                       colspan="2"/>
+                            </row>
+                            <row>
+                                <currencyField id="fjc_boc_2603Field" property="fjc_boc_2603"
+                                               width="100px"
+                                               dataContainer="apeDc"/>
+                                <label value="msg://gov.fjc.fis.entity.form/Ape.fjc_boc_2603" align="MIDDLE_LEFT"
+                                       colspan="2"/>
+                            </row>
+                            <row>
+                                <currencyField id="fjc_boc_2543Field" property="fjc_boc_2543"
+                                               width="100px"
+                                               dataContainer="apeDc"/>
+                                <label value="msg://gov.fjc.fis.entity.form/Ape.fjc_boc_2543"
+                                       align="MIDDLE_LEFT" colspan="2"/>
+                            </row>
+                            <row>
+                                <currencyField id="fjc_boc_otherField" property="fjc_boc_other"
+                                               width="100px"
+                                               dataContainer="apeDc"/>
+                                <label value="msg://gov.fjc.fis.entity.form/Ape.fjc_boc_other"
+                                       align="MIDDLE_LEFT"/>
+                                <textField id="fjc_boc_other_descriptionField" property="fjc_boc_other_description"
+                                           width="450px" dataContainer="apeDc" enable="false"/>
+                            </row>
+                            <row>
+                                <currencyField id="fjc_totalField" property="fjc_total" width="100px"
+                                               dataContainer="apeDc"
+                                               editable="false" enable="false"/>
+                                <label value="msg://gov.fjc.fis.entity.form/Ape.fjc_total" align="MIDDLE_LEFT"
+                                       colspan="2"/>
+                            </row>
+                        </rows>
+                    </gridLayout>
+                </groupBox>
+                <groupBox id="program_cost" spacing="true">
+                    <gridLayout spacing="true">
+                        <columns count="3"/>
+                        <rows>
+                            <row>
+                                <currencyField id="ape_totalField" property="ape_total" editable="false"
+                                               width="100px"
+                                               dataContainer="apeDc" enable="false"/>
+                                <label value="msg://gov.fjc.fis.entity.form/Ape.ape_total" align="MIDDLE_LEFT"
+                                       colspan="2"/>
+                            </row>
+                        </rows>
+                    </gridLayout>
+                </groupBox>
+            </tab>
+-->
+
+            <tab id="comments" label="Comments">
+                <p text="Comments"/>
+            </tab>
+
+        </tabSheet>
+
+        <p id="createdByString"/>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

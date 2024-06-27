@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="Authorization for Project Expenditures (APE)"
+      focusComponent="apesDataGrid">
+    <data>
+        <collection id="apesDc"
+                    class="gov.fjc.fis.entity.form.Ape">
+            <fetchPlan extends="_base">
+                <property name="activity" fetchPlan="_base"/>
+                <property name="division">
+                    <property name="appropriation">
+                        <property name="budgetFiscalYear"/>
+                    </property>
+                </property>
+            </fetchPlan>
+            <loader id="apesDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from fis_Ape e order by e.startDate desc]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="createBtn" action="apesDataGrid.create"/>
+            <button id="editBtn" action="apesDataGrid.edit"/>
+            <button id="excelExportBtn" action="apesDataGrid.excelExport"/>
+            <button id="removeBtn" action="apesDataGrid.remove"/>
+            <simplePagination id="pagination" dataLoader="apesDl" autoLoad="true" itemsPerPageDefaultValue="250"/>
+        </hbox>
+        <dataGrid id="apesDataGrid"
+                  width="100%"
+                  minHeight="20em"
+                  dataContainer="apesDc"
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
+            <actions>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="excelExport" type="grdexp_excelExport"/>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns resizable="true">
+                <column property="division.appropriation.budgetFiscalYear" header="BFY" width="90px" textAlign="END"/>
+                <column property="activity.activityNumber" header="Proj. #" textAlign="CENTER"/>
+                <column property="title" width="550px"/>
+                <column property="startDate" textAlign="END" width="120px" header="Start Date"/>
+                <column property="endDate" textAlign="END" width="120px" header="End Date"/>
+                <column property="duration" textAlign="END"/>
+                <column property="city" width="160px"/>
+                <column property="state" width="90px"/>
+                <column property="programLeader" width="190px"/>
+                <column property="programSupport" width="190px"/>
+                <column property="numberParticipants" header="# Part" textAlign="END"/>
+                <column property="numberFaculty" header="# Faculty" textAlign="END"/>
+                <column property="ape_total" header="Total cost" textAlign="END" width="120px">
+                    <numberRenderer numberFormat="#,##0"/>
+                </column>
+                <column property="activity.fund.titleAndCode" header="Fund" width="190px"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>
