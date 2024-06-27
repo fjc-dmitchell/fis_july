@@ -20,6 +20,7 @@ import org.springframework.core.env.Environment;
 import javax.sql.DataSource;
 
 @Push
+//@Theme(value = "fis", variant = "dark")
 @Theme(value = "fis")
 @PWA(name = "Fis", shortName = "Fis")
 @SpringBootApplication

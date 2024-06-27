@@ -59,6 +59,12 @@ public class Fund {
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
 
+    @DependsOnProperties({"title", "fundCode"})
+    @JmixProperty
+    public String getTitleAndCode() {
+        return String.format("%s (%s)", title, fundCode);
+    }
+
     @DependsOnProperties({"createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"})
     @JmixProperty
     public String getCreatedByString() {

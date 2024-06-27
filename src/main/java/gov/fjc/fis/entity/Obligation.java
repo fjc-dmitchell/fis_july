@@ -153,6 +153,12 @@ public class Obligation {
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
 
+    @DependsOnProperties({"blanketPurchaseOrder"})
+    @JmixProperty
+    public String getBpoString() {
+        return blanketPurchaseOrder ? "BPO" : null;
+    }
+
     @DependsOnProperties({"aoSyncDate"})
     @JmixProperty
     public String getAoSyncString() {

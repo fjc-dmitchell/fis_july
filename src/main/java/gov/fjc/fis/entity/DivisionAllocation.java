@@ -35,14 +35,15 @@ public class DivisionAllocation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull
     @OnDeleteInverse(DeletePolicy.DENY)
     @JoinColumn(name = "DIVISION_ID", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Division division;
 
+    @NotNull
     @OnDeleteInverse(DeletePolicy.DENY)
     @JoinColumn(name = "CATEGORY_ID", nullable = false)
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Category category;
 

@@ -1,8 +1,51 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <menu-config xmlns="http://jmix.io/schema/flowui/menu">
 
-    <menu id="application" title="msg://gov.fjc.fis/menu.application.title" opened="true">
+    <menu opened="true" id="primary" description="msg://gov.fjc.fis/menu_config.primary.description"
+          title="msg://gov.fjc.fis/menu_config.primary.title">
+        <item view="fis_Appropriation.list" title="msg://gov.fjc.fis.view.appropriation/appropriationListView.title"/>
+        <item view="fis_Division.list" title="msg://gov.fjc.fis.view.division/divisionListView.title"/>
+        <item view="fis_Activity.list" title="msg://gov.fjc.fis.view.activity/activityListView.title"/>
+        <item view="fis_Obligation.list" title="msg://gov.fjc.fis.view.obligation/obligationListView.title"/>
+        <item view="fis_Obligation2.list" title="msg://gov.fjc.fis.view.obligation/obligation2ListView.title"/>
+        <item view="fis_Invoice.list" title="msg://gov.fjc.fis.view.invoice/invoiceListView.title"/>
+        <item view="fis_FundControlNotice.list"
+              title="msg://gov.fjc.fis.view.fundcontrolnotice/fundControlNoticeListView.title"/>
+    </menu>
+    <menu id="secondary" description="msg://gov.fjc.fis/menu_config.secondary.description" title="Secondary Displays">
+        <item view="fis_Jitf.list" title="msg://gov.fjc.fis.view.jitf/jitfListView.title"/>
+        <item view="fis_Branch.list" title="msg://gov.fjc.fis.view.branch/branchListView.title"/>
+        <item view="fis_Group.list" title="msg://gov.fjc.fis.view.group/groupListView.title"/>
+        <item view="fis_Category.list" title="msg://gov.fjc.fis.view.category/categoryListView.title"/>
+        <item view="fis_ObjectClass.list" title="msg://gov.fjc.fis.view.objectclass/objectClassListView.title"/>
+        <item view="fis_Fund.list" title="msg://gov.fjc.fis.view.fund/fundListView.title"/>
+    </menu>
+    <menu id="jifms" description="msg://gov.fjc.fis/menu_config.jifms.description"
+          title="msg://gov.fjc.fis/menu_config.jifms.title">
+        <item view="fis_Document.list" title="msg://gov.fjc.fis.view.document/documentListView.title"/>
+    </menu>
+    <menu id="salaryProjections" description="msg://gov.fjc.fis/menu_config.salaryProjections.description"
+          title="msg://gov.fjc.fis/menu_config.salaryProjections.title"/>
+    <menu id="forms" description="msg://gov.fjc.fis/menu_config.forms.description"
+          title="msg://gov.fjc.fis/menu_config.forms.title">
+        <item view="fis_DistanceLearning.list"
+              title="msg://gov.fjc.fis.view.distancelearning/distanceLearningListView.title"/>
+        <item view="fis_Ape.list" title="msg://gov.fjc.fis.view.ape/apeListView.title"/>
+    </menu>
+    <menu id="fjcreports" description="msg://gov.fjc.fis/menu_config.fjcreports.description"
+          title="msg://gov.fjc.fis/menu_config.fjcreports.title">
+        <item bean="fis_ReportRouter" beanMethod="openStatusOfFundsReport"
+              description="msg://gov.fjc.fis/menu_config.fis_ReportRouter#openStatusOfFundsReport.description"
+              title="Status of Funds"/>
+        <item bean="fis_ReportRouter" beanMethod="openEducationProgramsReport"
+              description="msg://gov.fjc.fis/menu_config.fis_ReportRouter#openEducationProgramsReport.description"
+              title="Education Programs"/>
+        <item bean="fis_ReportRouter" beanMethod="openBudgetRequestReport"
+              title="msg://gov.fjc.fis.view.report.budgetrequestreport/budgetRequestReportView.title"/>
+    </menu>
+    <menu opened="true" id="application" title="msg://gov.fjc.fis/menu.application.title">
         <item view="fis_User.list" title="msg://gov.fjc.fis.view.user/UserListView.title"/>
     </menu>
-
+    <menu id="foundation" description="msg://gov.fjc.fis/menu_config.foundation.description"
+          title="msg://gov.fjc.fis/menu_config.foundation.title"/>
 </menu-config>

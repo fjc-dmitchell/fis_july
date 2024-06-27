@@ -51,6 +51,7 @@ public class Division {
     private String divisionCode;
 
     @Composition
+    @OrderBy("category")
     @OneToMany(mappedBy = "division")
     private List<DivisionAllocation> allocations;
 

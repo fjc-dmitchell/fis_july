@@ -40,6 +40,7 @@ public class EducationProgramsReportService {
         var reimbursements = activityReimbursementService.getReimbursementDtos(appropriation, activities);
         activityService.updateActivityAmounts(activities, obligations, projections, reimbursements);
 
+        // either create empty lists OR put all parameters in constructor. They are required.
         EducationProgramsReportData reportData = new EducationProgramsReportData(appropriation, division, branch);
         reportData.setPriorBudgetFiscalYear(priorYearAppropriation);
         reportData.setProjections(projections);

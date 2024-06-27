@@ -73,6 +73,12 @@ public class Branch {
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
 
+    @DependsOnProperties({"activities"})
+    @JmixProperty
+    public Integer getNumberActivities() {
+        return activities == null ? 0 : activities.size();
+    }
+
     public Integer getSortCode() {
         return sortCode;
     }

@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <mainView xmlns="http://jmix.io/schema/flowui/main-view"
           title="msg://MainView.title">
+
+    <data>
+        <collection id="bfyEntryDc" class="gov.fjc.fis.entity.Appropriation">
+            <loader id="bfyEntryDl" readOnly="true"/>
+            <fetchPlan extends="_base"/>
+        </collection>
+        <collection id="bfySearchDc" class="gov.fjc.fis.entity.Appropriation">
+            <loader id="bfySearchDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from fis_Appropriation e order by e.budgetFiscalYear desc]]>
+                </query>
+            </loader>
+            <fetchPlan extends="_base"/>
+        </collection>
+
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+
     <actions>
         <action id="logout" type="logout"/>
     </actions>
@@ -15,7 +35,7 @@
             </header>
         </navigationBar>
         <drawerLayout>
-            <section id="section" classNames="jmix-main-view-section">
+            <section id="section" classNames="jmix-list-menu,jmix-menubar-item">
                 <h2 id="applicationTitle"
                     classNames="jmix-main-view-application-title">
                     <anchor id="baseLink"
@@ -23,6 +43,28 @@
                             text="msg://applicationTitle.text"
                             classNames="jmix-main-view-application-title-base-link"/>
                 </h2>
+<!--start here-->
+
+<!--                <nav id="fiscalYear" classNames="jmix-main-view-navigation">-->
+                <vbox classNames="jmix-main-view-navigation bordered-panel" spacing="false" width="100%">
+                    <h5 text="Budget Fiscal Year" css="font-family: sans-serif;"/>
+                    <hbox spacing="true">
+
+                        <entityComboBox id="bfyEntry" itemsContainer="bfyEntryDc" width="140px"
+                                        metaClass="fis_Appropriation" property="budgetFiscalYear" label="Data Entry"
+                                        css="font-family: sans-serif;"/>
+                    </hbox>
+                    <multiSelectComboBoxPicker id="bfySearch" itemsContainer="bfySearchDc"
+                                               metaClass="fis_Appropriation" property="budgetFiscalYear" width="140px"
+                                               label="Search" css="font-family: sans-serif;">
+                        <tooltip text="Specifying search years will override the default search year" position="BOTTOM"/>
+                        <actions>
+                            <action id="entity_clear" type="entity_clear" icon="vaadin:close-small"/>
+                        </actions>
+                    </multiSelectComboBoxPicker>
+                </vbox>
+<!--                </nav>-->
+<!--end here-->
                 <nav id="navigation"
                      classNames="jmix-main-view-navigation"
                      ariaLabel="msg://navigation.ariaLabel">
@@ -37,6 +79,7 @@
             </section>
         </drawerLayout>
         <initialLayout>
+            <h1 text="Now is the time for all good men..."/>
         </initialLayout>
     </appLayout>
 </mainView>
