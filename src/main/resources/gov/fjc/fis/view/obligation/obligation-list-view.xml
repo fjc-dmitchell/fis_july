@@ -31,23 +31,11 @@
         <action id="showDivisionAction"/>
     </actions>
     <layout>
-
-        <tabSheet>
-            <tab id="quickSearch" label="Quick Find">
-                <hbox spacing="true" classNames="bordered-panel">
-                    <button id="bfySearch" text="BFY Search"/>
-                    <button id="showDiv1Btn" text="Show GA" action="showDivisionAction"/>
-                    <button id="showDiv2Btn" text="Show Education" action="showDivisionAction"/>
-                    <button id="showDiv3Btn" text="Show EIS" action="showDivisionAction"/>
-                    <button id="showDiv4Btn" text="Show Research" action="showDivisionAction"/>
-                    <button id="showDiv5Btn" text="Show ITO" action="showDivisionAction"/>
-                    <button id="showDiv6Btn" text="Show JED" action="showDivisionAction" visible="false"/>
-                    <button id="showDiv7Btn" text="Show MPO" action="showDivisionAction" visible="false"/>
-                    <button id="showDiv8Btn" text="Show JITF" action="showDivisionAction"/>
-
-                </hbox>
-            </tab>
-        </tabSheet>
+        <fragment class="gov.fjc.fis.view.search.CustomSearchFragment">
+            <properties>
+                <property name="hostDataContainer" value="obligationsDc" type="CONTAINER_REF"/>
+            </properties>
+        </fragment>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createBtn" action="obligationsDataGrid.create"/>
             <button id="editBtn" action="obligationsDataGrid.edit"/>

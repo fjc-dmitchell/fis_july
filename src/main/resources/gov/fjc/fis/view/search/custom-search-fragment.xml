@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fragment xmlns="http://jmix.io/schema/flowui/fragment">
+    <data>
+        <collection id="fundsDc" class="gov.fjc.fis.entity.Fund">
+            <loader id="fundsDl" readOnly="true"/>
+        </collection>
+        <collection id="divisionsDc" class="gov.fjc.fis.entity.Division">
+            <loader id="divisionsDl" readOnly="true"/>
+        </collection>
+        <collection id="objectClassesDc" class="gov.fjc.fis.entity.ObjectClass">
+            <loader id="objectClassesDl" readOnly="true"/>
+        </collection>
+        <collection id="categoriesDc" class="gov.fjc.fis.entity.Category">
+            <loader id="categoriesDl" readOnly="true"/>
+        </collection>
+        <collection id="branchesDc" class="gov.fjc.fis.entity.Branch">
+            <loader id="branchesDl" readOnly="true"/>
+        </collection>
+        <collection id="groupsDc" class="gov.fjc.fis.entity.Group">
+            <loader id="groupsDl" readOnly="true"/>
+        </collection>
+        <instance id="actionCodeDc" class="gov.fjc.fis.entity.personnel.ActionCode">
+            <fetchPlan extends="_base"/>
+            <loader id="actionCodeDl"/>
+        </instance>
+    </data>
+
+    <actions>
+        <action id="showBfyAction"/>
+        <action id="showDivisionAction"/>
+        <action id="customSearchAction" shortcutCombination="Enter"/>
+        <action id="clearCustomSearchAction"/>
+    </actions>
+
+    <content>
+        <vbox id="root" padding="false">
+
+            <details id="searchForm" opened="true" summaryText="Search and Filter" themeNames="filled">
+                <tabSheet id="searchTabSheet">
+                    <tab id="divisionSearch" label="Quick Search">
+                        <hbox>
+                            <button id="showBfyBtn" action="showBfyAction" width="170px"/>
+                            <hbox id="divisionSearchButtons">
+                                <button id="showDiv1Btn" action="showDivisionAction" text="Show GA"/>
+                                <button id="showDiv2Btn" action="showDivisionAction" text="Show Education"/>
+                                <button id="showDiv3Btn" action="showDivisionAction" text="Show EIS"/>
+                                <button id="showDiv4Btn" action="showDivisionAction" text="Show Research"/>
+                                <button id="showDiv5Btn" action="showDivisionAction" text="Show ITO"/>
+                                <button id="showDiv6Btn" action="showDivisionAction" text="Show JED"/>
+                                <button id="showDiv7Btn" action="showDivisionAction" text="Show MPO"/>
+                                <button id="showDiv8Btn" action="showDivisionAction" text="Show JITF"/>
+                            </hbox>
+                        </hbox>
+                    </tab>
+                    <tab id="customSearchTab" label="Custom Search" visible="false">
+                        <vbox id="searchvbox" width="100%" themeNames="spacing-xs" spacing="false" padding="false">
+                            <hbox id="bfyBox" width="100%" alignItems="CENTER">
+                                <span text="Budget Fiscal Years" />
+                                <textField id="fiscalYearsField" datatype="string" readOnly="true"
+                                           width="25em" maxWidth="100%"/>
+                            </hbox>
+                            <hbox width="100%" alignItems="CENTER">
+                                <span text="Division"/>
+                                <entityComboBox id="divisionSearchField" itemsContainer="divisionsDc"
+                                                metaClass="fis_Division" width="30em">
+                                    <actions>
+                                        <action id="clear" type="entity_clear" icon="vaadin:close-small"/>
+                                    </actions>
+                                </entityComboBox>
+                                <span text="Fund"/>
+                                <entityComboBox id="fundSearchField" itemsContainer="fundsDc"
+                                                metaClass="fis_Fund" width="16em">
+                                    <actions>
+                                        <action id="clear" type="entity_clear" icon="vaadin:close-small"/>
+                                    </actions>
+                                </entityComboBox>
+                            </hbox>
+                            <hbox id="bocBox" width="100%" visible="false">
+                                <entityComboBox id="categorySearchField" itemsContainer="categoriesDc"
+                                                metaClass="fis_Category" width="22em">
+                                    <actions>
+                                        <action id="clear" type="entity_clear" icon="vaadin:close-small"/>
+                                    </actions>
+                                </entityComboBox>
+                                <entityComboBox id="objectClassSearchField" itemsContainer="objectClassesDc"
+                                                metaClass="fis_ObjectClass" width="32em">
+                                    <actions>
+                                        <action id="clear" type="entity_clear" icon="vaadin:close-small"/>
+                                    </actions>
+                                </entityComboBox>
+                            </hbox>
+
+                            <hbox id="branchBox" visible="false" width="100%">
+                                <span text="Branch"/>
+                                <entityComboBox id="branchSearchField" itemsContainer="branchesDc"
+                                                metaClass="fis_Branch" width="30em"/>
+                                <span text="Group"/>
+                                <entityComboBox id="groupSearchField" itemsContainer="groupsDc"
+                                                metaClass="fis_Group" width="35em"/>
+                            </hbox>
+
+<!--                            <vbox id="customSearchBox" classNames="bg-contrast-10 rounded-s"-->
+                            <vbox id="customSearchBox" spacing="false" themeNames="spacing-xs" padding="false"/>
+
+                            <hbox>
+                                <button id="customSearchBtn" action="customSearchAction" text="Search"
+                                        icon="vaadin:search"/>
+                                <button id="clearSearchBtn" action="clearCustomSearchAction" text="Clear"
+                                        icon="vaadin:eraser"/>
+                            </hbox>
+                        </vbox>
+                    </tab>
+
+                </tabSheet>
+            </details>
+        </vbox>
+    </content>
+</fragment>

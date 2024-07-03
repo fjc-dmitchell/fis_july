@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fragment xmlns="http://jmix.io/schema/flowui/fragment">
+    <data>
+        <collection id="fundControlNoticesDc" class="gov.fjc.fis.entity.FundControlNotice" provided="true">
+            <loader id="fundControlNoticesDl" readOnly="true" provided="true"/>
+        </collection>
+    </data>
+    <content>
+        <vbox id="root" spacing="false" padding="false">
+            <hbox>
+                <propertyFilter id="amountSearch" property="amount" operation="EQUAL" dataLoader="fundControlNoticesDl"
+                                label="FCN Amount" operationEditable="true"/>
+                <propertyFilter id="fcnDateSearch" property="fcnDate" operation="EQUAL"
+                                dataLoader="fundControlNoticesDl" operationEditable="true" label="FCN Date"/>
+            </hbox>
+            <hbox id="objectClassBox" alignItems="CENTER">
+                <span text="Obligation Category"/>
+                <hbox id="mocBox" spacing="false"/>
+                <span text="Obligation BOC"/>
+                <hbox id="bocBox" spacing="false"/>
+            </hbox>
+            <hbox>
+                <propertyFilter property="obligation.documentNumber" operation="CONTAINS"
+                                dataLoader="fundControlNoticesDl" label="Obligation DIN"/>
+                <propertyFilter property="obligation.vendor" operation="CONTAINS"
+                                dataLoader="fundControlNoticesDl" operationTextVisible="false" label="Obligation Vendor"
+                                width="25em"/>
+                <propertyFilter id="obligationStatusSearch" property="obligation.status" operation="EQUAL"
+                                dataLoader="fundControlNoticesDl" label="Obligation Status" width="15em"/>
+            </hbox>
+        </vbox>
+    </content>
+</fragment>

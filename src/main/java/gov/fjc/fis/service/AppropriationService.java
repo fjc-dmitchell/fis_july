@@ -2,18 +2,17 @@ package gov.fjc.fis.service;
 
 import gov.fjc.fis.entity.Appropriation;
 import io.jmix.core.DataManager;
-import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.session.SessionData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Component("fis_AppropriationService")
 public class AppropriationService {
@@ -42,34 +41,35 @@ public class AppropriationService {
                 .list();
     }
 
-    public List<Appropriation> getBfySearchAppropriations(SessionData sessionData) {
-        Appropriation entryBfy = getBfyEntryAppropriation(sessionData);
-        List<Appropriation> searchBfys = (List<Appropriation>) sessionData.getAttribute("bfyPicker");
-        if (searchBfys != null && searchBfys.size() > 0) {
-            // ToDo: code Comparator class for here and in MainScreen.java
-            searchBfys.sort((o1, o2) -> {
-                String year1 = o1.getBudgetFiscalYear();
-                String year2 = o2.getBudgetFiscalYear();
-                if (year1 == null) {
-                    return 1;
-                } else if (year2 == null) {
-                    return -1;
-                }
-                return year2.compareTo(year1);
-            });
-            return searchBfys;
-        } else {
-            List<Appropriation> entryCollection = new ArrayList<>();
-            entryCollection.add(entryBfy);
-            return entryCollection;
-        }
-    }
+//    public List<Appropriation> getBfySearchAppropriations(SessionData sessionData) {
+//        Appropriation entryBfy = getBfyEntryAppropriation(sessionData);
+//        List<Appropriation> searchBfys = (List<Appropriation>) sessionData.getAttribute("bfyPicker");
+//        if (searchBfys != null && searchBfys.size() > 0) {
+//            // ToDo: code Comparator class for here and in MainScreen.java
+//            searchBfys.sort((o1, o2) -> {
+//                String year1 = o1.getBudgetFiscalYear();
+//                String year2 = o2.getBudgetFiscalYear();
+//                if (year1 == null) {
+//                    return 1;
+//                } else if (year2 == null) {
+//                    return -1;
+//                }
+//                return year2.compareTo(year1);
+//            });
+//            return searchBfys;
+//        } else {
+//            List<Appropriation> entryCollection = new ArrayList<>();
+//            entryCollection.add(entryBfy);
+//            return entryCollection;
+//        }
+//    }
 
     public List<Appropriation> getBfyFilterField(SessionData sessionData) {
         Appropriation entryBfy = (Appropriation) sessionData.getAttribute("bfyEntry");
         // ToDo - unchecked cast here; should check type and throw exception (it'll never happen)
-        List<Appropriation> searchBfys = (List<Appropriation>) sessionData.getAttribute("bfyPicker");
-        if (searchBfys != null && searchBfys.size() > 0) {
+        var bfySearchSet = (Set<Appropriation>) sessionData.getAttribute("bfySearch");
+        if (bfySearchSet != null && !bfySearchSet.isEmpty()) {
+            List<Appropriation> searchBfys = new ArrayList<>(bfySearchSet);
             // ToDo: code Comparator class for here and in MainScreen.java
             searchBfys.sort((o1, o2) -> {
                 String year1 = o1.getBudgetFiscalYear();
