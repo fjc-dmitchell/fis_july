@@ -46,6 +46,11 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
+        <fragment class="gov.fjc.fis.view.search.CustomSearchFragment">
+            <properties>
+                <property name="hostDataContainer" value="divisionsDc" type="CONTAINER_REF"/>
+            </properties>
+        </fragment>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createBtn" action="divisionsDataGrid.create"/>
             <button id="editBtn" action="divisionsDataGrid.edit"/>
@@ -53,9 +58,6 @@
             <button id="removeBtn" action="divisionsDataGrid.remove"/>
             <simplePagination id="pagination" dataLoader="divisionsDl" autoLoad="true" itemsPerPageDefaultValue="250"/>
         </hbox>
-        <!--        <hbox>-->
-        <!--            <quicksearch:buttons dataContainer="divisionsDc"/>-->
-        <!--        </hbox>-->
         <dataGrid id="divisionsDataGrid"
                   minHeight="20em"
                   dataContainer="divisionsDc"

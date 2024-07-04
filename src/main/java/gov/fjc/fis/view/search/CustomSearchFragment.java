@@ -140,6 +140,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     private String divisionCode;
     private String masterObjectClass;
     private boolean fjcFoundation;
+    private Fund fjcFoundationFund;
 
     /**
      * The hostDataContainer property must be explicitly set by the host invoking the fragment
@@ -171,10 +172,8 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         if (hostContainer == null) {
             throw new IllegalStateException("hostContainer is null in SearchFragment");
         }
-//        configureSubFragments();
-//        configureJoins();
-
         fiscalYears = appropriationService.getBfyFilterField(sessionData);
+        fjcFoundationFund = fundService.getFoundationFund();
         setBfyBtnCaption();
         fundsDl.load(); // are these necessary?
         divisionsDl.load();
@@ -182,48 +181,89 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         objectClassesDl.load();
         branchesDl.load();
         groupsDl.load();
-
     }
 
     @Subscribe(target = Target.HOST_CONTROLLER)
     protected void onHostBeforeShow(final View.BeforeShowEvent event) {
-        configureSubFragments();
-        configureJoins();
+//        configureSubFragments();
+        if(fjcFoundation) {
+//            fundSearchField.setItems(fjcFoundationFund);
+            fundSearchField.setValue(fjcFoundationFund);
+            fundSearchField.setReadOnly(true);
+            // set visibility of division box?
+        }
+        configureHostEntity();
     }
 
-    private void configureSubFragments() {
-        String dataContainerId;
-        String dataLoaderId;
-        Class<? extends Fragment<VerticalLayout>> fragmentClass;
+    @Subscribe(target = Target.HOST_CONTROLLER)
+    protected void onHostReady(final View.ReadyEvent event) {
+        //perform all loads here?
+        performSearch();
+    }
+
+
+
+//    private void configureSubFragments() {
+////        switch (hostEntityName) {
+////            case "fis_Activity" ->
+////                    configureEntitySearchFragment(ActivitySearchFragment.class, "activitiesDc", "activitiesDl");
+////            case "fis_Obligation" ->
+////                    configureEntitySearchFragment(ObligationSearchFragment.class, "obligationsDc", "obligationsDl");
+////            case "fis_Invoice" ->
+////                    configureEntitySearchFragment(InvoiceSearchFragment.class, "invoicesDc", "invoicesDl");
+////            case "fis_FundControlNotice" ->
+////                    configureEntitySearchFragment(FcnSearchFragment.class, "fundControlNoticesDc", "fundControlNoticesDl");
+////        }
+////        String dataContainerId;
+////        String dataLoaderId;
+////        Class<? extends Fragment<VerticalLayout>> fragmentClass;
+////        FragmentData fragmentData = this.getFragmentData();
+//        switch (hostEntityName) {
+//            case "fis_Activity":
+////                fragmentClass = ActivitySearchFragment.class;
+////                dataContainerId = "activitiesDc";
+////                dataLoaderId = "activitiesDl";
+//                configureEntitySearchFragment(ActivitySearchFragment.class, "activitiesDc", "activitiesDl");
+//                break;
+//            case "fis_Obligation":
+////                fragmentClass = ObligationSearchFragment.class;
+////                dataContainerId = "obligationsDc";
+////                dataLoaderId = "obligationsDl";
+//                configureEntitySearchFragment(ObligationSearchFragment.class, "obligationsDc", "obligationsDl");
+//                break;
+//            case "fis_Invoice":
+////                fragmentClass = InvoiceSearchFragment.class;
+////                dataContainerId = "invoicesDc";
+////                dataLoaderId = "invoicesDl";
+//                configureEntitySearchFragment(InvoiceSearchFragment.class, "invoicesDc", "invoicesDl");
+//                break;
+//            case "fis_FundControlNotice":
+////                fragmentClass = FcnSearchFragment.class;
+////                dataContainerId = "fundControlNoticesDc";
+////                dataLoaderId = "fundControlNoticesDl";
+//                configureEntitySearchFragment(FcnSearchFragment.class, "fundControlNoticesDc", "fundControlNoticesDl");
+//                break;
+////            default:
+////                throw new RuntimeException("Unknown host entity in SearchFragment controller: " + hostEntityName);
+//        }
+////        fragmentData.registerContainer(dataContainerId, hostContainer);
+////        fragmentData.registerLoader(dataLoaderId, hostLoader);
+////        FragmentUtils.setFragmentData(this, fragmentData);
+////        fragment = fragments.create(this, fragmentClass);
+////        ((EntitySearchFragment) fragment).addCategoryObjectClass(categorySearchField, objectClassSearchField);
+////        ((EntitySearchFragment) fragment).addBranchGroup(branchSearchField, groupSearchField);
+//////        filterConditions = ((ActivitySearchFragment) fragment).getCustomConditions();
+//////        filterConditions = ((EntitySearchFilter) fragment).getCustomConditions();
+////        filterConditions = ((EntitySearchFragment) fragment).getCustomConditions();
+////        customSearchBox.add(fragment);
+//    }
+
+    private void configureEntitySearchFragment(Class<? extends Fragment<VerticalLayout>> fragmentClass,
+                                               String dataContainerId,
+                                               String dataLoaderId) {
         FragmentData fragmentData = this.getFragmentData();
-        switch (hostEntityName) {
-            case "fis_Activity":
-                fragmentClass = ActivitySearchFragment.class;
-                dataContainerId = "activitiesDc";
-                dataLoaderId = "activitiesDl";
-                searchTabSheetCustomSearchTab.setVisible(true);
-                break;
-            case "fis_Obligation":
-                fragmentClass = ObligationSearchFragment.class;
-                dataContainerId = "obligationsDc";
-                dataLoaderId = "obligationsDl";
-                searchTabSheetCustomSearchTab.setVisible(true);
-                break;
-            case "fis_Invoice":
-                fragmentClass = InvoiceSearchFragment.class;
-                dataContainerId = "invoicesDc";
-                dataLoaderId = "invoicesDl";
-                searchTabSheetCustomSearchTab.setVisible(true);
-                break;
-            case "fis_FundControlNotice":
-                fragmentClass = FcnSearchFragment.class;
-                dataContainerId = "fundControlNoticesDc";
-                dataLoaderId = "fundControlNoticesDl";
-                searchTabSheetCustomSearchTab.setVisible(true);
-                break;
-            default:
-                throw new RuntimeException("Unknown host entity in SearchFragment controller: " + hostEntityName);
-        }
+        searchTabSheetCustomSearchTab.setVisible(true);
+
         fragmentData.registerContainer(dataContainerId, hostContainer);
         fragmentData.registerLoader(dataLoaderId, hostLoader);
         FragmentUtils.setFragmentData(this, fragmentData);
@@ -236,7 +276,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         customSearchBox.add(fragment);
     }
 
-    private void configureJoins() {
+    private void configureHostEntity() {
         hostQuery = "SELECT e FROM ".concat(hostEntityName).concat(" e");
         switch (hostEntityName) {
             case "fis_Activity":
@@ -246,6 +286,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 objectClassJoin = "JOIN {E}.projections p JOIN p.objectClass b";
                 branchJoin = "JOIN {E}.branch bch";
                 groupJoin = "JOIN {E}.group grp";
+                configureEntitySearchFragment(ActivitySearchFragment.class, "activitiesDc", "activitiesDl");
                 break;
             case "fis_Obligation":
                 fundJoin = "JOIN {E}.activity a JOIN a.fund f";
@@ -254,14 +295,27 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 objectClassJoin = "JOIN {E}.objectClass b";
                 branchJoin = "JOIN {E}.activity a JOIN a.branch bch";
                 groupJoin = "JOIN {E}.activity a JOIN a.group grp";
+                configureEntitySearchFragment(ObligationSearchFragment.class, "obligationsDc", "obligationsDl");
                 break;
             case "fis_Invoice":
+                fundJoin = "JOIN {E}.obligation o JOIN o.activity a JOIN a.fund f";
+                divisionJoin = "JOIN {E}.obligation o JOIN o.activity a JOIN a.division d";
+                categoryJoin = "JOIN {E}.obligation o JOIN o.objectClass b JOIN b.category m";
+                objectClassJoin = "JOIN {E}.obligation o JOIN o.objectClass b";
+                obligationJoin = "JOIN {E}.obligation o";
+                configureEntitySearchFragment(InvoiceSearchFragment.class, "invoicesDc", "invoicesDl");
+                break;
             case "fis_FundControlNotice":
                 fundJoin = "JOIN {E}.obligation o JOIN o.activity a JOIN a.fund f";
                 divisionJoin = "JOIN {E}.obligation o JOIN o.activity a JOIN a.division d";
                 categoryJoin = "JOIN {E}.obligation o JOIN o.objectClass b JOIN b.category m";
                 objectClassJoin = "JOIN {E}.obligation o JOIN o.objectClass b";
                 obligationJoin = "JOIN {E}.obligation o";
+                configureEntitySearchFragment(FcnSearchFragment.class, "fundControlNoticesDc", "fundControlNoticesDl");
+                break;
+            case "fis_Division":
+                hostQuery = "SELECT d FROM fis_Division d";
+                fundJoin = "JOIN {E}.fund f";
                 break;
             default:
                 fundJoin = null;
@@ -416,7 +470,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         if (branchSearchField.getValue() != null) {
             hostLoader.setParameter("branchCodeFilterField", branchSearchField.getValue().getBranchCode());
         } else {
-
             hostLoader.removeParameter("branchCodeFilterField");
         }
 
@@ -440,17 +493,21 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     }
 
     private void clearCustomSearchFields() {
-        if (!fjcFoundation) {
+        divisionSearchField.setValue(null);
+        if(!fjcFoundation) {
             fundSearchField.setValue(null);
         }
-        divisionSearchField.setValue(null);
-        fundSearchField.setValue(null);
         ((EntitySearchFragment) fragment).clearSearchFilters();
 
 //        customFilters.forEach((key, value) -> value.setValue(null));
     }
 
     private void performSearch() {
+        if(fjcFoundation) {
+            customConditions.add(JpqlCondition.createWithParameters("f = :foundationFund", fundJoin, Map.of("foundationFund", fjcFoundationFund)));
+        } else {
+            customConditions.add(JpqlCondition.createWithParameters("f <> :foundationFund", fundJoin, Map.of("foundationFund", fjcFoundationFund)));
+        }
         customConditions.add(JpqlCondition.createWithParameters("d.appropriation in :bfyFilterField", divisionJoin, Map.of("bfyFilterField", fiscalYears)));
         customConditions.add(JpqlCondition.create("f = :fundFilterField", fundJoin).skipNullOrEmpty());
         customConditions.add(JpqlCondition.create("d.divisionCode = :divCodeFilterField", divisionJoin).skipNullOrEmpty());

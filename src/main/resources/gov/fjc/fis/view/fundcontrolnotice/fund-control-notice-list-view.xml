@@ -6,18 +6,18 @@
     <data>
         <collection id="fundControlNoticesDc"
                     class="gov.fjc.fis.entity.FundControlNotice">
-            <fetchPlan extends="_base">
-                <property name="obligation" fetchPlan="_base"/>
-            </fetchPlan>
-            <loader id="fundControlNoticesDl" readOnly="true">
-                <query>
-                    <![CDATA[select e from fis_FundControlNotice e]]>
-                </query>
-            </loader>
+<!--            <fetchPlan extends="_base">-->
+<!--                <property name="obligation" fetchPlan="_base"/>-->
+<!--            </fetchPlan>-->
+            <loader id="fundControlNoticesDl" readOnly="true"/>
+<!--                <query>-->
+<!--                    <![CDATA[select e from fis_FundControlNotice e]]>-->
+<!--                </query>-->
+<!--            </loader>-->
         </collection>
     </data>
     <facets>
-        <dataLoadCoordinator auto="true"/>
+        <dataLoadCoordinator auto="false"/>
         <urlQueryParameters>
             <pagination component="pagination"/>
         </urlQueryParameters>

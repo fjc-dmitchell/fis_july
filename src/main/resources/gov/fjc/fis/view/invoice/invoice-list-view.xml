@@ -6,26 +6,26 @@
     <data>
         <collection id="invoicesDc"
                     class="gov.fjc.fis.entity.Invoice">
-            <fetchPlan extends="_base">
-                <property name="obligation" fetchPlan="_base">
-                    <property name="activity" fetchPlan="_base">
-                        <property name="division">
-                            <property name="title"/>
-                        </property>
-                        <property name="branch" fetchPlan="_base"/>
-                        <property name="group" fetchPlan="_base"/>
-                    </property>
-                </property>
-            </fetchPlan>
-            <loader id="invoicesDl" readOnly="true">
-                <query>
-                    <![CDATA[select e from fis_Invoice e]]>
-                </query>
-            </loader>
+<!--            <fetchPlan extends="_base">-->
+<!--                <property name="obligation" fetchPlan="_base">-->
+<!--                    <property name="activity" fetchPlan="_base">-->
+<!--                        <property name="division">-->
+<!--                            <property name="title"/>-->
+<!--                        </property>-->
+<!--                        <property name="branch" fetchPlan="_base"/>-->
+<!--                        <property name="group" fetchPlan="_base"/>-->
+<!--                    </property>-->
+<!--                </property>-->
+<!--            </fetchPlan>-->
+            <loader id="invoicesDl" readOnly="true"/>
+<!--                <query>-->
+<!--                    <![CDATA[select e from fis_Invoice e]]>-->
+<!--                </query>-->
+<!--            </loader>-->
         </collection>
     </data>
     <facets>
-        <dataLoadCoordinator auto="true"/>
+        <dataLoadCoordinator auto="false"/>
         <urlQueryParameters>
             <pagination component="pagination"/>
         </urlQueryParameters>

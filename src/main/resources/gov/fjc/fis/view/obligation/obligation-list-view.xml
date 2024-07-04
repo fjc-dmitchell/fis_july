@@ -31,7 +31,7 @@
         <action id="showDivisionAction"/>
     </actions>
     <layout>
-        <fragment class="gov.fjc.fis.view.search.CustomSearchFragment">
+        <fragment id="searchFragment" class="gov.fjc.fis.view.search.CustomSearchFragment">
             <properties>
                 <property name="hostDataContainer" value="obligationsDc" type="CONTAINER_REF"/>
             </properties>

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @FragmentDescriptor("entity-search-fragment.xml")
-public class EntitySearchFragment extends Fragment<VerticalLayout> {
+public abstract class EntitySearchFragment extends Fragment<VerticalLayout> {
     @ViewComponent
     private VerticalLayout root;
 
