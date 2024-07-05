@@ -143,7 +143,8 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     private Fund fjcFoundationFund;
 
     /**
-     * The hostDataContainer property must be explicitly set by the host invoking the fragment
+     * The hostDataContainer property must be explicitly set by the host invoking the fragment.
+     * The hostDataContainer <em>must</em> have a dataLoader
      *
      * @param hostDataContainer
      */
@@ -154,7 +155,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         if (hostLoader == null) {
             throw new IllegalStateException("hostLoader is null in SearchFragment");
         }
-        Class<?> hostClass = hostDataContainer.getEntityMetaClass().getJavaClass();
+        Class<?> hostEntityClass = hostDataContainer.getEntityMetaClass().getJavaClass();
         hostEntityName = hostDataContainer.getEntityMetaClass().getName();
     }
 
@@ -172,6 +173,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         if (hostContainer == null) {
             throw new IllegalStateException("hostContainer is null in SearchFragment");
         }
+        configureHostEntity();
         fiscalYears = appropriationService.getBfyFilterField(sessionData);
         fjcFoundationFund = fundService.getFoundationFund();
         setBfyBtnCaption();
@@ -183,97 +185,26 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         groupsDl.load();
     }
 
+//    @Subscribe(target = Target.HOST_CONTROLLER)
+//    protected void onHostBeforeShow(final View.BeforeShowEvent event) {
+////        configureSubFragments();
+//        if(fjcFoundation) {
+////            fundSearchField.setItems(fjcFoundationFund);
+//            fundSearchField.setValue(fjcFoundationFund);
+//            fundSearchField.setReadOnly(true);
+//            // set visibility of division box?
+//        }
+////        configureHostEntity();
+//    }
+
     @Subscribe(target = Target.HOST_CONTROLLER)
-    protected void onHostBeforeShow(final View.BeforeShowEvent event) {
-//        configureSubFragments();
+    protected void onHostReady(final View.ReadyEvent event) {
         if(fjcFoundation) {
-//            fundSearchField.setItems(fjcFoundationFund);
             fundSearchField.setValue(fjcFoundationFund);
             fundSearchField.setReadOnly(true);
             // set visibility of division box?
         }
-        configureHostEntity();
-    }
-
-    @Subscribe(target = Target.HOST_CONTROLLER)
-    protected void onHostReady(final View.ReadyEvent event) {
-        //perform all loads here?
         performSearch();
-    }
-
-
-
-//    private void configureSubFragments() {
-////        switch (hostEntityName) {
-////            case "fis_Activity" ->
-////                    configureEntitySearchFragment(ActivitySearchFragment.class, "activitiesDc", "activitiesDl");
-////            case "fis_Obligation" ->
-////                    configureEntitySearchFragment(ObligationSearchFragment.class, "obligationsDc", "obligationsDl");
-////            case "fis_Invoice" ->
-////                    configureEntitySearchFragment(InvoiceSearchFragment.class, "invoicesDc", "invoicesDl");
-////            case "fis_FundControlNotice" ->
-////                    configureEntitySearchFragment(FcnSearchFragment.class, "fundControlNoticesDc", "fundControlNoticesDl");
-////        }
-////        String dataContainerId;
-////        String dataLoaderId;
-////        Class<? extends Fragment<VerticalLayout>> fragmentClass;
-////        FragmentData fragmentData = this.getFragmentData();
-//        switch (hostEntityName) {
-//            case "fis_Activity":
-////                fragmentClass = ActivitySearchFragment.class;
-////                dataContainerId = "activitiesDc";
-////                dataLoaderId = "activitiesDl";
-//                configureEntitySearchFragment(ActivitySearchFragment.class, "activitiesDc", "activitiesDl");
-//                break;
-//            case "fis_Obligation":
-////                fragmentClass = ObligationSearchFragment.class;
-////                dataContainerId = "obligationsDc";
-////                dataLoaderId = "obligationsDl";
-//                configureEntitySearchFragment(ObligationSearchFragment.class, "obligationsDc", "obligationsDl");
-//                break;
-//            case "fis_Invoice":
-////                fragmentClass = InvoiceSearchFragment.class;
-////                dataContainerId = "invoicesDc";
-////                dataLoaderId = "invoicesDl";
-//                configureEntitySearchFragment(InvoiceSearchFragment.class, "invoicesDc", "invoicesDl");
-//                break;
-//            case "fis_FundControlNotice":
-////                fragmentClass = FcnSearchFragment.class;
-////                dataContainerId = "fundControlNoticesDc";
-////                dataLoaderId = "fundControlNoticesDl";
-//                configureEntitySearchFragment(FcnSearchFragment.class, "fundControlNoticesDc", "fundControlNoticesDl");
-//                break;
-////            default:
-////                throw new RuntimeException("Unknown host entity in SearchFragment controller: " + hostEntityName);
-//        }
-////        fragmentData.registerContainer(dataContainerId, hostContainer);
-////        fragmentData.registerLoader(dataLoaderId, hostLoader);
-////        FragmentUtils.setFragmentData(this, fragmentData);
-////        fragment = fragments.create(this, fragmentClass);
-////        ((EntitySearchFragment) fragment).addCategoryObjectClass(categorySearchField, objectClassSearchField);
-////        ((EntitySearchFragment) fragment).addBranchGroup(branchSearchField, groupSearchField);
-//////        filterConditions = ((ActivitySearchFragment) fragment).getCustomConditions();
-//////        filterConditions = ((EntitySearchFilter) fragment).getCustomConditions();
-////        filterConditions = ((EntitySearchFragment) fragment).getCustomConditions();
-////        customSearchBox.add(fragment);
-//    }
-
-    private void configureEntitySearchFragment(Class<? extends Fragment<VerticalLayout>> fragmentClass,
-                                               String dataContainerId,
-                                               String dataLoaderId) {
-        FragmentData fragmentData = this.getFragmentData();
-        searchTabSheetCustomSearchTab.setVisible(true);
-
-        fragmentData.registerContainer(dataContainerId, hostContainer);
-        fragmentData.registerLoader(dataLoaderId, hostLoader);
-        FragmentUtils.setFragmentData(this, fragmentData);
-        fragment = fragments.create(this, fragmentClass);
-        ((EntitySearchFragment) fragment).addCategoryObjectClass(categorySearchField, objectClassSearchField);
-        ((EntitySearchFragment) fragment).addBranchGroup(branchSearchField, groupSearchField);
-//        filterConditions = ((ActivitySearchFragment) fragment).getCustomConditions();
-//        filterConditions = ((EntitySearchFilter) fragment).getCustomConditions();
-        filterConditions = ((EntitySearchFragment) fragment).getCustomConditions();
-        customSearchBox.add(fragment);
     }
 
     private void configureHostEntity() {
@@ -318,9 +249,24 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 fundJoin = "JOIN {E}.fund f";
                 break;
             default:
-                fundJoin = null;
-                divisionJoin = null;
+                throw new IllegalStateException(hostEntityName.concat(" has not been configured in CustomSearchFragment"));
         }
+    }
+
+    private void configureEntitySearchFragment(Class<? extends Fragment<VerticalLayout>> fragmentClass,
+                                               String dataContainerId,
+                                               String dataLoaderId) {
+        FragmentData fragmentData = this.getFragmentData();
+        searchTabSheetCustomSearchTab.setVisible(true);
+
+        fragmentData.registerContainer(dataContainerId, hostContainer);
+        fragmentData.registerLoader(dataLoaderId, hostLoader);
+        FragmentUtils.setFragmentData(this, fragmentData);
+        fragment = fragments.create(this, fragmentClass);
+        ((EntitySearchFragment) fragment).addCategoryObjectClass(categorySearchField, objectClassSearchField);
+        ((EntitySearchFragment) fragment).addBranchGroup(branchSearchField, groupSearchField);
+        filterConditions = ((EntitySearchFragment) fragment).getCustomConditions();
+        customSearchBox.add(fragment);
     }
 
     private void setBfyBtnCaption() {
@@ -399,6 +345,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
 
     @Subscribe("divisionSearchField")
     protected void onDivisionSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Division>, Division> event) {
+        // if year added, should check value of existing branch/group, not necessarily erase it.
         if (event.getValue() == null) {
             divisionCode = null;
 //            branchSearchField.setValue(null);
@@ -444,7 +391,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 case "showDiv8Btn" -> hostLoader.setParameter("divCodeFilterField", "8");
             }
             performSearch();
-            hostLoader.removeParameter("divCodeFilterField");
+//            hostLoader.removeParameter("divCodeFilterField");
         }
     }
 
@@ -469,14 +416,14 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         }
         if (branchSearchField.getValue() != null) {
             hostLoader.setParameter("branchCodeFilterField", branchSearchField.getValue().getBranchCode());
-        } else {
-            hostLoader.removeParameter("branchCodeFilterField");
+//        } else {
+//            hostLoader.removeParameter("branchCodeFilterField");
         }
 
         if (groupSearchField.getValue() != null) {
             hostLoader.setParameter("groupCodeFilterField", groupSearchField.getValue().getGroupCode());
-        } else {
-            hostLoader.removeParameter("groupCodeFilterField");
+//        } else {
+//            hostLoader.removeParameter("groupCodeFilterField");
         }
         performSearch();
     }

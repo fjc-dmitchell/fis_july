@@ -19,10 +19,6 @@
         <collection id="groupsDc" class="gov.fjc.fis.entity.Group">
             <loader id="groupsDl" readOnly="true"/>
         </collection>
-        <instance id="actionCodeDc" class="gov.fjc.fis.entity.personnel.ActionCode">
-            <fetchPlan extends="_base"/>
-            <loader id="actionCodeDl"/>
-        </instance>
     </data>
 
     <actions>

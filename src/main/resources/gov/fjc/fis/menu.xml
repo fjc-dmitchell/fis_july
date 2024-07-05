@@ -32,6 +32,23 @@
               title="msg://gov.fjc.fis.view.distancelearning/distanceLearningListView.title"/>
         <item view="fis_Ape.list" title="msg://gov.fjc.fis.view.ape/apeListView.title"/>
     </menu>
+    <menu id="foundation" description="msg://gov.fjc.fis/menu_config.foundation.description"
+          title="msg://gov.fjc.fis/menu_config.foundation.title">
+        <!--        <item view="fis_Donor.list" description="msg://gov.fjc.fis.screen.donor/donorBrowse.menu"/>-->
+        <!--        <item view="fis_Gift.list" description="msg://gov.fjc.fis.screen.gift/giftBrowse.menu"/>-->
+        <separator/>
+        <item view="fis_Division.foundation-list"
+              title="msg://gov.fjc.fis.view.division/divisionListView.title"/>
+        <item view="fis_Activity.foundation-list"
+              title="msg://gov.fjc.fis.view.activity/activityListView.title"/>
+        <item view="fis_Obligation.foundation-list"
+              title="msg://gov.fjc.fis.view.obligation/obligationListView.title"/>
+        <separator/>
+        <item view="fis_Invoice.foundation-list"
+              title="msg://gov.fjc.fis.view.invoice/invoiceListView.title"/>
+        <item view="fis_FundControlNotice.foundation-list"
+              title="msg://gov.fjc.fis.view.fundcontrolnotice/fundControlNoticeListView.title"/>
+    </menu>
     <menu id="fjcreports" description="msg://gov.fjc.fis/menu_config.fjcreports.description"
           title="msg://gov.fjc.fis/menu_config.fjcreports.title">
         <item bean="fis_ReportRouter" beanMethod="openStatusOfFundsReport"
@@ -46,6 +63,4 @@
     <menu opened="true" id="application" title="msg://gov.fjc.fis/menu.application.title">
         <item view="fis_User.list" title="msg://gov.fjc.fis.view.user/UserListView.title"/>
     </menu>
-    <menu id="foundation" description="msg://gov.fjc.fis/menu_config.foundation.description"
-          title="msg://gov.fjc.fis/menu_config.foundation.title"/>
 </menu-config>

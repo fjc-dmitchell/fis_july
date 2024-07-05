@@ -3,6 +3,7 @@ package gov.fjc.fis.view.invoice;
 import com.vaadin.flow.router.Route;
 import gov.fjc.fis.entity.Invoice;
 import gov.fjc.fis.view.main.MainView;
+import gov.fjc.fis.view.search.CustomSearchFragment;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridColumnVisibilityChangedEvent;
 import io.jmix.flowui.view.*;
@@ -14,15 +15,16 @@ import io.jmix.flowui.view.*;
 @DialogMode(width = "64em")
 public class InvoiceListView extends StandardListView<Invoice> {
     @ViewComponent
-    private DataGrid<Invoice> invoicesDataGrid;
+    private CustomSearchFragment searchFragment;
 
-    @Subscribe
-    public void onInit(final InitEvent event) {
-//        invoicesDataGrid.setWidth("1440px");
+    private boolean fjcFoundation = false;
+
+    protected void setFjcFoundation() {
+        this.fjcFoundation = true;
     }
 
-    @Subscribe("invoicesDataGrid.[obligation.activity.branch.title]")
-    public void onInvoicesDataGridObligationActivityBranchTitleDataGridColumnVisibilityChanged(final DataGridColumnVisibilityChangedEvent<Invoice> event) {
-//        invoicesDataGrid.recalculateColumnWidths();
+    @Subscribe
+    protected void onBeforeShow(final BeforeShowEvent event) {
+        searchFragment.setFjcFoundation(fjcFoundation);
     }
 }

@@ -35,7 +35,7 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
-        <fragment class="gov.fjc.fis.view.search.CustomSearchFragment">
+        <fragment id="searchFragment" class="gov.fjc.fis.view.search.CustomSearchFragment">
             <properties>
                 <property name="hostDataContainer" value="invoicesDc" type="CONTAINER_REF"/>
             </properties>
