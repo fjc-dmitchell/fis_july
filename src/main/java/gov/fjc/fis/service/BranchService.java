@@ -19,15 +19,16 @@ public class BranchService {
     private DataManager dataManager;
 
     public List<Branch> getBranchSearchList(List<Appropriation> fiscalYears, String divCode) {
+        fiscalYears = fiscalYears.stream().sorted(Comparator.comparing(Appropriation::getBudgetFiscalYear).reversed()).toList();
         List<Branch> branchList = new ArrayList<>();
         Set<String> branchCodes = null;
 
         for (Appropriation year : fiscalYears) {
             List<Branch> branchesInBfyList = dataManager.load(Branch.class)
-                    .query("select b from fis_Branch b" +
-                            " where b.division.appropriation = :year" +
-                            " and b.division.divisionCode = :divCode" +
-                            " and b.branchCode not in :branchCodes")
+                    .query("SELECT b FROM fis_Branch b"
+                            +" WHERE b.division.appropriation = :year"
+                            +" AND b.division.divisionCode = :divCode"
+                            +" AND b.branchCode not in :branchCodes")
                     .parameter("year", year)
                     .parameter("divCode", divCode)
                     .parameter("branchCodes", branchCodes)

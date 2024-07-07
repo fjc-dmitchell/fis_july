@@ -105,17 +105,18 @@ public class ObjectClassService {
     }
 
     public List<ObjectClass> getObjectClassSearchList(List<Appropriation> fiscalYears, String moc, boolean includeGenerics) {
+        fiscalYears = fiscalYears.stream().sorted(Comparator.comparing(Appropriation::getBudgetFiscalYear).reversed()).toList();
         List<ObjectClass> bocList = new ArrayList<>();
         Set<String> bocCodes = null;
 
         for (Appropriation year : fiscalYears) {
             List<ObjectClass> objectClassesInBfyList =
                     dataManager.load(ObjectClass.class)
-                            .query("select c from fis_ObjectClass c" +
-                                    " where c.category.appropriation = :year" +
-                                    " and c.budgetObjectClass not in :bocCodes" +
-                                    " and (:generic = true or c.budgetObjectClass not like '%00')" +
-                                    " and (:moc is null or c.category.masterObjectClass = :moc)")
+                            .query("SELECT c FROM fis_ObjectClass c"
+                                    + " WHERE c.category.appropriation = :year"
+                                    + " AND c.budgetObjectClass NOT IN :bocCodes"
+                                    + " AND (:generic = true OR c.budgetObjectClass NOT LIKE '%00')"
+                                    + " AND (:moc IS NULL OR c.category.masterObjectClass = :moc)")
                             .parameter("year", year)
                             .parameter("bocCodes", bocCodes)
                             .parameter("moc", moc)

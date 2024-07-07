@@ -28,15 +28,16 @@ public class GroupService {
     }
 
     public List<Group> getGroupSearchList(List<Appropriation> fiscalYears, String divCode) {
+        fiscalYears = fiscalYears.stream().sorted(Comparator.comparing(Appropriation::getBudgetFiscalYear).reversed()).toList();
         List<Group> groupList = new ArrayList<>();
         Set<String> groupCodes = null;
 
         for (Appropriation year : fiscalYears) {
             List<Group> groupsInBfyList = dataManager.load(Group.class)
                     .query("SELECT e FROM fis_Group e"
-                            +" WHERE e.division.appropriation = :year"
-                            +" AND e.division.divisionCode = :divCode"
-                            +" AND e.groupCode NOT IN :groupCodes")
+                            + " WHERE e.division.appropriation = :year"
+                            + " AND e.division.divisionCode = :divCode"
+                            + " AND e.groupCode NOT IN :groupCodes")
                     .parameter("year", year)
                     .parameter("divCode", divCode)
                     .parameter("groupCodes", groupCodes)

@@ -80,6 +80,7 @@ public class CategoryService {
      * @return list of categories
      */
     public List<Category> getCategorySearchList(List<Appropriation> fiscalYears) {
+        fiscalYears = fiscalYears.stream().sorted(Comparator.comparing(Appropriation::getBudgetFiscalYear).reversed()).toList();
         List<Category> categoryList = new ArrayList<>();
         Set<String> categoryCodes = null;
 
