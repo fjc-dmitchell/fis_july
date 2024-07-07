@@ -11,32 +11,11 @@
                 <property name="totalAmount"/>
                 <property name="fund" fetchPlan="_base"/>
             </fetchPlan>
-            <loader id="divisionsDl" readOnly="true">
-
-                <query>
-                    <![CDATA[select e from fis_Division e order by e.appropriation.budgetFiscalYear desc, e.divisionCode asc]]>
-                    <condition>
-                        <and>
-                            <c:jpql>
-                                <!--                                <c:where>e.fund in :fundFilterField</c:where>-->
-                                <c:where>e.fund.fundCode = '092800'</c:where>
-                            </c:jpql>
-                            <c:jpql>
-                                <!--                                <c:where>e.appropriation in :bfyFilterField</c:where>-->
-                                <c:where>e.appropriation.budgetFiscalYear >= '2020'</c:where>
-                            </c:jpql>
-                            <c:jpql>
-                                <c:where>e.divisionCode = :divCodeFilterField</c:where>
-                            </c:jpql>
-                        </and>
-                    </condition>
-                </query>
-            </loader>
+            <loader id="divisionsDl" readOnly="true"/>
         </collection>
 
     </data>
     <facets>
-        <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
             <pagination component="pagination"/>
         </urlQueryParameters>

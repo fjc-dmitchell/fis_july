@@ -7,15 +7,10 @@
         <collection id="branchesDc"
                     class="gov.fjc.fis.entity.Branch">
             <fetchPlan extends="_base"/>
-            <loader id="branchesDl" readOnly="true">
-                <query>
-                    <![CDATA[select e from fis_Branch e]]>
-                </query>
-            </loader>
+            <loader id="branchesDl" readOnly="true"/>
         </collection>
     </data>
     <facets>
-        <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
             <pagination component="pagination"/>
         </urlQueryParameters>
@@ -25,6 +20,11 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
+        <fragment id="searchFragment" class="gov.fjc.fis.view.search.CustomSearchFragment">
+            <properties>
+                <property name="hostDataContainer" value="branchesDc" type="CONTAINER_REF"/>
+            </properties>
+        </fragment>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createBtn" action="branchesDataGrid.create"/>
             <button id="editBtn" action="branchesDataGrid.edit"/>

@@ -34,7 +34,7 @@
     </menu>
     <menu id="foundation" description="msg://gov.fjc.fis/menu_config.foundation.description"
           title="msg://gov.fjc.fis/menu_config.foundation.title">
-        <!--        <item view="fis_Donor.list" description="msg://gov.fjc.fis.screen.donor/donorBrowse.menu"/>-->
+        <item view="fis_Donor.list" title="msg://gov.fjc.fis.view.donor/donorListView.title"/>
         <!--        <item view="fis_Gift.list" description="msg://gov.fjc.fis.screen.gift/giftBrowse.menu"/>-->
         <separator/>
         <item view="fis_Division.foundation-list"
@@ -43,7 +43,6 @@
               title="msg://gov.fjc.fis.view.activity/activityListView.title"/>
         <item view="fis_Obligation.foundation-list"
               title="msg://gov.fjc.fis.view.obligation/obligationListView.title"/>
-        <separator/>
         <item view="fis_Invoice.foundation-list"
               title="msg://gov.fjc.fis.view.invoice/invoiceListView.title"/>
         <item view="fis_FundControlNotice.foundation-list"

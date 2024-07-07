@@ -9,15 +9,10 @@
             <fetchPlan extends="_base">
                 <property name="division" fetchPlan="_base"/>
             </fetchPlan>
-            <loader id="groupsDl" readOnly="true">
-                <query>
-                    <![CDATA[select e from fis_Group e]]>
-                </query>
-            </loader>
+            <loader id="groupsDl" readOnly="true"/>
         </collection>
     </data>
     <facets>
-        <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
             <pagination component="pagination"/>
         </urlQueryParameters>
@@ -27,6 +22,11 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
+        <fragment id="searchFragment" class="gov.fjc.fis.view.search.CustomSearchFragment">
+            <properties>
+                <property name="hostDataContainer" value="groupsDc" type="CONTAINER_REF"/>
+            </properties>
+        </fragment>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createBtn" action="groupsDataGrid.create"/>
             <button id="editBtn" action="groupsDataGrid.edit"/>

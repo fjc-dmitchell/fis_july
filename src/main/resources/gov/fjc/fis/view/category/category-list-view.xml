@@ -30,6 +30,11 @@
                        dataLoader="categoriesDl">
             <properties include=".*"/>
         </genericFilter>
+        <fragment id="searchFragment" class="gov.fjc.fis.view.search.CustomSearchFragment">
+            <properties>
+                <property name="hostDataContainer" value="categoriesDc" type="CONTAINER_REF"/>
+            </properties>
+        </fragment>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createBtn" action="categoriesDataGrid.create"/>
             <button id="editBtn" action="categoriesDataGrid.edit"/>

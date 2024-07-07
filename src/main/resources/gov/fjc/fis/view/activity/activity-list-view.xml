@@ -6,22 +6,17 @@
     <data>
         <collection id="activitiesDc"
                     class="gov.fjc.fis.entity.Activity">
-            <fetchPlan extends="_base">
-                <property name="division" fetchPlan="_instance_name">
-                    <property name="fund" fetchPlan="_base"/>
-                </property>
-                <property name="branch" fetchPlan="_base"/>
-                <property name="group" fetchPlan="_base"/>
-            </fetchPlan>
-            <loader id="activitiesDl" readOnly="true">
-                <query>
-                    <![CDATA[select e from fis_Activity e]]>
-                </query>
-            </loader>
+<!--            <fetchPlan extends="_base">-->
+<!--                <property name="division" fetchPlan="_instance_name">-->
+<!--                    <property name="fund" fetchPlan="_base"/>-->
+<!--                </property>-->
+<!--                <property name="branch" fetchPlan="_base"/>-->
+<!--                <property name="group" fetchPlan="_base"/>-->
+<!--            </fetchPlan>-->
+            <loader id="activitiesDl" readOnly="true"/>
         </collection>
     </data>
     <facets>
-        <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
             <pagination component="pagination"/>
         </urlQueryParameters>

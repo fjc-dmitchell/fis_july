@@ -79,7 +79,7 @@
             </section>
         </drawerLayout>
         <initialLayout>
-            <h1 text="Now is the time for all good men..."/>
+            <h1 text="insert a fragment based on business role (ofm, Education, etc.)"/>
         </initialLayout>
     </appLayout>
 </mainView>

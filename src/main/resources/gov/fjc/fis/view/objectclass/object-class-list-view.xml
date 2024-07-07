@@ -27,6 +27,11 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
+        <fragment id="searchFragment" class="gov.fjc.fis.view.search.CustomSearchFragment">
+            <properties>
+                <property name="hostDataContainer" value="objectClassesDc" type="CONTAINER_REF"/>
+            </properties>
+        </fragment>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createBtn" action="objectClassesDataGrid.create"/>
             <button id="editBtn" action="objectClassesDataGrid.edit"/>
