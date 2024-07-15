@@ -11,4 +11,9 @@ public class FoundationDivisionListView extends DivisionListView {
         super();
         super.setFjcFoundation();
     }
+
+    @Override
+    public String getPageTitle() {
+        return "FJC Foundation: ".concat(super.getPageTitle());
+    }
 }

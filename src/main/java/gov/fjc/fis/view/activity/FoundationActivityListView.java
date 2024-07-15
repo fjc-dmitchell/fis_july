@@ -11,4 +11,9 @@ public class FoundationActivityListView extends ActivityListView {
         super();
         super.setFjcFoundation();
     }
+
+    @Override
+    public String getPageTitle() {
+        return "FJC Foundation: ".concat(super.getPageTitle());
+    }
 }
