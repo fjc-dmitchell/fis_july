@@ -117,6 +117,10 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     private EntityComboBox<Group> groupSearchField;
     @ViewComponent
     private HorizontalLayout bocBox;
+    @ViewComponent
+    private HorizontalLayout divisionSearchButtons;
+    @ViewComponent
+    private HorizontalLayout divFundBox;
 
     /**
      * instance variables
@@ -124,15 +128,16 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     private CollectionContainer<?> hostContainer;
     private CollectionLoader<?> hostLoader;
     private String hostEntityName;
-    private String hostQuery;
+    private String hostEntityQuery;
     private String fundJoin;
+    private String appropriationJoin;
     private String divisionJoin;
     private String categoryJoin;
     private String objectClassJoin;
     private String obligationJoin;
     private String branchJoin;
     private String groupJoin;
-    private List<Condition> customConditions = new ArrayList<>();
+    //    private List<Condition> customConditions = new ArrayList<>();
     private List<Condition> filterConditions = new ArrayList<>();
     //    private FragmentData fragmentData;
     private Fragment<VerticalLayout> fragment;
@@ -157,6 +162,9 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         }
         Class<?> hostEntityClass = hostDataContainer.getEntityMetaClass().getJavaClass();
         hostEntityName = hostDataContainer.getEntityMetaClass().getName();
+//        fiscalYears = appropriationService.getBfyFilterField(sessionData);
+//        fjcFoundationFund = fundService.getFoundationFund();
+//        performSearch();
     }
 
     /**
@@ -177,7 +185,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         fiscalYears = appropriationService.getBfyFilterField(sessionData);
         fjcFoundationFund = fundService.getFoundationFund();
         setBfyBtnCaption();
-        fundsDl.load(); // are these necessary?
+        fundsDl.load();
         divisionsDl.load();
         categoriesDl.load();
         objectClassesDl.load();
@@ -185,21 +193,9 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         groupsDl.load();
     }
 
-//    @Subscribe(target = Target.HOST_CONTROLLER)
-//    protected void onHostBeforeShow(final View.BeforeShowEvent event) {
-////        configureSubFragments();
-//        if(fjcFoundation) {
-////            fundSearchField.setItems(fjcFoundationFund);
-//            fundSearchField.setValue(fjcFoundationFund);
-//            fundSearchField.setReadOnly(true);
-//            // set visibility of division box?
-//        }
-////        configureHostEntity();
-//    }
-
     @Subscribe(target = Target.HOST_CONTROLLER)
     protected void onHostReady(final View.ReadyEvent event) {
-        if(fjcFoundation) {
+        if (fjcFoundation) {
             fundSearchField.setValue(fjcFoundationFund);
             fundSearchField.setReadOnly(true);
             // set visibility of division box?
@@ -208,45 +204,96 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     }
 
     private void configureHostEntity() {
-        hostQuery = "SELECT e FROM ".concat(hostEntityName).concat(" e");
+        hostEntityQuery = "SELECT e FROM ".concat(hostEntityName).concat(" e");
         switch (hostEntityName) {
             case "fis_Activity":
+                hostEntityQuery += " ORDER BY e.division.appropriation.budgetFiscalYear, e.division.divisionCode, e.activityNumber";
                 fundJoin = "JOIN {E}.fund f";
-                divisionJoin = "JOIN {E}.division d";
-                categoryJoin = "JOIN {E}.projections p JOIN p.objectClass b JOIN b.category m";
-                objectClassJoin = "JOIN {E}.projections p JOIN p.objectClass b";
+                appropriationJoin = "JOIN {E}.division dv JOIN dv.appropriation app";
+                divisionJoin = "JOIN {E}.division dv";
+                categoryJoin = "JOIN {E}.projections p JOIN p.objectClass obj JOIN obj.category cat";
+                objectClassJoin = "JOIN {E}.projections p JOIN p.objectClass obj";
                 branchJoin = "JOIN {E}.branch bch";
                 groupJoin = "JOIN {E}.group grp";
                 configureEntitySearchFragment(ActivitySearchFragment.class, "activitiesDc", "activitiesDl");
+                hostLoader.setFetchPlan("activity-search-fetch-plan");
                 break;
             case "fis_Obligation":
-                fundJoin = "JOIN {E}.activity a JOIN a.fund f";
-                divisionJoin = "JOIN {E}.activity a JOIN a.division d";
-                categoryJoin = "JOIN {E}.objectClass b JOIN b.category m";
-                objectClassJoin = "JOIN {E}.objectClass b";
-                branchJoin = "JOIN {E}.activity a JOIN a.branch bch";
-                groupJoin = "JOIN {E}.activity a JOIN a.group grp";
+                hostEntityQuery += " ORDER BY e.activity.division.appropriation.budgetFiscalYear, e.activity.division.divisionCode, e.documentNumber, e.objectClass.budgetObjectClass";
+                fundJoin = "JOIN {E}.activity act JOIN act.fund f";
+                appropriationJoin = "JOIN {E}.activity act JOIN act.division dv JOIN dv.appropriation app";
+                divisionJoin = "JOIN {E}.activity act JOIN act.division dv";
+                categoryJoin = "JOIN {E}.objectClass obj JOIN obj.category cat";
+                objectClassJoin = "JOIN {E}.objectClass obj";
+                branchJoin = "JOIN {E}.activity act JOIN act.branch bch";
+                groupJoin = "JOIN {E}.activity act JOIN act.group grp";
                 configureEntitySearchFragment(ObligationSearchFragment.class, "obligationsDc", "obligationsDl");
+                hostLoader.setFetchPlan("obligation-search-fetch-plan");
                 break;
             case "fis_Invoice":
-                fundJoin = "JOIN {E}.obligation o JOIN o.activity a JOIN a.fund f";
-                divisionJoin = "JOIN {E}.obligation o JOIN o.activity a JOIN a.division d";
-                categoryJoin = "JOIN {E}.obligation o JOIN o.objectClass b JOIN b.category m";
-                objectClassJoin = "JOIN {E}.obligation o JOIN o.objectClass b";
-                obligationJoin = "JOIN {E}.obligation o";
+                hostEntityQuery += " ORDER BY e.obligation.activity.division.appropriation.budgetFiscalYear, e.obligation.activity.division.divisionCode, e.obligation.documentNumber, e.obligation.objectClass.budgetObjectClass, e.invoiceNumber";
+                fundJoin = "JOIN {E}.obligation obl JOIN obl.activity act JOIN act.fund f";
+                appropriationJoin = "JOIN {E}.obligation obl JOIN obl.activity act JOIN act.division dv JOIN dv.appropriation app";
+                divisionJoin = "JOIN {E}.obligation obl JOIN obl.activity act JOIN act.division dv";
+                categoryJoin = "JOIN {E}.obligation obl JOIN obl.objectClass obj JOIN obj.category cat";
+                objectClassJoin = "JOIN {E}.obligation obl JOIN obl.objectClass obj";
+                obligationJoin = "JOIN {E}.obligation obl";
                 configureEntitySearchFragment(InvoiceSearchFragment.class, "invoicesDc", "invoicesDl");
+                hostLoader.setFetchPlan("invoice-search-fetch-plan");
                 break;
             case "fis_FundControlNotice":
-                fundJoin = "JOIN {E}.obligation o JOIN o.activity a JOIN a.fund f";
-                divisionJoin = "JOIN {E}.obligation o JOIN o.activity a JOIN a.division d";
-                categoryJoin = "JOIN {E}.obligation o JOIN o.objectClass b JOIN b.category m";
-                objectClassJoin = "JOIN {E}.obligation o JOIN o.objectClass b";
-                obligationJoin = "JOIN {E}.obligation o";
+                hostEntityQuery += " ORDER BY e.obligation.activity.division.appropriation.budgetFiscalYear, e.obligation.activity.division.divisionCode, e.obligation.documentNumber, e.obligation.objectClass.budgetObjectClass, e.fcnDate";
+                obligationJoin = " JOIN {E}.obligation obl";
+                objectClassJoin = obligationJoin.concat(" JOIN obl.objectClass obj");
+                categoryJoin = objectClassJoin.concat(" JOIN obj.category cat");
+                var activityJoin = obligationJoin.concat(" JOIN obl.activity act");
+                fundJoin = activityJoin.concat(" JOIN act.fund f");
+                divisionJoin = activityJoin.concat(" JOIN act.division dv");
+                appropriationJoin = divisionJoin.concat(" JOIN dv.appropriation app");
                 configureEntitySearchFragment(FcnSearchFragment.class, "fundControlNoticesDc", "fundControlNoticesDl");
+                hostLoader.setFetchPlan("fundControlNotice-search-fetch-plan");
                 break;
             case "fis_Division":
-                hostQuery = "SELECT d FROM fis_Division d";
-                fundJoin = "JOIN {E}.fund f";
+                hostEntityQuery += " ORDER BY e.appropriation.budgetFiscalYear, e.divisionCode";
+                appropriationJoin = "JOIN {E}.appropriation app";
+                hostEntityQuery = "SELECT dv FROM fis_Division dv";
+//                hostEntityQuery = "SELECT e FROM fis_Division e ORDER BY e.appropriation.budgetFiscalYear, e.divisionCode";
+                fundJoin = "JOIN dv.fund f";
+
+                break;
+            case "fis_Branch":
+                hostEntityQuery += " ORDER BY e.division.appropriation.budgetFiscalYear, e.division.divisionCode, e.branchCode";
+                fundJoin = "JOIN {E}.division.fund f";
+                appropriationJoin = "JOIN {E}.division dv JOIN dv.appropriation app";
+                divisionJoin = "JOIN {E}.division d";
+//                hostEntityQuery += " ORDER BY d.appropriation.budgetFiscalYear, d.divisionCode, e.branchCode";
+                break;
+            case "fis_Group":
+                hostEntityQuery += " ORDER BY e.division.appropriation.budgetFiscalYear, e.division.divisionCode, e.groupCode";
+                fundJoin = "JOIN {E}.division.fund f";
+                appropriationJoin = "JOIN {E}.division dv JOIN dv.appropriation app";
+                divisionJoin = "JOIN {E}.division d";
+//                hostEntityQuery += " ORDER BY d.appropriation.budgetFiscalYear, d.divisionCode, e.groupCode";
+                break;
+            case "fis_Category":
+                hostEntityQuery += " ORDER BY e.appropriation.budgetFiscalYear, e.masterObjectClass";
+                fundJoin = null;
+                appropriationJoin = "JOIN {E}.appropriation app";
+//                hostEntityQuery = "SELECT cat FROM fis_Category cat ORDER BY cat.appropriation.budgetFiscalYear, cat.masterObjectClass";
+                divisionSearchButtons.setVisible(false);
+                break;
+            case "fis_ObjectClass":
+                hostEntityQuery += " ORDER BY e.category.appropriation.budgetFiscalYear, e.category.masterObjectClass, e.budgetObjectClass";
+                fundJoin = null;
+                appropriationJoin = "JOIN {E}.category cat JOIN cat.appropriation app";
+                categoryJoin = "JOIN {E}.category cat";
+//                hostEntityQuery = "SELECT o FROM fis_ObjectClass o";
+//                hostEntityQuery += " JOIN o.category d";
+//                hostEntityQuery += " ORDER BY d.appropriation.budgetFiscalYear, d.masterObjectClass, o.budgetObjectClass";
+                divisionSearchButtons.setVisible(false);
+//                searchTabSheetCustomSearchTab.setVisible(true);
+                divFundBox.setVisible(false);
+//                bocBox.setVisible(true);
                 break;
             default:
                 throw new IllegalStateException(hostEntityName.concat(" has not been configured in CustomSearchFragment"));
@@ -343,11 +390,19 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         return group.getTitleAndCode();
     }
 
+    @Subscribe("fundSearchField")
+    protected void onFundSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Fund>, Fund> event) {
+        if (fundSearchField.getValue() == null) {
+            hostLoader.removeParameter("fundFilterField");
+        }
+    }
+
     @Subscribe("divisionSearchField")
     protected void onDivisionSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Division>, Division> event) {
         // if year added, should check value of existing branch/group, not necessarily erase it.
         if (event.getValue() == null) {
             divisionCode = null;
+            hostLoader.removeParameter("divCodeFilterField");
 //            branchSearchField.setValue(null);
 //            groupSearchField.setValue(null);
         } else {
@@ -359,10 +414,25 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         groupsDl.load();
     }
 
+    @Subscribe("branchSearchField")
+    protected void onBranchSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Branch>, Branch> event) {
+        if (branchSearchField.getValue() == null) {
+            hostLoader.removeParameter("branchCodeFilterField");
+        }
+    }
+
+    @Subscribe("groupSearchField")
+    protected void onGroupSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Group>, Group> event) {
+        if (groupSearchField.getValue() == null) {
+            hostLoader.removeParameter("groupCodeFilterField");
+        }
+    }
+
     @Subscribe("categorySearchField")
     protected void onCategorySearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Category>, Category> event) {
         if (categorySearchField.getValue() == null) {
             masterObjectClass = null;
+            hostLoader.removeParameter("mocFilterField");
         } else {
             if (objectClassSearchField.getValue() == null) {
                 masterObjectClass = Objects.requireNonNull(event.getValue().getMasterObjectClass());
@@ -374,6 +444,13 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
             }
         }
         objectClassesDl.load();
+    }
+
+    @Subscribe("objectClassSearchField")
+    protected void onObjectClassSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<ObjectClass>, ObjectClass> event) {
+        if (objectClassSearchField.getValue() == null) {
+            hostLoader.removeParameter("bocFilterField");
+        }
     }
 
     @Subscribe("showDivisionAction")
@@ -397,6 +474,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
 
     @Subscribe(id = "showBfyBtn", subject = "clickListener")
     protected void onShowBfyBtnClick(final ClickEvent<JmixButton> event) {
+        hostLoader.removeParameter("divCodeFilterField");
         performSearch();
     }
 
@@ -407,6 +485,8 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         }
         if (divisionSearchField.getValue() != null) {
             hostLoader.setParameter("divCodeFilterField", divisionSearchField.getValue().getDivisionCode());
+//        } else {
+//            hostLoader.removeParameter("divCodeFilterField");
         }
         if (categorySearchField.getValue() != null) {
             hostLoader.setParameter("mocFilterField", categorySearchField.getValue().getMasterObjectClass());
@@ -416,16 +496,12 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         }
         if (branchSearchField.getValue() != null) {
             hostLoader.setParameter("branchCodeFilterField", branchSearchField.getValue().getBranchCode());
-//        } else {
-//            hostLoader.removeParameter("branchCodeFilterField");
         }
-
         if (groupSearchField.getValue() != null) {
             hostLoader.setParameter("groupCodeFilterField", groupSearchField.getValue().getGroupCode());
-//        } else {
-//            hostLoader.removeParameter("groupCodeFilterField");
         }
         performSearch();
+//        clearCustomSearchParameters();
     }
 
     @Subscribe(id = "clearSearchBtn", subject = "clickListener")
@@ -441,35 +517,90 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
 
     private void clearCustomSearchFields() {
         divisionSearchField.setValue(null);
-        if(!fjcFoundation) {
+        if (!fjcFoundation) {
             fundSearchField.setValue(null);
         }
-        ((EntitySearchFragment) fragment).clearSearchFilters();
+        if (fragment != null) {
+            ((EntitySearchFragment) fragment).clearSearchFilters();
+        }
 
 //        customFilters.forEach((key, value) -> value.setValue(null));
     }
 
     private void performSearch() {
-        if(fjcFoundation) {
-            customConditions.add(JpqlCondition.createWithParameters("f = :foundationFund", fundJoin, Map.of("foundationFund", fjcFoundationFund)));
-        } else {
-            customConditions.add(JpqlCondition.createWithParameters("f <> :foundationFund", fundJoin, Map.of("foundationFund", fjcFoundationFund)));
+        List<Condition> customConditions = new ArrayList<>();
+        customConditions.clear();
+//        clearCustomSearchParameters();
+
+        if (fundJoin != null) {
+            if (hostLoader.getParameter("fundFilterField") != null) {
+                customConditions.add(JpqlCondition.create("f = :fundFilterField", fundJoin));
+            } else {
+
+                if (fjcFoundation) {
+                    customConditions.add(JpqlCondition.createWithParameters("f = :foundationFund", fundJoin, Map.of("foundationFund", fjcFoundationFund)));
+                } else {
+                    customConditions.add(JpqlCondition.createWithParameters("f <> :foundationFund", fundJoin, Map.of("foundationFund", fjcFoundationFund)));
+                }
+            }
         }
-        customConditions.add(JpqlCondition.createWithParameters("d.appropriation in :bfyFilterField", divisionJoin, Map.of("bfyFilterField", fiscalYears)));
-        customConditions.add(JpqlCondition.create("f = :fundFilterField", fundJoin).skipNullOrEmpty());
-        customConditions.add(JpqlCondition.create("d.divisionCode = :divCodeFilterField", divisionJoin).skipNullOrEmpty());
-        customConditions.add(JpqlCondition.create("m.masterObjectClass = :mocFilterField", categoryJoin).skipNullOrEmpty());
-        customConditions.add(JpqlCondition.create("b.budgetObjectClass = :bocFilterField", objectClassJoin).skipNullOrEmpty());
+//            if (fjcFoundation) {
+//                hostLoader.setParameter("fundFilterField", fjcFoundationFund);
+//                customConditions.add(JpqlCondition.create("f = :fundFilterField", fundJoin));
+//            } else {
+//                if (hostLoader.getParameter("fundFilterField") != null) {
+//                    customConditions.add(JpqlCondition.create("f = :fundFilterField", fundJoin));
+//                } else {
+//                    hostLoader.setParameter("fundFilterField", fjcFoundationFund);
+//                    customConditions.add(JpqlCondition.create("f <> :fundFilterField", fundJoin));
+//                }
+//            }
+//        }
+//        if(hostLoader.getParameter("fundFilterField")==null) {
+//            hostLoader.setParameter("fundFilterField", fjcFoundationFund);
+//        }
+//        if(hostLoader.getParameter("fundFilterField") == null) {
+//            hostLoader.setParameter("fundFilterField", fjcFoundationFund);
+//            customConditions.add(JpqlCondition.create("f <> :fundFilterField", fundJoin));
+//        } else {
+//            customConditions.add(JpqlCondition.create("f = :fundFilterField", fundJoin));
+//        }
+
+//        if (fundJoin != null) {
+//            if (fjcFoundation) {
+//                customConditions.add(JpqlCondition.create("f = :fundFilterField", fundJoin));
+//            } else {
+//                customConditions.add(JpqlCondition.create("f <> :fundFilterField", fundJoin));
+//            }
+//        }
+
+        hostLoader.setParameter("bfyFilterField", fiscalYears);
+
+//        customConditions.add(JpqlCondition.createWithParameters("app in :bfyFilterField", appropriationJoin, Map.of("bfyFilterField", fiscalYears)));
+        customConditions.add(JpqlCondition.create("app in :bfyFilterField", appropriationJoin).skipNullOrEmpty());
+//        customConditions.add(JpqlCondition.create("dv.divisionCode = :divCodeFilterField", divisionJoin).skipNullOrEmpty());
+        if (hostLoader.getParameter("divCodeFilterField") != null) {
+            customConditions.add(JpqlCondition.createWithParameters("dv.divisionCode = :divCodeFilterField", divisionJoin, hostLoader.getParameters()));
+        }
+        customConditions.add(JpqlCondition.create("cat.masterObjectClass = :mocFilterField", categoryJoin).skipNullOrEmpty());
+        customConditions.add(JpqlCondition.create("obj.budgetObjectClass = :bocFilterField", objectClassJoin).skipNullOrEmpty());
         customConditions.add(JpqlCondition.create("bch.branchCode = :branchCodeFilterField", branchJoin).skipNullOrEmpty());
         customConditions.add(JpqlCondition.create("grp.groupCode = :groupCodeFilterField", groupJoin).skipNullOrEmpty());
         customConditions.addAll(filterConditions);
 
-        hostLoader.setQuery(hostQuery);
+        hostLoader.setQuery(hostEntityQuery);
         hostLoader.setCondition(LogicalCondition.and(customConditions.toArray(new Condition[0])));
+//        hostLoader.setCondition(
+//                LogicalCondition.and(
+//                        JpqlCondition.createWithParameters("app in :bfyFilterField", appropriationJoin, Map.of("bfyFilterField", fiscalYears)),
+//                        JpqlCondition.create("dv.divisionCode = :divCodeFilterField", divisionJoin).skipNullOrEmpty(),
+//                        JpqlCondition.create("f = :fundFilterField", fundJoin).skipNullOrEmpty()
+//                )
+//        );
         hostLoader.setFirstResult(0);
         hostLoader.load();
-        customConditions.clear();
-        clearCustomSearchParameters();
+//        customConditions.clear();
+//        clearCustomSearchParameters();
     }
 
     /**

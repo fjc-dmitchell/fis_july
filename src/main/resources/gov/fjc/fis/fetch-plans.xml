@@ -1,0 +1,48 @@
+<fetchPlans xmlns="http://jmix.io/schema/core/fetch-plans">
+    <fetchPlan entity="fis_Activity" name="activity-search-fetch-plan" extends="_base">
+        <property name="fund" fetchPlan="_base">
+            <property name="titleAndCode"/>
+        </property>
+        <property name="branch" fetchPlan="_base">
+            <property name="titleAndCode"/>
+        </property>
+        <property name="group" fetchPlan="_base">
+            <property name="titleAndCode"/>
+        </property>
+        <property name="division" fetchPlan="_instance_name">
+            <property name="titleAndCode"/>
+            <property name="titleAndBudgetOrg"/>
+        </property>
+        <property name="titleAndCode"/>
+    </fetchPlan>
+    <fetchPlan entity="fis_FundControlNotice" name="fundControlNotice-search-fetch-plan" extends="_base">
+        <property name="obligation" fetchPlan="_base">
+            <property name="activity" fetchPlan="_base">
+                <property name="fund" fetchPlan="_base"/>
+                <property name="branch" fetchPlan="_base"/>
+                <property name="group" fetchPlan="_base"/>
+            </property>
+            <property name="objectClass" fetchPlan="_base">
+                <property name="category" fetchPlan="_base"/>
+            </property>
+        </property>
+    </fetchPlan>
+    <fetchPlan entity="fis_Invoice" name="invoice-search-fetch-plan" extends="_base">
+        <property name="obligation" fetchPlan="_base">
+            <property name="activity" fetchPlan="_base">
+                <property name="fund" fetchPlan="_base"/>
+                <property name="branch" fetchPlan="_base"/>
+                <property name="group" fetchPlan="_base"/>
+            </property>
+            <property name="objectClass" fetchPlan="_base">
+                <property name="category" fetchPlan="_base"/>
+            </property>
+        </property>
+    </fetchPlan>
+    <fetchPlan entity="fis_Obligation" name="obligation-search-fetch-plan" extends="_base">
+        <property name="activity" fetchPlan="_base"/>
+        <property name="objectClass" fetchPlan="_base">
+            <property name="category" fetchPlan="_base"/>
+        </property>
+    </fetchPlan>
+</fetchPlans>

@@ -24,7 +24,7 @@
     <actions>
         <action id="showBfyAction"/>
         <action id="showDivisionAction"/>
-        <action id="customSearchAction" shortcutCombination="Enter"/>
+        <action id="customSearchAction"/>
         <action id="clearCustomSearchAction"/>
     </actions>
 
@@ -34,7 +34,7 @@
             <details id="searchForm" opened="true" summaryText="Search and Filter" themeNames="filled">
                 <tabSheet id="searchTabSheet">
                     <tab id="divisionSearch" label="Quick Search">
-                        <hbox>
+                        <hbox width="100%">
                             <button id="showBfyBtn" action="showBfyAction" width="170px"/>
                             <hbox id="divisionSearchButtons">
                                 <button id="showDiv1Btn" action="showDivisionAction" text="Show GA"/>
@@ -51,11 +51,11 @@
                     <tab id="customSearchTab" label="Custom Search" visible="false">
                         <vbox id="searchvbox" width="100%" themeNames="spacing-xs" spacing="false" padding="false">
                             <hbox id="bfyBox" width="100%" alignItems="CENTER">
-                                <span text="Budget Fiscal Years" />
+                                <span text="Budget Fiscal Years"/>
                                 <textField id="fiscalYearsField" datatype="string" readOnly="true"
                                            width="25em" maxWidth="100%"/>
                             </hbox>
-                            <hbox width="100%" alignItems="CENTER">
+                            <hbox id="divFundBox" width="100%" alignItems="CENTER">
                                 <span text="Division"/>
                                 <entityComboBox id="divisionSearchField" itemsContainer="divisionsDc"
                                                 metaClass="fis_Division" width="30em">
@@ -89,13 +89,22 @@
                             <hbox id="branchBox" visible="false" width="100%">
                                 <span text="Branch"/>
                                 <entityComboBox id="branchSearchField" itemsContainer="branchesDc"
-                                                metaClass="fis_Branch" width="30em"/>
+                                                metaClass="fis_Branch" width="30em">
+                                    <actions>
+                                        <action id="clear" type="entity_clear" icon="vaadin:close-small"/>
+                                    </actions>
+                                </entityComboBox>
+
                                 <span text="Group"/>
                                 <entityComboBox id="groupSearchField" itemsContainer="groupsDc"
-                                                metaClass="fis_Group" width="35em"/>
+                                                metaClass="fis_Group" width="35em">
+                                    <actions>
+                                        <action id="clear" type="entity_clear" icon="vaadin:close-small"/>
+                                    </actions>
+                                </entityComboBox>
                             </hbox>
 
-<!--                            <vbox id="customSearchBox" classNames="bg-contrast-10 rounded-s"-->
+                            <!--                            <vbox id="customSearchBox" classNames="bg-contrast-10 rounded-s"-->
                             <vbox id="customSearchBox" spacing="false" themeNames="spacing-xs" padding="false"/>
 
                             <hbox>

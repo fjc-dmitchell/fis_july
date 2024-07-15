@@ -6,6 +6,8 @@ import gov.fjc.fis.view.main.MainView;
 
 import com.vaadin.flow.router.Route;
 import gov.fjc.fis.view.search.CustomSearchFragment;
+import io.jmix.flowui.component.pagination.SimplePagination;
+import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 
 @Route(value = "activities", layout = MainView.class)
@@ -27,4 +29,5 @@ public class ActivityListView extends StandardListView<Activity> {
     protected void onBeforeShow(final BeforeShowEvent event) {
         searchFragment.setFjcFoundation(fjcFoundation);
     }
+
 }

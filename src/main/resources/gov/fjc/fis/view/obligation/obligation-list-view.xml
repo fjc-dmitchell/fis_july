@@ -20,7 +20,7 @@
         </collection>
     </data>
     <facets>
-        <dataLoadCoordinator auto="true"/>
+        <dataLoadCoordinator auto="false"/>
         <urlQueryParameters>
             <pagination component="pagination"/>
         </urlQueryParameters>
