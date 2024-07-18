@@ -1,6 +1,7 @@
 package gov.fjc.fis.entity.form;
 
 import gov.fjc.fis.entity.Activity;
+import gov.fjc.fis.entity.Branch;
 import gov.fjc.fis.entity.Division;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
@@ -24,7 +25,8 @@ import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
 @JmixEntity
 @Table(name = "FIS_APE", indexes = {
         @Index(name = "IDX_FIS_APE_DIVISION", columnList = "DIVISION_ID"),
-        @Index(name = "IDX_FIS_APE_ACTIVITY", columnList = "ACTIVITY_ID")
+        @Index(name = "IDX_FIS_APE_ACTIVITY", columnList = "ACTIVITY_ID"),
+        @Index(name = "IDX_FIS_APE_BRANCH", columnList = "BRANCH_ID")
 })
 @Entity(name = "fis_Ape")
 public class Ape {
@@ -38,6 +40,11 @@ public class Ape {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Division division;
+
+    @OnDeleteInverse(DeletePolicy.DENY)
+    @JoinColumn(name = "BRANCH_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Branch branch;
 
     @OnDeleteInverse(DeletePolicy.UNLINK)
     @JoinColumn(name = "ACTIVITY_ID")
@@ -196,6 +203,14 @@ public class Ape {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    public Branch getBranch() {
+        return branch;
+    }
+
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
 
     public String getProgramSupport() {
         return programSupport;

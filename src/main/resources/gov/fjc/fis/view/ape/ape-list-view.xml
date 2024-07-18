@@ -4,21 +4,37 @@
       title="Authorization for Project Expenditures (APE)"
       focusComponent="apesDataGrid">
     <data>
-        <collection id="apesDc"
-                    class="gov.fjc.fis.entity.form.Ape">
-            <fetchPlan extends="_base">
-                <property name="activity" fetchPlan="_base"/>
-                <property name="division">
-                    <property name="appropriation">
-                        <property name="budgetFiscalYear"/>
-                    </property>
-                </property>
-            </fetchPlan>
-            <loader id="apesDl" readOnly="true">
+        <collection id="appropriationsDc" class="gov.fjc.fis.entity.Appropriation">
+            <loader id="appropriationsDl">
                 <query>
-                    <![CDATA[select e from fis_Ape e order by e.startDate desc]]>
+                    <![CDATA[select e from fis_Appropriation e]]>
                 </query>
             </loader>
+            <fetchPlan extends="_base"/>
+        </collection>
+        <collection id="branchesDc" class="gov.fjc.fis.entity.Branch">
+            <loader id="branchesDl" readOnly="true"/>
+<!--                <query>-->
+<!--                    <![CDATA[select e from fis_Branch e]]>-->
+<!--                </query>-->
+<!--            </loader>-->
+            <fetchPlan extends="_base"/>
+        </collection>
+        <collection id="apesDc"
+                    class="gov.fjc.fis.entity.form.Ape">
+<!--            <fetchPlan extends="_base">-->
+<!--                <property name="activity" fetchPlan="_base"/>-->
+<!--                <property name="division">-->
+<!--                    <property name="appropriation">-->
+<!--                        <property name="budgetFiscalYear"/>-->
+<!--                    </property>-->
+<!--                </property>-->
+<!--            </fetchPlan>-->
+            <loader id="apesDl" readOnly="true"/>
+<!--                <query>-->
+<!--                    <![CDATA[select e from fis_Ape e order by e.startDate desc]]>-->
+<!--                </query>-->
+<!--            </loader>-->
         </collection>
     </data>
     <facets>
@@ -28,10 +44,25 @@
         </urlQueryParameters>
     </facets>
     <actions>
+        <action id="showBfyAction"/>
         <action id="selectAction" type="lookup_select"/>
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
+        <hbox width="100%">
+            <hbox id="branchBox" width="100%" alignItems="CENTER">
+                <button id="showBfyBtn" action="showBfyAction" width="170px"/>
+                <span text="Branch"/>
+                <entityComboBox id="branchSearchField" itemsContainer="branchesDc"
+                                metaClass="fis_Branch" width="30em">
+                    <actions>
+                        <action id="clear" type="entity_clear" icon="vaadin:close-small"/>
+                    </actions>
+                </entityComboBox>
+                <span text="Leader/Support"/>
+                <textField id="programContactSearch" minWidth="30em" clearButtonVisible="true"/>
+            </hbox>
+        </hbox>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createBtn" action="apesDataGrid.create"/>
             <button id="editBtn" action="apesDataGrid.edit"/>

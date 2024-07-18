@@ -53,6 +53,26 @@ public abstract class EntitySearchFragment extends Fragment<VerticalLayout> {
         }
     }
 
+    /**
+     * clear just the parameter, not the filter value
+     */
+//    public void clearSearchConditions() {
+//        for(PropertyFilter<?> filter : propertyFilters){
+//            filter.getQueryCondition().setParameterValue(null);
+//        }
+//    }
+
+    /**
+     * reset the parameters to the saved filter values. This is so we can switch between tabs without losing filter values
+     */
+//    public void resetSearchConditions() {
+//        for(PropertyFilter<?> filter : propertyFilters){
+//           if(filter.getValueComponent().isEmpty()) {
+//               filter.getQueryCondition().setParameterValue(filter.getValueComponent().getValue());
+//           }
+//        }
+//    }
+
     public void addCategoryObjectClass(EntityComboBox<Category> category, EntityComboBox<ObjectClass> objectClass) {
         // by default, do nothing. Subclasses can override this method.
     }

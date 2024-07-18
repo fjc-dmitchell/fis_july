@@ -4,3 +4,15 @@
     font-weight: bold;
     align-self: center;
 }
+
+.fis-login {
+    background-image: url("./fis-icon.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    /*background-size: auto;*/
+    /*display: flex;*/
+    /*height: 5em;*/
+    width: 200px;
+    height: 200px;
+    /*object-fit: scale-down;*/
+}

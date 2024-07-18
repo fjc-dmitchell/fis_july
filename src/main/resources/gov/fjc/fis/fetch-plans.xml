@@ -45,4 +45,13 @@
             <property name="category" fetchPlan="_base"/>
         </property>
     </fetchPlan>
+    <fetchPlan entity="fis_ObjectClass" name="objectClass-search-fetch-plan" extends="_base">
+        <property name="category" fetchPlan="_base"/>
+    </fetchPlan>
+    <fetchPlan entity="fis_Ape" name="ape-search-fetch-plan" extends="_base">
+        <property name="division" fetchPlan="_base"/>
+        <property name="activity" fetchPlan="_base">
+            <property name="fund" fetchPlan="_base"/>
+        </property>
+    </fetchPlan>
 </fetchPlans>

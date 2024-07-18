@@ -116,8 +116,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     @ViewComponent
     private EntityComboBox<Group> groupSearchField;
     @ViewComponent
-    private HorizontalLayout bocBox;
-    @ViewComponent
     private HorizontalLayout divisionSearchButtons;
     @ViewComponent
     private HorizontalLayout divFundBox;
@@ -137,9 +135,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     private String obligationJoin;
     private String branchJoin;
     private String groupJoin;
-    //    private List<Condition> customConditions = new ArrayList<>();
     private List<Condition> filterConditions = new ArrayList<>();
-    //    private FragmentData fragmentData;
     private Fragment<VerticalLayout> fragment;
     private List<Appropriation> fiscalYears;
     private String divisionCode;
@@ -149,22 +145,18 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
 
     /**
      * The hostDataContainer property must be explicitly set by the host invoking the fragment.
-     * The hostDataContainer <em>must</em> have a dataLoader
+     * The hostDataContainer must have a dataLoader
      *
      * @param hostDataContainer
      */
     public void setHostDataContainer(CollectionContainer<?> hostDataContainer) {
         hostContainer = hostDataContainer;
         hostLoader = (CollectionLoader<?>) ((CollectionContainerImpl<?>) hostDataContainer).getLoader();
-        // todo: create a hostloader if it doesn't exist?
         if (hostLoader == null) {
             throw new IllegalStateException("hostLoader is null in SearchFragment");
         }
         Class<?> hostEntityClass = hostDataContainer.getEntityMetaClass().getJavaClass();
         hostEntityName = hostDataContainer.getEntityMetaClass().getName();
-//        fiscalYears = appropriationService.getBfyFilterField(sessionData);
-//        fjcFoundationFund = fundService.getFoundationFund();
-//        performSearch();
     }
 
     /**
@@ -207,6 +199,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         hostEntityQuery = "SELECT e FROM ".concat(hostEntityName).concat(" e");
         switch (hostEntityName) {
             case "fis_Activity":
+                hostLoader.setFetchPlan("activity-search-fetch-plan");
                 hostEntityQuery += " ORDER BY e.division.appropriation.budgetFiscalYear, e.division.divisionCode, e.activityNumber";
                 fundJoin = "JOIN {E}.fund f";
                 appropriationJoin = "JOIN {E}.division dv JOIN dv.appropriation app";
@@ -216,9 +209,9 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 branchJoin = "JOIN {E}.branch bch";
                 groupJoin = "JOIN {E}.group grp";
                 configureEntitySearchFragment(ActivitySearchFragment.class, "activitiesDc", "activitiesDl");
-                hostLoader.setFetchPlan("activity-search-fetch-plan");
                 break;
             case "fis_Obligation":
+                hostLoader.setFetchPlan("obligation-search-fetch-plan");
                 hostEntityQuery += " ORDER BY e.activity.division.appropriation.budgetFiscalYear, e.activity.division.divisionCode, e.documentNumber, e.objectClass.budgetObjectClass";
                 fundJoin = "JOIN {E}.activity act JOIN act.fund f";
                 appropriationJoin = "JOIN {E}.activity act JOIN act.division dv JOIN dv.appropriation app";
@@ -228,9 +221,9 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 branchJoin = "JOIN {E}.activity act JOIN act.branch bch";
                 groupJoin = "JOIN {E}.activity act JOIN act.group grp";
                 configureEntitySearchFragment(ObligationSearchFragment.class, "obligationsDc", "obligationsDl");
-                hostLoader.setFetchPlan("obligation-search-fetch-plan");
                 break;
             case "fis_Invoice":
+                hostLoader.setFetchPlan("invoice-search-fetch-plan");
                 hostEntityQuery += " ORDER BY e.obligation.activity.division.appropriation.budgetFiscalYear, e.obligation.activity.division.divisionCode, e.obligation.documentNumber, e.obligation.objectClass.budgetObjectClass, e.invoiceNumber";
                 fundJoin = "JOIN {E}.obligation obl JOIN obl.activity act JOIN act.fund f";
                 appropriationJoin = "JOIN {E}.obligation obl JOIN obl.activity act JOIN act.division dv JOIN dv.appropriation app";
@@ -239,11 +232,11 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 objectClassJoin = "JOIN {E}.obligation obl JOIN obl.objectClass obj";
                 obligationJoin = "JOIN {E}.obligation obl";
                 configureEntitySearchFragment(InvoiceSearchFragment.class, "invoicesDc", "invoicesDl");
-                hostLoader.setFetchPlan("invoice-search-fetch-plan");
                 break;
             case "fis_FundControlNotice":
+                hostLoader.setFetchPlan("fundControlNotice-search-fetch-plan");
                 hostEntityQuery += " ORDER BY e.obligation.activity.division.appropriation.budgetFiscalYear, e.obligation.activity.division.divisionCode, e.obligation.documentNumber, e.obligation.objectClass.budgetObjectClass, e.fcnDate";
-                obligationJoin = " JOIN {E}.obligation obl";
+                obligationJoin = "JOIN {E}.obligation obl";
                 objectClassJoin = obligationJoin.concat(" JOIN obl.objectClass obj");
                 categoryJoin = objectClassJoin.concat(" JOIN obj.category cat");
                 var activityJoin = obligationJoin.concat(" JOIN obl.activity act");
@@ -251,13 +244,12 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 divisionJoin = activityJoin.concat(" JOIN act.division dv");
                 appropriationJoin = divisionJoin.concat(" JOIN dv.appropriation app");
                 configureEntitySearchFragment(FcnSearchFragment.class, "fundControlNoticesDc", "fundControlNoticesDl");
-                hostLoader.setFetchPlan("fundControlNotice-search-fetch-plan");
                 break;
             case "fis_Division":
-                hostEntityQuery += " ORDER BY e.appropriation.budgetFiscalYear, e.divisionCode";
+//                hostEntityQuery += " ORDER BY e.appropriation.budgetFiscalYear, e.divisionCode";
                 appropriationJoin = "JOIN {E}.appropriation app";
                 hostEntityQuery = "SELECT dv FROM fis_Division dv";
-//                hostEntityQuery = "SELECT e FROM fis_Division e ORDER BY e.appropriation.budgetFiscalYear, e.divisionCode";
+//                hostEntityQuery = "SELECT e FROM  e ORDER BY e.appropriation.budgetFiscalYear, e.divisionCode";
                 fundJoin = "JOIN dv.fund f";
 
                 break;
@@ -266,14 +258,12 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 fundJoin = "JOIN {E}.division.fund f";
                 appropriationJoin = "JOIN {E}.division dv JOIN dv.appropriation app";
                 divisionJoin = "JOIN {E}.division d";
-//                hostEntityQuery += " ORDER BY d.appropriation.budgetFiscalYear, d.divisionCode, e.branchCode";
                 break;
             case "fis_Group":
                 hostEntityQuery += " ORDER BY e.division.appropriation.budgetFiscalYear, e.division.divisionCode, e.groupCode";
                 fundJoin = "JOIN {E}.division.fund f";
                 appropriationJoin = "JOIN {E}.division dv JOIN dv.appropriation app";
                 divisionJoin = "JOIN {E}.division d";
-//                hostEntityQuery += " ORDER BY d.appropriation.budgetFiscalYear, d.divisionCode, e.groupCode";
                 break;
             case "fis_Category":
                 hostEntityQuery += " ORDER BY e.appropriation.budgetFiscalYear, e.masterObjectClass";
@@ -283,6 +273,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 divisionSearchButtons.setVisible(false);
                 break;
             case "fis_ObjectClass":
+                hostLoader.setFetchPlan("objectClass-search-fetch-plan");
                 hostEntityQuery += " ORDER BY e.category.appropriation.budgetFiscalYear, e.category.masterObjectClass, e.budgetObjectClass";
                 fundJoin = null;
                 appropriationJoin = "JOIN {E}.category cat JOIN cat.appropriation app";
@@ -399,19 +390,31 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
 
     @Subscribe("divisionSearchField")
     protected void onDivisionSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Division>, Division> event) {
-        // if year added, should check value of existing branch/group, not necessarily erase it.
         if (event.getValue() == null) {
             divisionCode = null;
             hostLoader.removeParameter("divCodeFilterField");
-//            branchSearchField.setValue(null);
-//            groupSearchField.setValue(null);
         } else {
             divisionCode = event.getValue().getDivisionCode();
         }
-        branchSearchField.setValue(null);
-        groupSearchField.setValue(null);
+
         branchesDl.load();
         groupsDl.load();
+        if (branchSearchField.getValue() != null) {
+            branchSearchField.setValue(
+                    branchesDl.getContainer().getItems().stream()
+                            .filter(bch -> bch.getBranchCode().equals(branchSearchField.getValue().getBranchCode()))
+                            .findFirst()
+                            .orElse(null)
+            );
+        }
+        if (groupSearchField.getValue() != null) {
+            groupSearchField.setValue(
+                    groupsDl.getContainer().getItems().stream()
+                            .filter(grp -> grp.getGroupCode().equals(groupSearchField.getValue().getGroupCode()))
+                            .findFirst()
+                            .orElse(null)
+            );
+        }
     }
 
     @Subscribe("branchSearchField")
@@ -456,6 +459,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     @Subscribe("showDivisionAction")
     public void onShowDivisionAction(final ActionPerformedEvent event) {
         if (FragmentUtils.getComponentId(event.getComponent()).isPresent()) {
+            clearCustomSearchParameters();
             String btnId = FragmentUtils.getComponentId(event.getComponent()).get();
             switch (btnId) {
                 case "showDiv1Btn" -> hostLoader.setParameter("divCodeFilterField", "1");
@@ -474,7 +478,9 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
 
     @Subscribe(id = "showBfyBtn", subject = "clickListener")
     protected void onShowBfyBtnClick(final ClickEvent<JmixButton> event) {
-        hostLoader.removeParameter("divCodeFilterField");
+//        hostLoader.removeParameter("divCodeFilterField");
+//        clearSearchConditions
+        clearCustomSearchParameters();
         performSearch();
     }
 
@@ -482,37 +488,50 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     protected void onCustomSearchBtnClick(final ClickEvent<JmixButton> event) {
         if (fundSearchField.getValue() != null) {
             hostLoader.setParameter("fundFilterField", fundSearchField.getValue());
+        } else {
+            hostLoader.removeParameter("fundFilterField");
         }
         if (divisionSearchField.getValue() != null) {
             hostLoader.setParameter("divCodeFilterField", divisionSearchField.getValue().getDivisionCode());
-//        } else {
-//            hostLoader.removeParameter("divCodeFilterField");
+        } else {
+            hostLoader.removeParameter("divCodeFilterField");
         }
         if (categorySearchField.getValue() != null) {
             hostLoader.setParameter("mocFilterField", categorySearchField.getValue().getMasterObjectClass());
+        } else {
+            hostLoader.removeParameter("mocFilterField");
         }
         if (objectClassSearchField.getValue() != null) {
             hostLoader.setParameter("bocFilterField", objectClassSearchField.getValue().getBudgetObjectClass());
+        } else {
+            hostLoader.removeParameter("bocFilterField");
         }
         if (branchSearchField.getValue() != null) {
             hostLoader.setParameter("branchCodeFilterField", branchSearchField.getValue().getBranchCode());
+        } else {
+            hostLoader.removeParameter("branchCodeFilterField");
         }
         if (groupSearchField.getValue() != null) {
             hostLoader.setParameter("groupCodeFilterField", groupSearchField.getValue().getGroupCode());
+        } else {
+            hostLoader.removeParameter("groupCodeFilterField");
         }
         performSearch();
-//        clearCustomSearchParameters();
     }
 
     @Subscribe(id = "clearSearchBtn", subject = "clickListener")
     protected void onClearSearchBtnClick(final ClickEvent<JmixButton> event) {
         clearCustomSearchParameters();
-        clearCustomSearchFields();
+//        clearCustomSearchFields();
     }
 
     private void clearCustomSearchParameters() {
         Set<String> params = new HashSet<>(hostLoader.getParameters().keySet());
         params.forEach(hostLoader::removeParameter);
+//        if (fragment != null) {
+//            ((EntitySearchFragment) fragment).clearSearchConditions();
+//        }
+        clearCustomSearchFields();
     }
 
     private void clearCustomSearchFields() {
@@ -529,7 +548,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
 
     private void performSearch() {
         List<Condition> customConditions = new ArrayList<>();
-        customConditions.clear();
+//        customConditions.clear();
 //        clearCustomSearchParameters();
 
         if (fundJoin != null) {
@@ -544,36 +563,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 }
             }
         }
-//            if (fjcFoundation) {
-//                hostLoader.setParameter("fundFilterField", fjcFoundationFund);
-//                customConditions.add(JpqlCondition.create("f = :fundFilterField", fundJoin));
-//            } else {
-//                if (hostLoader.getParameter("fundFilterField") != null) {
-//                    customConditions.add(JpqlCondition.create("f = :fundFilterField", fundJoin));
-//                } else {
-//                    hostLoader.setParameter("fundFilterField", fjcFoundationFund);
-//                    customConditions.add(JpqlCondition.create("f <> :fundFilterField", fundJoin));
-//                }
-//            }
-//        }
-//        if(hostLoader.getParameter("fundFilterField")==null) {
-//            hostLoader.setParameter("fundFilterField", fjcFoundationFund);
-//        }
-//        if(hostLoader.getParameter("fundFilterField") == null) {
-//            hostLoader.setParameter("fundFilterField", fjcFoundationFund);
-//            customConditions.add(JpqlCondition.create("f <> :fundFilterField", fundJoin));
-//        } else {
-//            customConditions.add(JpqlCondition.create("f = :fundFilterField", fundJoin));
-//        }
-
-//        if (fundJoin != null) {
-//            if (fjcFoundation) {
-//                customConditions.add(JpqlCondition.create("f = :fundFilterField", fundJoin));
-//            } else {
-//                customConditions.add(JpqlCondition.create("f <> :fundFilterField", fundJoin));
-//            }
-//        }
-
         hostLoader.setParameter("bfyFilterField", fiscalYears);
 
 //        customConditions.add(JpqlCondition.createWithParameters("app in :bfyFilterField", appropriationJoin, Map.of("bfyFilterField", fiscalYears)));
@@ -590,23 +579,14 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
 
         hostLoader.setQuery(hostEntityQuery);
         hostLoader.setCondition(LogicalCondition.and(customConditions.toArray(new Condition[0])));
-//        hostLoader.setCondition(
-//                LogicalCondition.and(
-//                        JpqlCondition.createWithParameters("app in :bfyFilterField", appropriationJoin, Map.of("bfyFilterField", fiscalYears)),
-//                        JpqlCondition.create("dv.divisionCode = :divCodeFilterField", divisionJoin).skipNullOrEmpty(),
-//                        JpqlCondition.create("f = :fundFilterField", fundJoin).skipNullOrEmpty()
-//                )
-//        );
         hostLoader.setFirstResult(0);
         hostLoader.load();
-//        customConditions.clear();
-//        clearCustomSearchParameters();
     }
 
     /**
      * Changes the Show BFY button caption after a Fiscal Year change event
      *
-     * @param event
+     * @param event custom event
      */
     @Async
     @EventListener
@@ -640,29 +620,11 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                             .orElse(null)
             );
         }
-        if (hostEntityName.equals("fis_Activity")) {
-            if (branchSearchField.getValue() != null) {
-                branchSearchField.setValue(
-                        branchesDl.getContainer().getItems().stream()
-                                .filter(bch -> bch.getBranchCode().equals(branchSearchField.getValue().getBranchCode()))
-                                .findFirst()
-                                .orElse(null)
-                );
-            }
-            if (groupSearchField.getValue() != null) {
-                groupSearchField.setValue(
-                        groupsDl.getContainer().getItems().stream()
-                                .filter(grp -> grp.getGroupCode().equals(groupSearchField.getValue().getGroupCode()))
-                                .findFirst()
-                                .orElse(null)
-                );
-            }
-        }
     }
 
     @Subscribe("searchTabSheet")
     protected void onSearchTabSheetSelectedChange(final JmixTabSheet.SelectedChangeEvent event) {
-        clearCustomSearchParameters();
-        clearCustomSearchFields();
+//        clearCustomSearchParameters();
+//        clearCustomSearchFields();
     }
 }
