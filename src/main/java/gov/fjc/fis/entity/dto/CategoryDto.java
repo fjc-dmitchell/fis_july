@@ -281,7 +281,14 @@ public class CategoryDto {
     }
 
     public void setShowOnReport(Boolean showOnReport) {
-        this.showOnReport = showOnReport;
+        this.showOnReport = showOnReport ||
+                nonZero(priorYearProjected, priorYearReimbursed, priorYearObligated, priorYearDisbursed,
+                        oneYearProjected, oneYearReimbursed, oneYearObligated, oneYearDisbursed,
+                        twoYearProjected, twoYearReimbursed, twoYearObligated, twoYearDisbursed,
+                        totalOneYearAllocations, totalTwoYearAllocations,
+                        totalOneYearObligations, totalTwoYearObligations,
+                        totalOneYearProjections, totalTwoYearProjections,
+                        totalOneYearReimbursements, totalTwoYearReimbursements);
     }
 
     public BigDecimal getTotalTwoYearReimbursements() {
@@ -527,16 +534,16 @@ public class CategoryDto {
         totalTwoYearReimbursements = getTotalNullAllowed(totalTwoYearReimbursements, amount);
     }
 
-    public boolean showOnReport() {
-        return showOnReport ||
-                nonZero(priorYearProjected, priorYearReimbursed, priorYearObligated, priorYearDisbursed,
-                        oneYearProjected, oneYearReimbursed, oneYearObligated, oneYearDisbursed,
-                        twoYearProjected, twoYearReimbursed, twoYearObligated, twoYearDisbursed,
-                        totalOneYearAllocations, totalTwoYearAllocations,
-                        totalOneYearObligations, totalTwoYearObligations,
-                        totalOneYearProjections, totalTwoYearProjections,
-                        totalOneYearReimbursements, totalTwoYearReimbursements);
-    }
+//    public boolean showOnReport() {
+//        return showOnReport ||
+//                nonZero(priorYearProjected, priorYearReimbursed, priorYearObligated, priorYearDisbursed,
+//                        oneYearProjected, oneYearReimbursed, oneYearObligated, oneYearDisbursed,
+//                        twoYearProjected, twoYearReimbursed, twoYearObligated, twoYearDisbursed,
+//                        totalOneYearAllocations, totalTwoYearAllocations,
+//                        totalOneYearObligations, totalTwoYearObligations,
+//                        totalOneYearProjections, totalTwoYearProjections,
+//                        totalOneYearReimbursements, totalTwoYearReimbursements);
+//    }
 
     public BigDecimal getOneYearProjected() {
         return oneYearProjected;

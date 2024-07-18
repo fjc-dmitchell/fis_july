@@ -104,7 +104,6 @@
                                 </entityComboBox>
                             </hbox>
 
-                            <!--                            <vbox id="customSearchBox" classNames="bg-contrast-10 rounded-s"-->
                             <vbox id="customSearchBox" spacing="false" themeNames="spacing-xs" padding="false"/>
 
                             <hbox>

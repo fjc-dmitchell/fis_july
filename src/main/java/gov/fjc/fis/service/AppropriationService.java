@@ -160,12 +160,12 @@ public class AppropriationService {
      */
     public List<Appropriation> getReportFiscalYears(SessionData sessionData) {
         // ToDo - unchecked cast here; should check type and throw exception (it'll never happen)
-        List<Appropriation> searchBfys = (List<Appropriation>) sessionData.getAttribute("bfyPicker");
+        Set<Appropriation> searchYears = (Set<Appropriation>) sessionData.getAttribute("bfySearch");
         return dataManager.load(Appropriation.class)
                 .query("SELECT a FROM fis_Appropriation a"
                         + " WHERE a.status = TRUE OR a IN :searchYears"
                         + " ORDER BY a.budgetFiscalYear DESC")
-                .parameter("searchYears", searchBfys)
+                .parameter("searchYears", searchYears)
                 .list();
     }
 

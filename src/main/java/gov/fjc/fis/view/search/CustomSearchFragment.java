@@ -16,7 +16,6 @@ import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.session.SessionData;
 import io.jmix.flowui.Fragments;
 import io.jmix.flowui.component.combobox.EntityComboBox;
-import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentData;
@@ -136,7 +135,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     private String branchJoin;
     private String groupJoin;
     private List<Condition> filterConditions = new ArrayList<>();
-    private Fragment<VerticalLayout> fragment;
+    private Fragment<VerticalLayout> subFragment;
     private List<Appropriation> fiscalYears;
     private String divisionCode;
     private String masterObjectClass;
@@ -300,11 +299,11 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         fragmentData.registerContainer(dataContainerId, hostContainer);
         fragmentData.registerLoader(dataLoaderId, hostLoader);
         FragmentUtils.setFragmentData(this, fragmentData);
-        fragment = fragments.create(this, fragmentClass);
-        ((EntitySearchFragment) fragment).addCategoryObjectClass(categorySearchField, objectClassSearchField);
-        ((EntitySearchFragment) fragment).addBranchGroup(branchSearchField, groupSearchField);
-        filterConditions = ((EntitySearchFragment) fragment).getCustomConditions();
-        customSearchBox.add(fragment);
+        subFragment = fragments.create(this, fragmentClass);
+        ((EntitySearchFragment) subFragment).addCategoryObjectClass(categorySearchField, objectClassSearchField);
+        ((EntitySearchFragment) subFragment).addBranchGroup(branchSearchField, groupSearchField);
+        filterConditions = ((EntitySearchFragment) subFragment).getCustomConditions();
+        customSearchBox.add(subFragment);
     }
 
     private void setBfyBtnCaption() {
@@ -396,25 +395,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         } else {
             divisionCode = event.getValue().getDivisionCode();
         }
-
-        branchesDl.load();
-        groupsDl.load();
-        if (branchSearchField.getValue() != null) {
-            branchSearchField.setValue(
-                    branchesDl.getContainer().getItems().stream()
-                            .filter(bch -> bch.getBranchCode().equals(branchSearchField.getValue().getBranchCode()))
-                            .findFirst()
-                            .orElse(null)
-            );
-        }
-        if (groupSearchField.getValue() != null) {
-            groupSearchField.setValue(
-                    groupsDl.getContainer().getItems().stream()
-                            .filter(grp -> grp.getGroupCode().equals(groupSearchField.getValue().getGroupCode()))
-                            .findFirst()
-                            .orElse(null)
-            );
-        }
+        checkBranchGroup();
     }
 
     @Subscribe("branchSearchField")
@@ -472,7 +453,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 case "showDiv8Btn" -> hostLoader.setParameter("divCodeFilterField", "8");
             }
             performSearch();
-//            hostLoader.removeParameter("divCodeFilterField");
         }
     }
 
@@ -539,8 +519,8 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         if (!fjcFoundation) {
             fundSearchField.setValue(null);
         }
-        if (fragment != null) {
-            ((EntitySearchFragment) fragment).clearSearchFilters();
+        if (subFragment != null) {
+            ((EntitySearchFragment) subFragment).clearSearchFilters();
         }
 
 //        customFilters.forEach((key, value) -> value.setValue(null));
@@ -548,8 +528,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
 
     private void performSearch() {
         List<Condition> customConditions = new ArrayList<>();
-//        customConditions.clear();
-//        clearCustomSearchParameters();
 
         if (fundJoin != null) {
             if (hostLoader.getParameter("fundFilterField") != null) {
@@ -567,10 +545,10 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
 
 //        customConditions.add(JpqlCondition.createWithParameters("app in :bfyFilterField", appropriationJoin, Map.of("bfyFilterField", fiscalYears)));
         customConditions.add(JpqlCondition.create("app in :bfyFilterField", appropriationJoin).skipNullOrEmpty());
-//        customConditions.add(JpqlCondition.create("dv.divisionCode = :divCodeFilterField", divisionJoin).skipNullOrEmpty());
-        if (hostLoader.getParameter("divCodeFilterField") != null) {
-            customConditions.add(JpqlCondition.createWithParameters("dv.divisionCode = :divCodeFilterField", divisionJoin, hostLoader.getParameters()));
-        }
+        customConditions.add(JpqlCondition.create("dv.divisionCode = :divCodeFilterField", divisionJoin).skipNullOrEmpty());
+//        if (hostLoader.getParameter("divCodeFilterField") != null) {
+//            customConditions.add(JpqlCondition.createWithParameters("dv.divisionCode = :divCodeFilterField", divisionJoin, hostLoader.getParameters()));
+//        }
         customConditions.add(JpqlCondition.create("cat.masterObjectClass = :mocFilterField", categoryJoin).skipNullOrEmpty());
         customConditions.add(JpqlCondition.create("obj.budgetObjectClass = :bocFilterField", objectClassJoin).skipNullOrEmpty());
         customConditions.add(JpqlCondition.create("bch.branchCode = :branchCodeFilterField", branchJoin).skipNullOrEmpty());
@@ -593,6 +571,12 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     public void handleAsyncEvent(FiscalYearChangeEvent event) {
         fiscalYears = appropriationService.getBfyFilterField(sessionData);
         setBfyBtnCaption();
+        checkDivision();
+        checkObjectClass();
+        checkBranchGroup();
+    }
+
+    private void checkDivision() {
         divisionsDl.load();
         if (divisionSearchField.getValue() != null) {
             divisionSearchField.setValue(
@@ -602,6 +586,9 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                             .orElse(null)
             );
         }
+    }
+
+    private void checkObjectClass() {
         categoriesDl.load();
         if (categorySearchField.getValue() != null) {
             categorySearchField.setValue(
@@ -622,9 +609,24 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         }
     }
 
-    @Subscribe("searchTabSheet")
-    protected void onSearchTabSheetSelectedChange(final JmixTabSheet.SelectedChangeEvent event) {
-//        clearCustomSearchParameters();
-//        clearCustomSearchFields();
+    private void checkBranchGroup() {
+        branchesDl.load();
+        groupsDl.load();
+        if (branchSearchField.getValue() != null) {
+            branchSearchField.setValue(
+                    branchesDl.getContainer().getItems().stream()
+                            .filter(bch -> bch.getBranchCode().equals(branchSearchField.getValue().getBranchCode()))
+                            .findFirst()
+                            .orElse(null)
+            );
+        }
+        if (groupSearchField.getValue() != null) {
+            groupSearchField.setValue(
+                    groupsDl.getContainer().getItems().stream()
+                            .filter(grp -> grp.getGroupCode().equals(groupSearchField.getValue().getGroupCode()))
+                            .findFirst()
+                            .orElse(null)
+            );
+        }
     }
 }

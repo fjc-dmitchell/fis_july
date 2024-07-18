@@ -132,7 +132,7 @@ public class StatusOfFundsReportService {
             categoryDto.setShowOnReport(showCategories.contains(categoryDto.getMasterObjectClass()));
         }
 
-        return categoryDtos.stream().filter(CategoryDto::showOnReport).toList();
+        return categoryDtos.stream().filter(CategoryDto::getShowOnReport).toList();
     }
 
     private boolean matchDivisionAndCategory(KeyValueEntity kvEntity, DivisionDto div, CategoryDto cat) {

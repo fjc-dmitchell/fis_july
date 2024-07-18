@@ -36,13 +36,14 @@
         </navigationBar>
         <drawerLayout>
             <section id="section" classNames="jmix-list-menu,jmix-menubar-item">
-                <h2 id="applicationTitle"
-                    classNames="jmix-main-view-application-title">
-                    <anchor id="baseLink"
-                            href="."
-                            text="msg://applicationTitle.text"
-                            classNames="jmix-main-view-application-title-base-link"/>
-                </h2>
+                <div id="applicationTitlePlaceholder" classNames="jmix-main-view-title-holder"/>
+<!--                <h2 id="applicationTitle"-->
+<!--                    classNames="jmix-main-view-application-title">-->
+<!--                    <anchor id="baseLink"-->
+<!--                            href="."-->
+<!--                            text="msg://applicationTitle.text"-->
+<!--                            classNames="jmix-main-view-application-title-base-link"/>-->
+<!--                </h2>-->
 <!--start here-->
 
 <!--                <nav id="fiscalYear" classNames="jmix-main-view-navigation">-->

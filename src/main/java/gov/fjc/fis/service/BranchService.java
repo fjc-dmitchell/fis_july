@@ -18,6 +18,12 @@ public class BranchService {
     @Autowired
     private DataManager dataManager;
 
+    public BranchService(DivisionService divisionService) {
+        this.divisionService = divisionService;
+    }
+
+    private final DivisionService divisionService;
+
     public List<Branch> getBranchSearchList(List<Appropriation> fiscalYears, String divCode) {
         fiscalYears = fiscalYears.stream().sorted(Comparator.comparing(Appropriation::getBudgetFiscalYear).reversed()).toList();
         List<Branch> branchList = new ArrayList<>();
@@ -25,10 +31,10 @@ public class BranchService {
 
         for (Appropriation year : fiscalYears) {
             List<Branch> branchesInBfyList = dataManager.load(Branch.class)
-                    .query("SELECT b FROM fis_Branch b"
-                            +" WHERE b.division.appropriation = :year"
-                            +" AND b.division.divisionCode = :divCode"
-                            +" AND b.branchCode not in :branchCodes")
+                    .query("SELECT e FROM fis_Branch e"
+                            + " WHERE e.division.appropriation = :year"
+                            + " AND e.division.divisionCode = :divCode"
+                            + " AND e.branchCode NOT IN :branchCodes")
                     .parameter("year", year)
                     .parameter("divCode", divCode)
                     .parameter("branchCodes", branchCodes)
@@ -42,10 +48,11 @@ public class BranchService {
 
     public List<Branch> getBranchesForDivision(Division division) {
         return dataManager.load(Branch.class)
-                .query("select b from fis_Branch b" +
-                        " where b.division = :division" +
-                        " order by b.branchCode")
+                .query("SELECT e FROM fis_Branch e"
+                        + " WHERE e.division = :division"
+                        + " ORDER BY e.branchCode")
                 .parameter("division", division)
                 .list();
     }
+
 }
