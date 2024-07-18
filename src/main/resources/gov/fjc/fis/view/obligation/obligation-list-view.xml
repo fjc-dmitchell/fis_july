@@ -36,17 +36,15 @@
                 <property name="hostDataContainer" value="obligationsDc" type="CONTAINER_REF"/>
             </properties>
         </fragment>
-        <hbox id="buttonsPanel" classNames="buttons-panel">
+        <hbox id="buttonsPanel" classNames="buttons-panel" width="100%">
             <button id="createBtn" action="obligationsDataGrid.create"/>
             <button id="editBtn" action="obligationsDataGrid.edit"/>
             <button id="excelExportBtn" action="obligationsDataGrid.excelExport"/>
             <button id="removeBtn" action="obligationsDataGrid.remove"/>
+            <gridColumnVisibility dataGrid="obligationsDataGrid" icon="COG"/>
             <simplePagination id="pagination" dataLoader="obligationsDl" autoLoad="true" itemsPerPageDefaultValue="250"
                               itemsPerPageVisible="true" itemsPerPageItems="250,500,1000"/>
         </hbox>
-        <gridColumnVisibility dataGrid="obligationsDataGrid"
-                              alignSelf="END"
-                              icon="COG"/>
         <dataGrid id="obligationsDataGrid"
                   width="100%"
                   minHeight="20em"

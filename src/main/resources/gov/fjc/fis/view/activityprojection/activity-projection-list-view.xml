@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="msg://activityProjectionListView.title"
+      focusComponent="activityProjectionsDataGrid">
+    <data>
+        <collection id="activityProjectionsDc"
+                    class="gov.fjc.fis.entity.ActivityProjection">
+            <loader id="activityProjectionsDl" readOnly="true"/>
+        </collection>
+    </data>
+    <facets>
+        <urlQueryParameters>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout>
+        <fragment id="searchFragment" class="gov.fjc.fis.view.search.CustomSearchFragment">
+            <properties>
+                <property name="hostDataContainer" value="activityProjectionsDc" type="CONTAINER_REF"/>
+            </properties>
+        </fragment>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+<!--            <button id="createBtn" action="activityProjectionsDataGrid.create"/>-->
+            <button id="editBtn" action="activityProjectionsDataGrid.edit"/>
+            <button id="excelExportBtn" action="activityProjectionsDataGrid.excelExport"/>
+<!--            <button id="removeBtn" action="activityProjectionsDataGrid.remove"/>-->
+            <simplePagination id="pagination" dataLoader="activityProjectionsDl" autoLoad="true" itemsPerPageDefaultValue="250"
+                              itemsPerPageVisible="true" itemsPerPageItems="250,500,1000"/>
+        </hbox>
+        <dataGrid id="activityProjectionsDataGrid"
+                  width="1450px"
+                  minHeight="20em"
+                  dataContainer="activityProjectionsDc"
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
+            <actions>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="excelExport" type="grdexp_excelExport"/>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns resizable="true">
+                <column property="activity.division.appropriation.budgetFiscalYear" header="BFY" width="70px"/>
+                <column property="activity.division.titleAndCode" header="Division" width="350px"/>
+                <column property="activity.titleAndCode" header="Activity" width="350px"/>
+                <column property="objectClass.titleAndCode" header="BOC" width="350px"/>
+                <column property="amount" header="Projection" textAlign="END"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

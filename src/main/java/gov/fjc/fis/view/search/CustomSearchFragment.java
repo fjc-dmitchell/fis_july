@@ -209,6 +209,10 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 groupJoin = "JOIN {E}.group grp";
                 configureEntitySearchFragment(ActivitySearchFragment.class, "activitiesDc", "activitiesDl");
                 break;
+            case "fis_ActivityProjection":
+                appropriationJoin = "JOIN {E}.activity act JOIN act.division dv JOIN dv.appropriation app";
+                divisionJoin = "JOIN {E}.activity act JOIN act.division dv";
+                break;
             case "fis_Obligation":
                 hostLoader.setFetchPlan("obligation-search-fetch-plan");
                 hostEntityQuery += " ORDER BY e.activity.division.appropriation.budgetFiscalYear, e.activity.division.divisionCode, e.documentNumber, e.objectClass.budgetObjectClass";
@@ -546,13 +550,13 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
 //        customConditions.add(JpqlCondition.createWithParameters("app in :bfyFilterField", appropriationJoin, Map.of("bfyFilterField", fiscalYears)));
         customConditions.add(JpqlCondition.create("app in :bfyFilterField", appropriationJoin).skipNullOrEmpty());
         customConditions.add(JpqlCondition.create("dv.divisionCode = :divCodeFilterField", divisionJoin).skipNullOrEmpty());
-//        if (hostLoader.getParameter("divCodeFilterField") != null) {
-//            customConditions.add(JpqlCondition.createWithParameters("dv.divisionCode = :divCodeFilterField", divisionJoin, hostLoader.getParameters()));
-//        }
         customConditions.add(JpqlCondition.create("cat.masterObjectClass = :mocFilterField", categoryJoin).skipNullOrEmpty());
         customConditions.add(JpqlCondition.create("obj.budgetObjectClass = :bocFilterField", objectClassJoin).skipNullOrEmpty());
         customConditions.add(JpqlCondition.create("bch.branchCode = :branchCodeFilterField", branchJoin).skipNullOrEmpty());
         customConditions.add(JpqlCondition.create("grp.groupCode = :groupCodeFilterField", groupJoin).skipNullOrEmpty());
+        if(hostEntityName.equals("fis_ActivityProjection")) {
+            customConditions.add(JpqlCondition.create("e.amount <> 0", null).skipNullOrEmpty());
+        }
         customConditions.addAll(filterConditions);
 
         hostLoader.setQuery(hostEntityQuery);

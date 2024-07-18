@@ -19,6 +19,8 @@
         <item view="fis_Category.list" title="msg://gov.fjc.fis.view.category/categoryListView.title"/>
         <item view="fis_ObjectClass.list" title="msg://gov.fjc.fis.view.objectclass/objectClassListView.title"/>
         <item view="fis_Fund.list" title="msg://gov.fjc.fis.view.fund/fundListView.title"/>
+        <item view="fis_ActivityProjection.list"
+              title="msg://gov.fjc.fis.view.activityprojection/activityProjectionListView.title"/>
     </menu>
     <menu id="jifms" description="msg://gov.fjc.fis/menu_config.jifms.description"
           title="msg://gov.fjc.fis/menu_config.jifms.title">

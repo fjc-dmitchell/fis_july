@@ -36,6 +36,7 @@
             <button id="editBtn" action="activitiesDataGrid.edit"/>
             <button id="excelExportBtn" action="activitiesDataGrid.excelExport"/>
             <button id="removeBtn" action="activitiesDataGrid.remove"/>
+            <gridColumnVisibility dataGrid="activitiesDataGrid" icon="COG"/>
             <simplePagination id="pagination" dataLoader="activitiesDl" autoLoad="true" itemsPerPageDefaultValue="250"
                               itemsPerPageVisible="true" itemsPerPageItems="250,500,1000"/>
         </hbox>
