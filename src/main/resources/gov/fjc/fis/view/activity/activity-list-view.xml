@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
-      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="msg://activityListView.title"
       focusComponent="activitiesDataGrid">
     <data>
         <collection id="activitiesDc"
                     class="gov.fjc.fis.entity.Activity">
-<!--            <fetchPlan extends="_base">-->
-<!--                <property name="division" fetchPlan="_instance_name">-->
-<!--                    <property name="fund" fetchPlan="_base"/>-->
-<!--                </property>-->
-<!--                <property name="branch" fetchPlan="_base"/>-->
-<!--                <property name="group" fetchPlan="_base"/>-->
-<!--            </fetchPlan>-->
             <loader id="activitiesDl" readOnly="true"/>
         </collection>
     </data>
@@ -52,7 +44,7 @@
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
-                <column property="division.appropriation.budgetFiscalYear" header="BFY" textAlign="END" width="70px"/>
+                <column property="division.appropriation.budgetFiscalYear" header="BFY" width="70px"/>
                 <column property="division.divisionCode" header="Division" textAlign="CENTER" width="90px"/>
                 <column property="activityNumber" textAlign="CENTER" header="Activity"/>
                 <column property="title" width="350px"/>

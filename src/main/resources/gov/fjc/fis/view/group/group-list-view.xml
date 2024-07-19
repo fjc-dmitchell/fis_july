@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
-      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="Division - Groups"
       focusComponent="groupsDataGrid">
     <data>
         <collection id="groupsDc"
                     class="gov.fjc.fis.entity.Group">
-            <fetchPlan extends="_base">
-                <property name="division" fetchPlan="_base"/>
-            </fetchPlan>
             <loader id="groupsDl" readOnly="true"/>
         </collection>
     </data>
@@ -35,7 +31,7 @@
             <simplePagination id="pagination" dataLoader="groupsDl" autoLoad="true" itemsPerPageDefaultValue="250"/>
         </hbox>
         <dataGrid id="groupsDataGrid"
-                  width="100%"
+                  width="909px"
                   minHeight="20em"
                   dataContainer="groupsDc"
                   columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
@@ -46,7 +42,7 @@
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
-                <column property="division.appropriation.budgetFiscalYear" header="BFY" width="95px"
+                <column property="division.appropriation.budgetFiscalYear" header="BFY" width="70px"
                         textAlign="CENTER"/>
                 <column property="division.divisionCode" header="Division" width="105px" textAlign="CENTER"/>
                 <column property="groupCode" header="Group" width="100px" textAlign="CENTER"/>

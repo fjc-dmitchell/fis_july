@@ -51,7 +51,7 @@
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
-                <column property="division.appropriation.budgetFiscalYear" header="BFY" width="90px" textAlign="END"/>
+                <column property="division.appropriation.budgetFiscalYear" header="BFY" width="70px"/>
                 <column property="activity.activityNumber" header="Proj. #" textAlign="CENTER"/>
 <!--                <column property="title" header="Program/Meeting Title"/>-->
                 <column property="title" header="msg://column.header" width="500px" autoWidth="true"/>

@@ -7,7 +7,6 @@
         <item view="fis_Division.list" title="msg://gov.fjc.fis.view.division/divisionListView.title"/>
         <item view="fis_Activity.list" title="msg://gov.fjc.fis.view.activity/activityListView.title"/>
         <item view="fis_Obligation.list" title="msg://gov.fjc.fis.view.obligation/obligationListView.title"/>
-        <item view="fis_Obligation2.list" title="msg://gov.fjc.fis.view.obligation/obligation2ListView.title"/>
         <item view="fis_Invoice.list" title="msg://gov.fjc.fis.view.invoice/invoiceListView.title"/>
         <item view="fis_FundControlNotice.list"
               title="msg://gov.fjc.fis.view.fundcontrolnotice/fundControlNoticeListView.title"/>
