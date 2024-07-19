@@ -11,7 +11,7 @@
             </fetchPlan>
             <loader id="documentsDl" readOnly="true">
                 <query>
-                    <![CDATA[select e from fis_Document e]]>
+                    <![CDATA[select e from fis_Document e order by e.createdate desc]]>
                 </query>
             </loader>
         </collection>
@@ -27,6 +27,91 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
+        <details id="searchForm" summaryText="Search and Filter" themeNames="filled">
+            <tabSheet id="searchTabSheet">
+                <tab id="customSearchTab" label="Custom Search">
+                    <vbox id="searchvbox" width="100%" themeNames="spacing-xs" spacing="false" padding="false">
+
+                        <vbox id="customSearchBox" spacing="false" themeNames="spacing-xs" padding="false"/>
+                        <hbox>
+                            <propertyFilter dataLoader="documentsDl" operation="EQUAL" property="bbfy" width="5em"/>
+                            <propertyFilter dataLoader="documentsDl" operation="EQUAL" property="ebfy" width="5em"/>
+                            <propertyFilter dataLoader="documentsDl" operation="CONTAINS" property="budgetorg"
+                                            width="10em"/>
+                            <propertyFilter dataLoader="documentsDl" operation="EQUAL" property="project" width="6em"/>
+                            <propertyFilter dataLoader="documentsDl" operation="CONTAINS" property="title"/>
+                            <propertyFilter dataLoader="documentsDl" operation="CONTAINS" property="vendorName"/>
+                        </hbox>
+                        <hbox width="6em">
+                            <propertyFilter dataLoader="documentsDl" operation="EQUAL" property="doctype"
+                                            labelPosition="TOP" width="6em"/>
+
+                            <propertyFilter dataLoader="documentsDl" operation="STARTS_WITH" property="docnumber"
+                                            label="DIN starts with" width="8em"/>
+                            <propertyFilter dataLoader="documentsDl" operation="EQUAL" property="boc" width="6em"/>
+                            <propertyFilter dataLoader="documentsDl" operation="EQUAL" property="docdate"
+                                            operationEditable="true" width="13em"/>
+                            <propertyFilter dataLoader="documentsDl" operation="GREATER" property="amount" width="12em"
+                                            operationEditable="true"/>
+                        </hbox>
+                        <hbox>
+                            <propertyFilter dataLoader="documentsDl" operation="GREATER" property="closedAmount"
+                                            operationEditable="true" width="12em"/>
+                            <propertyFilter dataLoader="documentsDl" operation="EQUAL" property="closedDate"
+                                            operationEditable="true" width="13em"/>
+
+                            <propertyFilter dataLoader="documentsDl" operation="GREATER_OR_EQUAL"
+                                            property="travelStartDate"
+                                            operationEditable="true" width="13em"/>
+                            <propertyFilter dataLoader="documentsDl" operation="LESS_OR_EQUAL" property="travelEndDate"
+                                            operationEditable="true" width="13em"/>
+                        </hbox>
+                        <details opened="false" summaryText="Less common filters">
+                            <hbox>
+                                <propertyFilter dataLoader="documentsDl" operation="CONTAINS" property="fund"
+                                                width="7em"/>
+                                <propertyFilter dataLoader="documentsDl" operation="EQUAL" property="taxid"
+                                                width="8em"/>
+                                <propertyFilter dataLoader="documentsDl" operation="EQUAL" property="taxidType"
+                                                width="8em"/>
+                                <propertyFilter dataLoader="documentsDl" operation="EQUAL" property="addressCode"
+                                                width="8em"/>
+                                <propertyFilter dataLoader="documentsDl" operation="EQUAL" property="vendorCode"
+                                                width="8em"/>
+                                <propertyFilter dataLoader="documentsDl" operation="EQUAL" property="linenumber"
+                                                width="5em"/>
+                            </hbox>
+                            <hbox>
+                                <propertyFilter dataLoader="documentsDl" operation="EQUAL" property="costorg"/>
+                                <propertyFilter dataLoader="documentsDl" operation="EQUAL" property="createdate"
+                                                width="13em"
+                                                operationEditable="true"/>
+                                <propertyFilter dataLoader="documentsDl" operation="CONTAINS" property="moduser"/>
+                                <propertyFilter dataLoader="documentsDl" operation="EQUAL" property="fjc" width="5em"/>
+                            </hbox>
+                            <hbox>
+                                <propertyFilter dataLoader="documentsDl" operation="GREATER" property="expendedAmount"
+                                                operationEditable="true" width="12em"/>
+
+                                <propertyFilter dataLoader="documentsDl" operation="GREATER" property="orderedAmount"
+                                                operationEditable="true" width="12em"/>
+                                <propertyFilter dataLoader="documentsDl" operation="GREATER"
+                                                property="outstandingAmount"
+                                                operationEditable="true" width="12em"/>
+                                <propertyFilter dataLoader="documentsDl" operation="GREATER" property="prepaidAmount"
+                                                operationEditable="true" width="12em"/>
+                                <propertyFilter dataLoader="documentsDl" operation="GREATER" property="refundedAmount"
+                                                operationEditable="true" width="12em"/>
+                            </hbox>
+                        </details>
+                        <hbox>
+                            <button id="clearSearchBtn" text="Clear"
+                                    icon="vaadin:eraser"/>
+                        </hbox>
+                    </vbox>
+                </tab>
+            </tabSheet>
+        </details>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createBtn" action="documentsDataGrid.create"/>
             <button id="editBtn" action="documentsDataGrid.edit"/>

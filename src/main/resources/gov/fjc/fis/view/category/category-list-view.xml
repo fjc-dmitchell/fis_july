@@ -17,7 +17,6 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
-            <genericFilter component="genericFilter"/>
             <pagination component="pagination"/>
         </urlQueryParameters>
     </facets>
@@ -26,10 +25,6 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
-        <genericFilter id="genericFilter"
-                       dataLoader="categoriesDl">
-            <properties include=".*"/>
-        </genericFilter>
         <fragment id="searchFragment" class="gov.fjc.fis.view.search.CustomSearchFragment">
             <properties>
                 <property name="hostDataContainer" value="categoriesDc" type="CONTAINER_REF"/>
