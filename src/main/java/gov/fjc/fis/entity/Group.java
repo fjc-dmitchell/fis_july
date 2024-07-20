@@ -20,6 +20,8 @@ import static java.util.Objects.requireNonNullElse;
 @JmixEntity
 @Table(name = "FIS_GROUP", indexes = {
         @Index(name = "IDX_FIS_GROUP_DIVISION", columnList = "DIVISION_ID")
+}, uniqueConstraints = {
+        @UniqueConstraint(name = "IDX_FIS_GROUP_UNQ", columnNames = {"DIVISION_ID", "GROUP_CODE"})
 })
 @Entity(name = "fis_Group")
 public class Group {

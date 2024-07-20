@@ -3,6 +3,9 @@
       title="msg://groupDetailView.title"
       focusComponent="form">
     <data>
+        <collection id="divisionsDc" class="gov.fjc.fis.entity.Division" fetchPlan="_base">
+            <loader id="divisionsDl" readOnly="true"/>
+        </collection>
         <instance id="groupDc" class="gov.fjc.fis.entity.Group">
             <loader/>
         </instance>
@@ -16,17 +19,21 @@
     </actions>
     <layout>
         <formLayout id="form" dataContainer="groupDc">
-            <entityPicker id="divisionField" property="division">
-                <actions>
-                    <action id="entityLookup" type="entity_lookup"/>
-                    <action id="entityClear" type="entity_clear"/>
-                </actions>
-            </entityPicker>
-            <textField id="groupCodeField" property="groupCode"/>
-            <textField id="titleField" property="title"/>
-            <textField id="sortCodeField" property="sortCode"/>
+            <vbox>
+                <hbox>
+                    <textField id="budgetFiscalYearField" width="9em"
+                               label="Budget Fiscal Year" datatype="string" readOnly="true"/>
+                    <entityComboBox id="divisionsComboBox" itemsContainer="divisionsDc" dataContainer="groupDc"
+                                    property="division" label="Division" width="25em"/>
+                </hbox>
+                <hbox>
+                    <textField id="groupCodeField" property="groupCode" width="7em" label="Group Code"/>
+                    <textField id="titleField" property="title" width="30em" label="Title"/>
+                    <textField id="sortCodeField" property="sortCode" width="7em" label="Sort Code"/>
+                </hbox>
+            </vbox>
         </formLayout>
-        <tabSheet width="100%">
+        <tabSheet id="tabSheet" width="100%">
             <tab id="activitiesTab" label="Activities">
                 <hbox id="activitiesFragment"/>
             </tab>
