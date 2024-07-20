@@ -3,17 +3,7 @@
       title="msg://groupDetailView.title"
       focusComponent="form">
     <data>
-        <instance id="groupDc"
-                  class="gov.fjc.fis.entity.Group">
-            <fetchPlan extends="_base">
-                <property name="division" fetchPlan="_base">
-                    <property name="activities" fetchPlan="_base">
-                        <property name="branch" fetchPlan="_base">
-                            <property name="titleAndCode"/>
-                        </property>
-                    </property>
-                </property>
-            </fetchPlan>
+        <instance id="groupDc" class="gov.fjc.fis.entity.Group">
             <loader/>
         </instance>
     </data>
@@ -36,6 +26,15 @@
             <textField id="titleField" property="title"/>
             <textField id="sortCodeField" property="sortCode"/>
         </formLayout>
+        <tabSheet width="100%">
+            <tab id="activitiesTab" label="Activities">
+                <hbox id="activitiesFragment"/>
+            </tab>
+            <tab id="obligationsTab" label="Obligations">
+                <hbox id="obligationsFragment"/>
+            </tab>
+        </tabSheet>
+        <p id="createdByString"/>
         <hbox id="detailActions">
             <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>

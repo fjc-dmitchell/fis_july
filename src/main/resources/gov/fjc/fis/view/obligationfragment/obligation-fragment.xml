@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fragment xmlns="http://jmix.io/schema/flowui/fragment">
+    <data>
+        <collection id="obligationsDc" class="gov.fjc.fis.entity.Obligation">
+            <fetchPlan extends="_base">
+                <property name="activity" fetchPlan="_base"/>
+                <property name="objectClass" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader id="obligationsDl" readOnly="true"/>
+        </collection>
+    </data>
+    <content>
+        <vbox id="root" padding="false" spacing="false">
+            <dataGrid id="obligationsDataGrid" dataContainer="obligationsDc" width="100%" aggregatable="true">
+                <actions>
+                    <action id="create" type="list_create"/>
+                    <action id="edit" type="list_edit"/>
+                    <action id="excelExport" type="grdexp_excelExport"/>
+                    <action id="read" type="list_read"/>
+                    <action id="remove" type="list_remove"/>
+                </actions>
+                <columns>
+                    <column property="activity.title"/>
+                    <column property="documentNumber"/>
+                    <column property="objectClass.budgetObjectClass" header="BOC"/>
+                    <column property="vendor"/>
+                    <column property="documentDate"/>
+                    <column property="status"/>
+                    <column property="amount" textAlign="END">
+                    <aggregation type="SUM">
+                        <formatter>
+                            <number format="#,##0.00"/>
+                        </formatter>
+                    </aggregation>
+                    </column>
+                </columns>
+            </dataGrid>
+        </vbox>
+    </content>
+</fragment>
