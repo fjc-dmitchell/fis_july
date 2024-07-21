@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:charts="http://jmix.io/schema/charts/ui"
+      title="msg://dashboardView.title">
+    <data>
+        <collection id="appropriationsDc" class="gov.fjc.fis.entity.Appropriation">
+            <loader id="appropriationsDl" readOnly="true"/>
+        </collection>
+        <collection id="categoryDtosDc" class="gov.fjc.fis.entity.dto.CategoryDto">
+            <loader id="categoryDtosDl" readOnly="true"/>
+        </collection>
+    </data>
+    <layout>
+        <entityComboBox id="appropriationsComboBox" itemsContainer="appropriationsDc"
+                        metaClass="fis_Appropriation" label="Appropriation" width="8em"/>
+
+        <tabSheet id="dashboardTabSheet" width="100%" minHeight="50em">
+            <tab id="sof" label="Status of Funds">
+                <vbox padding="false">
+                    <details id="oneYearDetails" summaryText="One Year Appropriation" opened="true">
+                        <dataGrid id="categoryDtoesDataGrid1" dataContainer="categoryDtosDc"
+                                  aggregatable="true" selectionMode="NONE"
+                                  themeNames="no-row-borders column-borders compact row-stripes"
+                                  allRowsVisible="true" width="950px">
+                            <actions/>
+                            <columns sortable="false">
+                                <column property="titleAndCode" header="Object Class" width="240px"/>
+                                <column property="totalOneYearAllocations" header="Allocations" textAlign="END"
+                                        width="135px">
+                                    <numberRenderer numberFormat="#,##0"/>
+                                    <aggregation type="SUM">
+                                        <formatter>
+                                            <number format="#,##0"/>
+                                        </formatter>
+                                    </aggregation>
+                                </column>
+                                <column property="totalOneYearProjections" header="Projections" textAlign="END"
+                                        width="135px">
+                                    <numberRenderer numberFormat="#,##0"/>
+                                    <aggregation type="SUM">
+                                        <formatter>
+                                            <number format="#,##0"/>
+                                        </formatter>
+                                    </aggregation>
+                                </column>
+                                <column property="totalOneYearObligations" header="Obligations" textAlign="END"
+                                        width="135px">
+                                    <numberRenderer numberFormat="#,##0"/>
+                                    <aggregation type="SUM">
+                                        <formatter>
+                                            <number format="#,##0"/>
+                                        </formatter>
+                                    </aggregation>
+                                </column>
+                                <column property="totalOneYearReimbursements" header="Reimburse." textAlign="END"
+                                        width="135px">
+                                    <numberRenderer numberFormat="#,##0"/>
+                                    <aggregation type="SUM">
+                                        <formatter>
+                                            <number format="#,##0"/>
+                                        </formatter>
+                                    </aggregation>
+                                </column>
+                                <column property="totalOneYearBalance" header="Balance" textAlign="END">
+                                    <numberRenderer numberFormat="#,##0"/>
+                                    <aggregation type="SUM">
+                                        <formatter>
+                                            <number format="#,##0"/>
+                                        </formatter>
+                                    </aggregation>
+                                </column>
+                            </columns>
+                        </dataGrid>
+                    </details>
+                    <details id="twoYearDetails" summaryText="Two Year Appropriation" opened="true">
+                        <dataGrid id="categoryDtoesDataGrid2" dataContainer="categoryDtosDc"
+                                  aggregatable="true" selectionMode="NONE"
+                                  themeNames="no-row-borders column-borders compact row-stripes"
+                                  allRowsVisible="true" width="950px">
+                            <actions/>
+                            <columns sortable="false">
+                                <column property="titleAndCode" header="Object Class" width="240px"/>
+                                <column property="totalTwoYearAllocations" header="Allocations" textAlign="END"
+                                        width="135px">
+                                    <numberRenderer numberFormat="#,##0"/>
+                                    <aggregation type="SUM">
+                                        <formatter>
+                                            <number format="#,##0"/>
+                                        </formatter>
+                                    </aggregation>
+                                </column>
+                                <column property="totalTwoYearProjections" header="Projections" textAlign="END"
+                                        width="135px">
+                                    <numberRenderer numberFormat="#,##0"/>
+                                    <aggregation type="SUM">
+                                        <formatter>
+                                            <number format="#,##0"/>
+                                        </formatter>
+                                    </aggregation>
+                                </column>
+                                <column property="totalTwoYearObligations" header="Obligations" textAlign="END"
+                                        width="135px">
+                                    <numberRenderer numberFormat="#,##0"/>
+                                    <aggregation type="SUM">
+                                        <formatter>
+                                            <number format="#,##0"/>
+                                        </formatter>
+                                    </aggregation>
+                                </column>
+                                <column property="totalTwoYearReimbursements" header="Reimburse." textAlign="END"
+                                        width="135px">
+                                    <numberRenderer numberFormat="#,##0"/>
+                                    <aggregation type="SUM">
+                                        <formatter>
+                                            <number format="#,##0"/>
+                                        </formatter>
+                                    </aggregation>
+                                </column>
+                                <column property="totalTwoYearBalance" header="Balance" textAlign="END">
+                                    <numberRenderer numberFormat="#,##0"/>
+                                    <aggregation type="SUM">
+                                        <formatter>
+                                            <number format="#,##0"/>
+                                        </formatter>
+                                    </aggregation>
+                                </column>
+                            </columns>
+                        </dataGrid>
+                    </details>
+                </vbox>
+            </tab>
+            <tab id="mocChart" label="Obligations by Category">
+                <vbox padding="false" spacing="false" height="100%" width="100%">
+
+                    <comboBox id="appropriationType" itemsEnum="gov.fjc.fis.entity.AppropriationType"/>
+<!--                    <charts:chart id="pie" width="40em" height="80%" minHeight="30em" alignSelf="STRETCH">-->
+<!--                        <charts:series>-->
+<!--                            <charts:pie name="Obligations" radius="50% 80%">-->
+<!--                                <charts:label formatter="{b} : {d}%"/>-->
+<!--                            </charts:pie>-->
+<!--                        </charts:series>-->
+<!--                    </charts:chart>-->
+                    <charts:chart id="allocationsChart" minWidth="45em" width="100%" minHeight="25em"
+                                  backgroundColor="transparent">
+                        <charts:legend right="0" orientation="VERTICAL" selector="false" />
+                        <charts:title />
+                        <charts:tooltip trigger="ITEM"/>
+                        <charts:series>
+                            <charts:pie name="Allocations" radius="30% 60%" selectedOffset="-40">
+                                <charts:label formatter="{b} : {d}%"/>
+                            </charts:pie>
+                        </charts:series>
+                    </charts:chart>
+
+                    <charts:chart id="spendingChart" minWidth="45em" width="100%" minHeight="25em"
+                                  backgroundColor="transparent">
+                        <charts:legend right="0" orientation="VERTICAL" selector="false" />
+                        <charts:title />
+                        <charts:tooltip trigger="ITEM"/>
+                        <charts:series>
+                            <charts:pie name="Spending" radius="30% 60%" selectedOffset="-40">
+                                <charts:label formatter="{b} : {d}%"/>
+                            </charts:pie>
+                        </charts:series>
+                    </charts:chart>
+                </vbox>
+            </tab>
+        </tabSheet>
+
+
+    </layout>
+</view>

@@ -242,7 +242,11 @@ public class CategoryDto {
     }
 
     public String getTitleAndCode() {
-        return String.format("%s (%s)", title, masterObjectClass);
+        if (titleAndCode == null) {
+            return String.format("%s (%s)", title, masterObjectClass);
+        } else {
+            return titleAndCode;
+        }
     }
 
     public void setTitleAndCode(String titleAndCode) {

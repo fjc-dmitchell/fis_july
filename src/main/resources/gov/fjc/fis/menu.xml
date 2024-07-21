@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <menu-config xmlns="http://jmix.io/schema/flowui/menu">
-
+    <item view="fis_DashboardView" description="msg://gov.fjc.fis/menu_config.fis_DashboardView.description"
+          title="msg://gov.fjc.fis/menu_config.fis_DashboardView.title" icon="vaadin:chart"/>
     <menu opened="true" id="primary" description="msg://gov.fjc.fis/menu_config.primary.description"
           title="msg://gov.fjc.fis/menu_config.primary.title">
         <item view="fis_Appropriation.list" title="msg://gov.fjc.fis.view.appropriation/appropriationListView.title"/>
@@ -36,16 +37,11 @@
     <menu id="foundation" description="msg://gov.fjc.fis/menu_config.foundation.description"
           title="msg://gov.fjc.fis/menu_config.foundation.title">
         <item view="fis_Donor.list" title="msg://gov.fjc.fis.view.donor/donorListView.title"/>
-        <!--        <item view="fis_Gift.list" description="msg://gov.fjc.fis.screen.gift/giftBrowse.menu"/>-->
         <separator/>
-        <item view="fis_Division.foundation-list"
-              title="msg://gov.fjc.fis.view.division/divisionListView.title"/>
-        <item view="fis_Activity.foundation-list"
-              title="msg://gov.fjc.fis.view.activity/activityListView.title"/>
-        <item view="fis_Obligation.foundation-list"
-              title="msg://gov.fjc.fis.view.obligation/obligationListView.title"/>
-        <item view="fis_Invoice.foundation-list"
-              title="msg://gov.fjc.fis.view.invoice/invoiceListView.title"/>
+        <item view="fis_Division.foundation-list" title="msg://gov.fjc.fis.view.division/divisionListView.title"/>
+        <item view="fis_Activity.foundation-list" title="msg://gov.fjc.fis.view.activity/activityListView.title"/>
+        <item view="fis_Obligation.foundation-list" title="msg://gov.fjc.fis.view.obligation/obligationListView.title"/>
+        <item view="fis_Invoice.foundation-list" title="msg://gov.fjc.fis.view.invoice/invoiceListView.title"/>
         <item view="fis_FundControlNotice.foundation-list"
               title="msg://gov.fjc.fis.view.fundcontrolnotice/fundControlNoticeListView.title"/>
     </menu>
@@ -62,5 +58,6 @@
     </menu>
     <menu opened="true" id="application" title="msg://gov.fjc.fis/menu.application.title">
         <item view="fis_User.list" title="msg://gov.fjc.fis.view.user/UserListView.title"/>
+        <item view="fis_UserMessage.list" title="msg://gov.fjc.fis.view.usermessage/userMessageListView.title"/>
     </menu>
 </menu-config>

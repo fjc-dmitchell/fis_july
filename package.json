@@ -70,6 +70,7 @@
     "ace-builds": "1.18.0",
     "construct-style-sheets-polyfill": "3.1.0",
     "date-fns": "2.29.3",
+    "echarts": "5.4.3",
     "lit": "3.1.2"
   },
   "devDependencies": {
@@ -159,6 +160,7 @@
       "ace-builds": "1.18.0",
       "construct-style-sheets-polyfill": "3.1.0",
       "date-fns": "2.29.3",
+      "echarts": "5.4.3",
       "lit": "3.1.2"
     },
     "devDependencies": {
@@ -179,7 +181,7 @@
       "workbox-core": "7.0.0",
       "workbox-precaching": "7.0.0"
     },
-    "hash": "b8191b689af586fe9ee5f4154931883609320376e073aa1b58f397352ca583d0"
+    "hash": "ef2767698db2cfe676c35ddba768aa0c92e43a570b688022e26190721ed949ef"
   },
   "overrides": {
     "@vaadin/bundles": "$@vaadin/bundles",
@@ -249,6 +251,7 @@
     "@polymer/polymer": "$@polymer/polymer",
     "@vaadin/vaadin-themable-mixin": "$@vaadin/vaadin-themable-mixin",
     "ace-builds": "$ace-builds",
-    "date-fns": "$date-fns"
+    "date-fns": "$date-fns",
+    "echarts": "$echarts"
   }
 }

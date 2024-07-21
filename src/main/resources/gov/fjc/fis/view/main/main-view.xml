@@ -47,7 +47,7 @@
 <!--start here-->
 
 <!--                <nav id="fiscalYear" classNames="jmix-main-view-navigation">-->
-                <vbox classNames="jmix-main-view-navigation bordered-panel" spacing="false" width="100%">
+                <vbox classNames="jmix-main-view-navigation bordered-panel" width="100%" spacing="false" css="margin-bottom: 15px;">
                     <h5 text="Budget Fiscal Year" css="font-family: sans-serif;"/>
                     <hbox spacing="true">
 
@@ -80,7 +80,7 @@
             </section>
         </drawerLayout>
         <initialLayout>
-            <h1 text="insert a fragment based on business role (ofm, Education, etc.)"/>
+            <fragment class="gov.fjc.fis.view.mainviewfragment.MainViewFragment"/>
         </initialLayout>
     </appLayout>
 </mainView>

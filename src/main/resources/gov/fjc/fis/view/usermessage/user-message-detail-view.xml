@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://userMessageDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="userMessageDc"
+                  class="gov.fjc.fis.entity.UserMessage">
+            <fetchPlan extends="_base"/>
+            <loader id="userMessageDl"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="userMessageDc">
+            <textField id="titleField" property="title"/>
+            <richTextEditor id="messageField" property="message" height="15em"/>
+<!--            <textArea id="messageField" height="9.5em" property="message"/>-->
+            <dateTimePicker id="postDateField" property="postDate"/>
+            <checkbox id="publishedField" property="published"/>
+        </formLayout>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>
