@@ -13,7 +13,6 @@
     <layout>
         <entityComboBox id="appropriationsComboBox" itemsContainer="appropriationsDc"
                         metaClass="fis_Appropriation" label="Appropriation" width="8em"/>
-
         <tabSheet id="dashboardTabSheet" width="100%" minHeight="50em">
             <tab id="sof" label="Status of Funds">
                 <vbox padding="false">
@@ -131,15 +130,7 @@
             </tab>
             <tab id="mocChart" label="Obligations by Category">
                 <vbox padding="false" spacing="false" height="100%" width="100%">
-
-                    <comboBox id="appropriationType" itemsEnum="gov.fjc.fis.entity.AppropriationType"/>
-<!--                    <charts:chart id="pie" width="40em" height="80%" minHeight="30em" alignSelf="STRETCH">-->
-<!--                        <charts:series>-->
-<!--                            <charts:pie name="Obligations" radius="50% 80%">-->
-<!--                                <charts:label formatter="{b} : {d}%"/>-->
-<!--                            </charts:pie>-->
-<!--                        </charts:series>-->
-<!--                    </charts:chart>-->
+                    <comboBox id="appropriationType" itemsEnum="gov.fjc.fis.entity.AppropriationType" width="17em"/>
                     <charts:chart id="allocationsChart" minWidth="45em" width="100%" minHeight="25em"
                                   backgroundColor="transparent">
                         <charts:legend right="0" orientation="VERTICAL" selector="false" />
@@ -166,7 +157,5 @@
                 </vbox>
             </tab>
         </tabSheet>
-
-
     </layout>
 </view>

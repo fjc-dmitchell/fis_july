@@ -45,9 +45,9 @@ public class FundService {
 
     public List<Fund> getFundSearchList(boolean foundation) {
         return dataManager.load(Fund.class)
-                .query("SELECT f FROM fis_Fund f WHERE " +
-                        "((:foundation = TRUE AND f.fundCode = :foundationFund) OR " +
-                        "(:foundation = FALSE AND f.fundCode <> :foundationFund))")
+                .query("SELECT f FROM fis_Fund f WHERE "
+                        + "((:foundation = TRUE AND f.fundCode = :foundationFund) OR "
+                        + "(:foundation = FALSE AND f.fundCode <> :foundationFund))")
                 .parameter("foundation", foundation)
                 .parameter("foundationFund", foundationFund)
                 .list();

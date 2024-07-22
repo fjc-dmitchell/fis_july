@@ -155,6 +155,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
             throw new IllegalStateException("hostLoader is null in SearchFragment");
         }
         Class<?> hostEntityClass = hostDataContainer.getEntityMetaClass().getJavaClass();
+        // would this be better? hostDataContainer.getEntityMetaClass().getJavaClass().getSimpleName()
         hostEntityName = hostDataContainer.getEntityMetaClass().getName();
     }
 
@@ -384,43 +385,44 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         return group.getTitleAndCode();
     }
 
-    @Subscribe("fundSearchField")
-    protected void onFundSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Fund>, Fund> event) {
-        if (fundSearchField.getValue() == null) {
-            hostLoader.removeParameter("fundFilterField");
-        }
-    }
+    // parameter removals are probably redundant and can be removed
+//    @Subscribe("fundSearchField")
+//    protected void onFundSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Fund>, Fund> event) {
+//        if (fundSearchField.getValue() == null) {
+//            hostLoader.removeParameter("fundFilterField");
+//        }
+//    }
 
     @Subscribe("divisionSearchField")
     protected void onDivisionSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Division>, Division> event) {
         if (event.getValue() == null) {
             divisionCode = null;
-            hostLoader.removeParameter("divCodeFilterField");
+//            hostLoader.removeParameter("divCodeFilterField");
         } else {
             divisionCode = event.getValue().getDivisionCode();
         }
         checkBranchGroup();
     }
 
-    @Subscribe("branchSearchField")
-    protected void onBranchSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Branch>, Branch> event) {
-        if (branchSearchField.getValue() == null) {
-            hostLoader.removeParameter("branchCodeFilterField");
-        }
-    }
+//    @Subscribe("branchSearchField")
+//    protected void onBranchSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Branch>, Branch> event) {
+//        if (branchSearchField.getValue() == null) {
+//            hostLoader.removeParameter("branchCodeFilterField");
+//        }
+//    }
 
-    @Subscribe("groupSearchField")
-    protected void onGroupSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Group>, Group> event) {
-        if (groupSearchField.getValue() == null) {
-            hostLoader.removeParameter("groupCodeFilterField");
-        }
-    }
+//    @Subscribe("groupSearchField")
+//    protected void onGroupSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Group>, Group> event) {
+//        if (groupSearchField.getValue() == null) {
+//            hostLoader.removeParameter("groupCodeFilterField");
+//        }
+//    }
 
     @Subscribe("categorySearchField")
     protected void onCategorySearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Category>, Category> event) {
         if (categorySearchField.getValue() == null) {
             masterObjectClass = null;
-            hostLoader.removeParameter("mocFilterField");
+//            hostLoader.removeParameter("mocFilterField");
         } else {
             if (objectClassSearchField.getValue() == null) {
                 masterObjectClass = Objects.requireNonNull(event.getValue().getMasterObjectClass());
@@ -434,12 +436,12 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         objectClassesDl.load();
     }
 
-    @Subscribe("objectClassSearchField")
-    protected void onObjectClassSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<ObjectClass>, ObjectClass> event) {
-        if (objectClassSearchField.getValue() == null) {
-            hostLoader.removeParameter("bocFilterField");
-        }
-    }
+//    @Subscribe("objectClassSearchField")
+//    protected void onObjectClassSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<ObjectClass>, ObjectClass> event) {
+//        if (objectClassSearchField.getValue() == null) {
+//            hostLoader.removeParameter("bocFilterField");
+//        }
+//    }
 
     @Subscribe("showDivisionAction")
     public void onShowDivisionAction(final ActionPerformedEvent event) {
@@ -537,7 +539,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
             if (hostLoader.getParameter("fundFilterField") != null) {
                 customConditions.add(JpqlCondition.create("f = :fundFilterField", fundJoin));
             } else {
-
                 if (fjcFoundation) {
                     customConditions.add(JpqlCondition.createWithParameters("f = :foundationFund", fundJoin, Map.of("foundationFund", fjcFoundationFund)));
                 } else {

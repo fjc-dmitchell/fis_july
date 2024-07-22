@@ -58,36 +58,15 @@ public class DashboardView extends StandardView {
     Appropriation appropriation;
 
     @ViewComponent
-    private Chart pie;
-    @ViewComponent
     private Chart allocationsChart;
     @ViewComponent
     private Chart spendingChart;
-//    @ViewComponent
-//    private DataSet allocationsDataSet;
 
     @Subscribe
     protected void onInit(final InitEvent event) {
         appropriationType.setValue(AppropriationType.COMBINED_YEAR_FUND);
         appropriationsDl.load();
         appropriationRefresh();
-//        appropriationType.setValue(AppropriationType.COMBINED_YEAR_FUND);
-
-//        ListChartItems<MapDataItem> items = new ListChartItems<>(
-//                new MapDataItem(Map.of("category", "Completed", "value", 20)),
-//                new MapDataItem(Map.of("category", "Not Started", "value", 30)),
-//                new MapDataItem(Map.of("category", "In Progress", "value", 40))
-//        );
-//
-//        pie.setDataSet(
-//                new DataSet()
-//                        .withSource(
-//                                new DataSet.Source<MapDataItem>()
-//                                        .withDataProvider(items)
-//                                        .withCategoryField("category")
-//                                        .withValueField("value")
-//                        )
-//        );
     }
 
     private void onStateChange() {
@@ -166,7 +145,7 @@ public class DashboardView extends StandardView {
 
     @Subscribe("appropriationType")
     protected void onAppropriationTypeComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixComboBox<AppropriationType>, AppropriationType> event) {
-       onStateChange();
+        onStateChange();
     }
 
     private void appropriationRefresh() {
@@ -178,15 +157,9 @@ public class DashboardView extends StandardView {
         }
     }
 
-    @Subscribe("dashboardTabSheet")
-    protected void onDashboardTabSheetSelectedChange(final JmixTabSheet.SelectedChangeEvent event) {
-        appropriationRefresh();
-    }
-
     @Async
     @EventListener
     public void handleAsyncEvent(FiscalYearChangeEvent event) {
         appropriationRefresh();
     }
-
 }

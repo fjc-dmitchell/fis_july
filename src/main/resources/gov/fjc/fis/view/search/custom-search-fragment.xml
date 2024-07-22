@@ -22,10 +22,7 @@
     </data>
 
     <actions>
-        <action id="showBfyAction"/>
         <action id="showDivisionAction"/>
-        <action id="customSearchAction"/>
-        <action id="clearCustomSearchAction"/>
     </actions>
 
     <content>
@@ -35,7 +32,7 @@
                 <tabSheet id="searchTabSheet">
                     <tab id="divisionSearch" label="Quick Search">
                         <hbox width="100%">
-                            <button id="showBfyBtn" action="showBfyAction" width="170px"/>
+                            <button id="showBfyBtn" width="170px"/>
                             <hbox id="divisionSearchButtons">
                                 <button id="showDiv1Btn" action="showDivisionAction" text="Show GA"/>
                                 <button id="showDiv2Btn" action="showDivisionAction" text="Show Education"/>
@@ -107,9 +104,9 @@
                             <vbox id="customSearchBox" spacing="false" themeNames="spacing-xs" padding="false"/>
 
                             <hbox>
-                                <button id="customSearchBtn" action="customSearchAction" text="Search"
+                                <button id="customSearchBtn" text="Search"
                                         icon="vaadin:search"/>
-                                <button id="clearSearchBtn" action="clearCustomSearchAction" text="Clear"
+                                <button id="clearSearchBtn" text="Clear"
                                         icon="vaadin:eraser"/>
                             </hbox>
                         </vbox>
