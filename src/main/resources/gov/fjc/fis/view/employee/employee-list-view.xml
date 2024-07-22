@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="msg://employeeListView.title"
+      focusComponent="employeesDataGrid">
+    <data>
+        <collection id="employeesDc"
+                    class="gov.fjc.fis.entity.personnel.Employee">
+            <fetchPlan extends="_base"/>
+            <loader id="employeesDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from fis_Employee e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <genericFilter component="genericFilter"/>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout>
+        <genericFilter id="genericFilter"
+                       dataLoader="employeesDl">
+            <properties include=".*"/>
+        </genericFilter>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="createBtn" action="employeesDataGrid.create"/>
+            <button id="editBtn" action="employeesDataGrid.edit"/>
+            <button id="excelExportBtn" action="employeesDataGrid.excelExport"/>
+            <button id="removeBtn" action="employeesDataGrid.remove"/>
+            <simplePagination id="pagination" dataLoader="employeesDl"/>
+        </hbox>
+        <dataGrid id="employeesDataGrid"
+                  width="100%"
+                  minHeight="20em"
+                  dataContainer="employeesDc"
+                  columnReorderingAllowed="true">
+            <actions>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="excelExport" type="grdexp_excelExport"/>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns resizable="true">
+                <column property="emplid"/>
+                <column property="name"/>
+                <column property="jobcode"/>
+                <column property="positionNbr"/>
+                <column property="jobtitle"/>
+                <column property="emplType"/>
+                <column property="regTemp"/>
+                <column property="fullPartTime"/>
+                <column property="stdHours"/>
+                <column property="gvtApptExpirDt"/>
+                <column property="jlBudCatgCd"/>
+                <column property="jlCostOrgCd"/>
+                <column property="deptId"/>
+                <column property="paygroup"/>
+                <column property="grade"/>
+                <column property="step"/>
+                <column property="hourlyRt"/>
+                <column property="gvtBiweeklyRt"/>
+                <column property="annualRt"/>
+                <column property="gvtComprate"/>
+                <column property="gvtLocalityAdj"/>
+                <column property="gvtWorkSched"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

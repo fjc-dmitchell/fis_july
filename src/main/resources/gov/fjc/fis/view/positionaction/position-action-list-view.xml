@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="msg://positionActionListView.title"
+      focusComponent="positionActionsDataGrid">
+    <data>
+        <collection id="positionActionsDc"
+                    class="gov.fjc.fis.entity.personnel.PositionAction">
+            <fetchPlan extends="_base">
+                <property name="totalPay"/>
+            </fetchPlan>
+            <loader id="positionActionsDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from fis_PositionAction e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <genericFilter component="genericFilter"/>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout>
+        <genericFilter id="genericFilter"
+                       dataLoader="positionActionsDl">
+            <properties include=".*"/>
+        </genericFilter>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="createBtn" action="positionActionsDataGrid.create"/>
+            <button id="editBtn" action="positionActionsDataGrid.edit"/>
+            <button id="excelExportBtn" action="positionActionsDataGrid.excelExport"/>
+            <button id="removeBtn" action="positionActionsDataGrid.remove"/>
+            <simplePagination id="pagination" dataLoader="positionActionsDl"/>
+        </hbox>
+        <dataGrid id="positionActionsDataGrid"
+                  width="100%"
+                  minHeight="20em"
+                  dataContainer="positionActionsDc"
+                  columnReorderingAllowed="true">
+            <actions>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="excelExport" type="grdexp_excelExport"/>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns resizable="true">
+                <column property="position"/>
+                <column property="payPeriod"/>
+                <column property="gvtComprate"/>
+                <column property="gvtLocalityAdj"/>
+                <column property="actionCode"/>
+                <column property="totalPay"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

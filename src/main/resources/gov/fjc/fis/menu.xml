@@ -27,12 +27,16 @@
         <item view="fis_Document.list" title="msg://gov.fjc.fis.view.document/documentListView.title"/>
     </menu>
     <menu id="salaryProjections" description="msg://gov.fjc.fis/menu_config.salaryProjections.description"
-          title="msg://gov.fjc.fis/menu_config.salaryProjections.title"/>
-    <menu id="forms" description="msg://gov.fjc.fis/menu_config.forms.description"
-          title="msg://gov.fjc.fis/menu_config.forms.title">
-        <item view="fis_DistanceLearning.list"
-              title="msg://gov.fjc.fis.view.distancelearning/distanceLearningListView.title"/>
-        <item view="fis_Ape.list" title="msg://gov.fjc.fis.view.ape/apeListView.title"/>
+          title="msg://gov.fjc.fis/menu_config.salaryProjections.title">
+        <item view="fis_Position.list" title="msg://gov.fjc.fis.view.position/positionListView.title"/>
+        <item view="fis_PositionAction.list"
+              title="msg://gov.fjc.fis.view.positionaction/positionActionListView.title"/>
+        <item view="fis_BonusProjection.list"
+              title="msg://gov.fjc.fis.view.bonusprojection/bonusProjectionListView.title"/>
+        <item view="fis_Employee.list" title="msg://gov.fjc.fis.view.employee/employeeListView.title"/>
+        <item view="fis_PayPeriod.list" title="msg://gov.fjc.fis.view.payperiod/payPeriodListView.title"/>
+        <item view="fis_PayAdjustment.list" title="msg://gov.fjc.fis.view.payadjustment/payAdjustmentListView.title"/>
+        <item view="fis_ActionCode.list" title="msg://gov.fjc.fis.view.actioncode/actionCodeListView.title"/>
     </menu>
     <menu id="foundation" description="msg://gov.fjc.fis/menu_config.foundation.description"
           title="msg://gov.fjc.fis/menu_config.foundation.title">
@@ -55,6 +59,12 @@
               title="Education Programs"/>
         <item bean="fis_ReportRouter" beanMethod="openBudgetRequestReport"
               title="msg://gov.fjc.fis.view.report.budgetrequestreport/budgetRequestReportView.title"/>
+    </menu>
+    <menu id="forms" description="msg://gov.fjc.fis/menu_config.forms.description"
+          title="msg://gov.fjc.fis/menu_config.forms.title">
+        <item view="fis_DistanceLearning.list"
+              title="msg://gov.fjc.fis.view.distancelearning/distanceLearningListView.title"/>
+        <item view="fis_Ape.list" title="msg://gov.fjc.fis.view.ape/apeListView.title"/>
     </menu>
     <menu opened="true" id="application" title="msg://gov.fjc.fis/menu.application.title">
         <item view="fis_User.list" title="msg://gov.fjc.fis.view.user/UserListView.title"/>

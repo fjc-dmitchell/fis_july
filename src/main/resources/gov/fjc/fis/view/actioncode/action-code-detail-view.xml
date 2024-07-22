@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://actionCodeDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="actionCodeDc"
+                  class="gov.fjc.fis.entity.personnel.ActionCode">
+            <fetchPlan extends="_base">
+                <property name="actions" fetchPlan="_base"/>
+                <property name="createdByString"/>
+            </fetchPlan>
+            <loader id="actionCodeDl"/>
+            <collection id="actionsDc" property="actions"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="actionCodeDc">
+            <textField id="natureOfActionCodeField" property="natureOfActionCode"/>
+            <textField id="titleField" property="title"/>
+            <textField id="createdByStringField" property="createdByString"/>
+        </formLayout>
+        <dataGrid id="actionsDataGrid" dataContainer="actionsDc" width="100%" minHeight="20em">
+            <columns>
+                <column property="position"/>
+                <column property="actionCode"/>
+                <column property="payPeriod"/>
+                <column property="gvtComprate"/>
+                <column property="gvtLocalityAdj"/>
+            </columns>
+        </dataGrid>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

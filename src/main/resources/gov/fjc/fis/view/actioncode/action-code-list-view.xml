@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="msg://actionCodeListView.title"
+      focusComponent="actionCodesDataGrid">
+    <data>
+        <collection id="actionCodesDc"
+                    class="gov.fjc.fis.entity.personnel.ActionCode">
+            <fetchPlan extends="_base"/>
+            <loader id="actionCodesDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from fis_ActionCode e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <genericFilter component="genericFilter"/>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout>
+        <genericFilter id="genericFilter"
+                       dataLoader="actionCodesDl">
+            <properties include=".*"/>
+        </genericFilter>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="createBtn" action="actionCodesDataGrid.create"/>
+            <button id="editBtn" action="actionCodesDataGrid.edit"/>
+            <button id="excelExportBtn" action="actionCodesDataGrid.excelExport"/>
+            <button id="removeBtn" action="actionCodesDataGrid.remove"/>
+            <simplePagination id="pagination" dataLoader="actionCodesDl"/>
+        </hbox>
+        <dataGrid id="actionCodesDataGrid"
+                  width="100%"
+                  minHeight="20em"
+                  dataContainer="actionCodesDc"
+                  columnReorderingAllowed="true">
+            <actions>
+                <action id="create" type="list_create"/>
+                <action id="edit" type="list_edit"/>
+                <action id="excelExport" type="grdexp_excelExport"/>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns resizable="true">
+                <column property="natureOfActionCode"/>
+                <column property="title"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectBtn" action="selectAction"/>
+            <button id="discardBtn" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

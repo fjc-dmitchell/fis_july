@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://bonusProjectionDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="bonusProjectionDc"
+                  class="gov.fjc.fis.entity.personnel.BonusProjection">
+            <fetchPlan extends="_base">
+                <property name="division" fetchPlan="_instance_name">
+                    <property name="titleAndCode"/>
+                </property>
+                <property name="createdByString"/>
+            </fetchPlan>
+            <loader id="bonusProjectionDl"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="bonusProjectionDc">
+            <entityPicker id="divisionField" property="division">
+                <actions>
+                    <action id="entityLookup" type="entity_lookup"/>
+                    <action id="entityClear" type="entity_clear"/>
+                </actions>
+            </entityPicker>
+            <textField id="projectionField" property="projection"/>
+            <textField id="awardedField" property="awarded"/>
+            <textArea id="memoField" height="9.5em" property="memo"/>
+            <checkbox id="statusField" property="status"/>
+            <textField id="createdByStringField" property="createdByString"/>
+        </formLayout>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>
