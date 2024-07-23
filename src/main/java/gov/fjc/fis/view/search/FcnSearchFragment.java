@@ -24,8 +24,8 @@ public class FcnSearchFragment extends EntitySearchFragment {
     private EntityComboBox<Category> categorySearchField;
     private EntityComboBox<ObjectClass> objectClassSearchField;
 
-    @Subscribe(target = Target.HOST_CONTROLLER)
-    protected void onHostAttach(final AttachEvent event) {
+    @Override
+    protected void additionalFragmentActions() {
         ((JmixSelect<Boolean>) obligationStatusSearch.getValueComponent()).setItemLabelGenerator(status -> {
             if (status == null) {
                 return "";
@@ -43,8 +43,8 @@ public class FcnSearchFragment extends EntitySearchFragment {
     }
 
     @Override
-    public void clearSearchFilters() {
-        super.clearSearchFilters();
+    public void clearPropertyFilters() {
+        super.clearPropertyFilters();
         categorySearchField.setValue(null);
         objectClassSearchField.setValue(null);
     }

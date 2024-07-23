@@ -81,7 +81,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     @ViewComponent("searchTabSheet.customSearchTab")
     private Tab searchTabSheetCustomSearchTab;
     @ViewComponent
-    private VerticalLayout customSearchBox;
+    private VerticalLayout subFragmentSearchBox;
     @ViewComponent
     private JmixButton showBfyBtn;
     @ViewComponent
@@ -134,7 +134,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     private String obligationJoin;
     private String branchJoin;
     private String groupJoin;
-    private List<Condition> filterConditions = new ArrayList<>();
+    private List<Condition> subFragmentConditions = new ArrayList<>();
     private Fragment<VerticalLayout> subFragment;
     private List<Appropriation> fiscalYears;
     private String divisionCode;
@@ -208,7 +208,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 objectClassJoin = "JOIN {E}.projections p JOIN p.objectClass obj";
                 branchJoin = "JOIN {E}.branch bch";
                 groupJoin = "JOIN {E}.group grp";
-                configureEntitySearchFragment(ActivitySearchFragment.class, "activitiesDc", "activitiesDl");
+                configureSubFragment(ActivitySearchFragment.class, "activitiesDc", "activitiesDl");
                 break;
             case "fis_ActivityProjection":
                 appropriationJoin = "JOIN {E}.activity act JOIN act.division dv JOIN dv.appropriation app";
@@ -224,7 +224,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 objectClassJoin = "JOIN {E}.objectClass obj";
                 branchJoin = "JOIN {E}.activity act JOIN act.branch bch";
                 groupJoin = "JOIN {E}.activity act JOIN act.group grp";
-                configureEntitySearchFragment(ObligationSearchFragment.class, "obligationsDc", "obligationsDl");
+                configureSubFragment(ObligationSearchFragment.class, "obligationsDc", "obligationsDl");
                 break;
             case "fis_Invoice":
                 hostLoader.setFetchPlan("invoice-search-fetch-plan");
@@ -235,7 +235,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 categoryJoin = "JOIN {E}.obligation obl JOIN obl.objectClass obj JOIN obj.category cat";
                 objectClassJoin = "JOIN {E}.obligation obl JOIN obl.objectClass obj";
                 obligationJoin = "JOIN {E}.obligation obl";
-                configureEntitySearchFragment(InvoiceSearchFragment.class, "invoicesDc", "invoicesDl");
+                configureSubFragment(InvoiceSearchFragment.class, "invoicesDc", "invoicesDl");
                 break;
             case "fis_FundControlNotice":
                 hostLoader.setFetchPlan("fundControlNotice-search-fetch-plan");
@@ -247,7 +247,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 fundJoin = activityJoin.concat(" JOIN act.fund f");
                 divisionJoin = activityJoin.concat(" JOIN act.division dv");
                 appropriationJoin = divisionJoin.concat(" JOIN dv.appropriation app");
-                configureEntitySearchFragment(FcnSearchFragment.class, "fundControlNoticesDc", "fundControlNoticesDl");
+                configureSubFragment(FcnSearchFragment.class, "fundControlNoticesDc", "fundControlNoticesDl");
                 break;
             case "fis_Division":
 //                hostEntityQuery += " ORDER BY e.appropriation.budgetFiscalYear, e.divisionCode";
@@ -295,9 +295,9 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         }
     }
 
-    private void configureEntitySearchFragment(Class<? extends Fragment<VerticalLayout>> fragmentClass,
-                                               String dataContainerId,
-                                               String dataLoaderId) {
+    private void configureSubFragment(Class<? extends EntitySearchFragment> fragmentClass,
+                                      String dataContainerId,
+                                      String dataLoaderId) {
         FragmentData fragmentData = this.getFragmentData();
         searchTabSheetCustomSearchTab.setVisible(true);
 
@@ -307,8 +307,9 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         subFragment = fragments.create(this, fragmentClass);
         ((EntitySearchFragment) subFragment).addCategoryObjectClass(categorySearchField, objectClassSearchField);
         ((EntitySearchFragment) subFragment).addBranchGroup(branchSearchField, groupSearchField);
-        filterConditions = ((EntitySearchFragment) subFragment).getCustomConditions();
-        customSearchBox.add(subFragment);
+        subFragmentConditions = ((EntitySearchFragment) subFragment).getPropertyFilterConditions();
+        subFragmentSearchBox.add(subFragment);
+        subFragmentSearchBox.setVisible(true);
     }
 
     private void setBfyBtnCaption() {
@@ -514,19 +515,13 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     private void clearCustomSearchParameters() {
         Set<String> params = new HashSet<>(hostLoader.getParameters().keySet());
         params.forEach(hostLoader::removeParameter);
-//        if (fragment != null) {
-//            ((EntitySearchFragment) fragment).clearSearchConditions();
-//        }
-        clearCustomSearchFields();
-    }
 
-    private void clearCustomSearchFields() {
         divisionSearchField.setValue(null);
         if (!fjcFoundation) {
             fundSearchField.setValue(null);
         }
         if (subFragment != null) {
-            ((EntitySearchFragment) subFragment).clearSearchFilters();
+            ((EntitySearchFragment) subFragment).clearPropertyFilters();
         }
 
 //        customFilters.forEach((key, value) -> value.setValue(null));
@@ -558,7 +553,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         if(hostEntityName.equals("fis_ActivityProjection")) {
             customConditions.add(JpqlCondition.create("e.amount <> 0", null).skipNullOrEmpty());
         }
-        customConditions.addAll(filterConditions);
+        customConditions.addAll(subFragmentConditions);
 
         hostLoader.setQuery(hostEntityQuery);
         hostLoader.setCondition(LogicalCondition.and(customConditions.toArray(new Condition[0])));

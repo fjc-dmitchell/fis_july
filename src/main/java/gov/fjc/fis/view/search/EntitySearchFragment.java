@@ -24,54 +24,39 @@ public abstract class EntitySearchFragment extends Fragment<VerticalLayout> {
     @ViewComponent
     private VerticalLayout root;
 
-    private final List<Condition> customConditions = new ArrayList<>();
+    private final List<Condition> propertyFilterConditions = new ArrayList<>();
     private final List<PropertyFilter<?>> propertyFilters = new ArrayList<>();
 
     @Subscribe(target = Target.HOST_CONTROLLER)
-    protected void onHostReady(final View.ReadyEvent event) {
-        for(var component : UiComponentUtils.getComponents(root)){
-            if(component instanceof PropertyFilter<?>){
+    protected final void onHostReady(final View.ReadyEvent event) {
+        for (var component : UiComponentUtils.getComponents(root)) {
+            if (component instanceof PropertyFilter<?>) {
                 addFilterCondition((PropertyFilter<?>) component);
             }
         }
+        additionalFragmentActions();
     }
 
     private void addFilterCondition(PropertyFilter<?> filter) {
         filter.setAutoApply(false);
 //        filter.setLabelPosition(SupportsLabelPosition.LabelPosition.TOP);
         propertyFilters.add(filter);
-        customConditions.add(filter.getQueryCondition());
+        propertyFilterConditions.add(filter.getQueryCondition());
     }
 
-    public List<Condition> getCustomConditions() {
-        return customConditions;
+    protected void additionalFragmentActions() {
+        // subclass may need to perform additional actions
     }
 
-    public void clearSearchFilters() {
+    public final List<Condition> getPropertyFilterConditions() {
+        return propertyFilterConditions;
+    }
+
+    public void clearPropertyFilters() {
         for (PropertyFilter<?> filter : propertyFilters) {
             filter.clear();
         }
     }
-
-    /**
-     * clear just the parameter, not the filter value
-     */
-//    public void clearSearchConditions() {
-//        for(PropertyFilter<?> filter : propertyFilters){
-//            filter.getQueryCondition().setParameterValue(null);
-//        }
-//    }
-
-    /**
-     * reset the parameters to the saved filter values. This is so we can switch between tabs without losing filter values
-     */
-//    public void resetSearchConditions() {
-//        for(PropertyFilter<?> filter : propertyFilters){
-//           if(filter.getValueComponent().isEmpty()) {
-//               filter.getQueryCondition().setParameterValue(filter.getValueComponent().getValue());
-//           }
-//        }
-//    }
 
     public void addCategoryObjectClass(EntityComboBox<Category> category, EntityComboBox<ObjectClass> objectClass) {
         // by default, do nothing. Subclasses can override this method.

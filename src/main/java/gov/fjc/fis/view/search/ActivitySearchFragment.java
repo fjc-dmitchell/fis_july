@@ -43,8 +43,8 @@ public class ActivitySearchFragment extends EntitySearchFragment {
     }
 
     @Override
-    public void clearSearchFilters() {
-        super.clearSearchFilters();
+    public void clearPropertyFilters() {
+        super.clearPropertyFilters();
         categorySearchField.setValue(null);
         objectClassSearchField.setValue(null);
         branchSearchField.setValue(null);

@@ -101,7 +101,8 @@
                                 </entityComboBox>
                             </hbox>
 
-                            <vbox id="customSearchBox" spacing="false" themeNames="spacing-xs" padding="false"/>
+                            <vbox id="subFragmentSearchBox" spacing="false" themeNames="spacing-xs" padding="false"
+                                  visible="false"/>
 
                             <hbox>
                                 <button id="customSearchBtn" text="Search"

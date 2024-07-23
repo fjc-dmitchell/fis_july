@@ -1,6 +1,5 @@
 package gov.fjc.fis.view.search;
 
-import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import gov.fjc.fis.entity.Category;
 import gov.fjc.fis.entity.ObjectClass;
@@ -8,8 +7,6 @@ import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.fragment.FragmentDescriptor;
-import io.jmix.flowui.view.Subscribe;
-import io.jmix.flowui.view.Target;
 import io.jmix.flowui.view.ViewComponent;
 
 @FragmentDescriptor("invoice-search-fragment.xml")
@@ -24,8 +21,8 @@ public class InvoiceSearchFragment extends EntitySearchFragment {
     private EntityComboBox<Category> categorySearchField;
     private EntityComboBox<ObjectClass> objectClassSearchField;
 
-    @Subscribe(target = Target.HOST_CONTROLLER)
-    protected void onHostAttach(final AttachEvent event) {
+    @Override
+    protected void additionalFragmentActions() {
         ((JmixSelect<Boolean>) obligationStatusSearch.getValueComponent()).setItemLabelGenerator(status -> {
             if (status == null) {
                 return "";
@@ -43,8 +40,8 @@ public class InvoiceSearchFragment extends EntitySearchFragment {
     }
 
     @Override
-    public void clearSearchFilters() {
-        super.clearSearchFilters();
+    public void clearPropertyFilters() {
+        super.clearPropertyFilters();
         categorySearchField.setValue(null);
         objectClassSearchField.setValue(null);
     }
