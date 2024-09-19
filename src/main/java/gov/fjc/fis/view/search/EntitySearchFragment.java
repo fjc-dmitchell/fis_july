@@ -31,7 +31,6 @@ public abstract class EntitySearchFragment extends Fragment<VerticalLayout> {
     protected final void onHostReady(final View.ReadyEvent event) {
         for (var component : UiComponentUtils.getComponents(root)) {
             if (component instanceof PropertyFilter<?> propertyFilter) {
-//                addFilterCondition((PropertyFilter<?>) component);
                 addFilterCondition(propertyFilter);
             }
         }

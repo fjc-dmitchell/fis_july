@@ -21,35 +21,17 @@ public class ActivitySearchFragment extends EntitySearchFragment {
     @ViewComponent
     private HorizontalLayout bocBox;
 
-//    private EntityComboBox<Category> categorySearchField;
-//    private EntityComboBox<ObjectClass> objectClassSearchField;
-//    private EntityComboBox<Branch> branchSearchField;
-//    private EntityComboBox<Group> groupSearchField;
-
     @Override
     public void addCategoryObjectClass(EntityComboBox<Category> categorySearchField,
                                        EntityComboBox<ObjectClass> objectClassSearchField) {
-//        categorySearchField = category;
         mocBox.add(categorySearchField);
-//        objectClassSearchField = objectClass;
         bocBox.add(objectClassSearchField);
     }
 
     @Override
     public void addBranchGroup(EntityComboBox<Branch> branchSearchField,
                                EntityComboBox<Group> groupSearchField) {
-//        branchSearchField = branch;
         branchBox.add(branchSearchField);
-//        groupSearchField = group;
         groupBox.add(groupSearchField);
     }
-
-//    @Override
-//    public void clearPropertyFilters() {
-//        super.clearPropertyFilters();
-//        categorySearchField.setValue(null);
-//        objectClassSearchField.setValue(null);
-//        branchSearchField.setValue(null);
-//        groupSearchField.setValue(null);
-//    }
 }

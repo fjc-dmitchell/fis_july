@@ -18,9 +18,6 @@ public class InvoiceSearchFragment extends EntitySearchFragment {
     @ViewComponent
     private HorizontalLayout bocBox;
 
-//    private EntityComboBox<Category> categorySearchField;
-//    private EntityComboBox<ObjectClass> objectClassSearchField;
-
     @Override
     protected void additionalFragmentActions() {
         ((JmixSelect<Boolean>) obligationStatusSearch.getValueComponent())
@@ -30,16 +27,7 @@ public class InvoiceSearchFragment extends EntitySearchFragment {
     @Override
     public void addCategoryObjectClass(EntityComboBox<Category> categorySearchField,
                                        EntityComboBox<ObjectClass> objectClassSearchField) {
-//        categorySearchField = category;
         mocBox.add(categorySearchField);
-//        objectClassSearchField = objectClass;
         bocBox.add(objectClassSearchField);
     }
-
-//    @Override
-//    public void clearPropertyFilters() {
-//        super.clearPropertyFilters();
-//        categorySearchField.setValue(null);
-//        objectClassSearchField.setValue(null);
-//    }
 }
