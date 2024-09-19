@@ -66,10 +66,10 @@
                     <textField id="totalAmountField" property="totalAmount" label="Total Allocated" readOnly="true"
                                tabIndex="-1"/>
                 </hbox>
-<!--                <hbox classNames="border border-error" padding="true" width="100%" margin="true">-->
-                    <p id="allocWarning" text="Warning: division allocations do not equal category allocations"
-                       classNames="text-error"/>
-<!--                </hbox>-->
+                <!--                <hbox classNames="border border-error" padding="true" width="100%" margin="true">-->
+                <p id="allocWarning" text="Warning: division allocations do not equal category allocations"
+                   classNames="text-error"/>
+                <!--                </hbox>-->
             </vbox>
         </formLayout>
 
@@ -83,7 +83,7 @@
                         <button action="allocationsDataGrid.remove"/>
                     </hbox>
                     <dataGrid id="allocationsDataGrid" dataContainer="allocationsDc" width="750px"
-                              themeNames="column-borders compact row-stripes" allRowsVisible="true">
+                              themeNames="column-borders compact row-stripes" allRowsVisible="true" aggregatable="true">
                         <actions>
                             <action id="create" type="list_create">
                                 <properties>
@@ -105,11 +105,17 @@
                             <column property="category.titleAndCode" header="Category" sortable="false"
                                     width="375px"/>
                             <column property="oneYearAmount" header="One Year" textAlign="END" sortable="false"
-                                    width="125px"/>
+                                    width="125px">
+                                <aggregation type="SUM"/>
+                            </column>
                             <column property="twoYearAmount" header="Two Year" textAlign="END" sortable="false"
-                                    width="125px"/>
+                                    width="125px">
+                                <aggregation type="SUM"/>
+                            </column>
                             <column property="totalAmount" header="Total" textAlign="END" sortable="false"
-                                    width="125px"/>
+                                    width="125px">
+                                <aggregation type="SUM"/>
+                            </column>
 
                         </columns>
                     </dataGrid>
@@ -213,13 +219,13 @@
                             <column property="programDirector" width="20%"/>
                             <column property="projectedAmount" width="20%" visible="false" textAlign="END"/>
                             <column property="reimbursedAmount" width="20%" visible="false" textAlign="END"/>
-<!--                            <column property="sortCode"/>-->
-<!--                            <column property="memo"/>-->
-<!--                            <column property="note"/>-->
-<!--                            <column property="trainingProject"/>-->
-<!--                            <column property="projectedAmount"/>-->
-<!--                            <column property="reimbursedAmount"/>-->
-<!--                            <column property="reportNote"/>-->
+                            <!--                            <column property="sortCode"/>-->
+                            <!--                            <column property="memo"/>-->
+                            <!--                            <column property="note"/>-->
+                            <!--                            <column property="trainingProject"/>-->
+                            <!--                            <column property="projectedAmount"/>-->
+                            <!--                            <column property="reimbursedAmount"/>-->
+                            <!--                            <column property="reportNote"/>-->
                         </columns>
                     </dataGrid>
                 </vbox>

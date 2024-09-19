@@ -11,7 +11,7 @@
             </fetchPlan>
             <loader id="payPeriodsDl" readOnly="true">
                 <query>
-                    <![CDATA[select e from fis_PayPeriod e]]>
+                    <![CDATA[select e from fis_PayPeriod e order by e.payYear desc, e.payPeriod asc]]>
                 </query>
             </loader>
         </collection>
@@ -19,7 +19,6 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
-            <genericFilter component="genericFilter"/>
             <pagination component="pagination"/>
         </urlQueryParameters>
     </facets>
@@ -28,22 +27,18 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
-        <genericFilter id="genericFilter"
-                       dataLoader="payPeriodsDl">
-            <properties include=".*"/>
-        </genericFilter>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createBtn" action="payPeriodsDataGrid.create"/>
             <button id="editBtn" action="payPeriodsDataGrid.edit"/>
             <button id="excelExportBtn" action="payPeriodsDataGrid.excelExport"/>
             <button id="removeBtn" action="payPeriodsDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="payPeriodsDl"/>
+            <simplePagination id="pagination" dataLoader="payPeriodsDl" autoLoad="true"/>
         </hbox>
         <dataGrid id="payPeriodsDataGrid"
-                  width="100%"
+                  width="410px"
                   minHeight="20em"
                   dataContainer="payPeriodsDc"
-                  columnReorderingAllowed="true">
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>
@@ -51,10 +46,12 @@
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
-                <column property="payYear"/>
-                <column property="payPeriod"/>
-                <column property="startDate"/>
-                <column property="endDate"/>
+                <column property="payYear" width="80px" textAlign="CENTER">
+                    <numberRenderer numberFormat="###0"/>
+                </column>
+                <column property="payPeriod" width="80px" textAlign="END" header="PP"/>
+                <column property="startDate" width="120px" textAlign="END"/>
+                <column property="endDate" width="120px" textAlign="END"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

@@ -35,13 +35,13 @@
             <button id="editBtn" action="positionsDataGrid.edit"/>
             <button id="excelExportBtn" action="positionsDataGrid.excelExport"/>
             <button id="removeBtn" action="positionsDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="positionsDl"/>
+            <simplePagination id="pagination" dataLoader="positionsDl" autoLoad="true"/>
         </hbox>
         <dataGrid id="positionsDataGrid"
                   width="100%"
                   minHeight="20em"
                   dataContainer="positionsDc"
-                  columnReorderingAllowed="true">
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>

@@ -9,7 +9,7 @@
             <fetchPlan extends="_base"/>
             <loader id="actionCodesDl" readOnly="true">
                 <query>
-                    <![CDATA[select e from fis_ActionCode e]]>
+                    <![CDATA[select e from fis_ActionCode e order by e.natureOfActionCode]]>
                 </query>
             </loader>
         </collection>
@@ -17,7 +17,6 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
-            <genericFilter component="genericFilter"/>
             <pagination component="pagination"/>
         </urlQueryParameters>
     </facets>
@@ -26,22 +25,18 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
-        <genericFilter id="genericFilter"
-                       dataLoader="actionCodesDl">
-            <properties include=".*"/>
-        </genericFilter>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createBtn" action="actionCodesDataGrid.create"/>
             <button id="editBtn" action="actionCodesDataGrid.edit"/>
             <button id="excelExportBtn" action="actionCodesDataGrid.excelExport"/>
             <button id="removeBtn" action="actionCodesDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="actionCodesDl"/>
+            <simplePagination id="pagination" dataLoader="actionCodesDl" autoLoad="true"/>
         </hbox>
         <dataGrid id="actionCodesDataGrid"
-                  width="100%"
+                  width="550px"
                   minHeight="20em"
                   dataContainer="actionCodesDc"
-                  columnReorderingAllowed="true">
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>
@@ -49,8 +44,8 @@
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
-                <column property="natureOfActionCode"/>
-                <column property="title"/>
+                <column property="natureOfActionCode" header="NOA" width="75px"/>
+                <column property="title" width="450px"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

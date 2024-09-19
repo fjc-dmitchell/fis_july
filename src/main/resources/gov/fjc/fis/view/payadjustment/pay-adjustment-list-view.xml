@@ -16,7 +16,7 @@
             </fetchPlan>
             <loader id="payAdjustmentsDl" readOnly="true">
                 <query>
-                    <![CDATA[select e from fis_PayAdjustment e]]>
+                    <![CDATA[select e from fis_PayAdjustment e order by e.payPeriod.startDate desc]]>
                 </query>
             </loader>
         </collection>
@@ -37,12 +37,12 @@
             <button id="editBtn" action="payAdjustmentsDataGrid.edit"/>
             <button id="excelExportBtn" action="payAdjustmentsDataGrid.excelExport"/>
             <button id="removeBtn" action="payAdjustmentsDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="payAdjustmentsDl"/>
+            <simplePagination id="pagination" dataLoader="payAdjustmentsDl" autoLoad="true"/>
         </hbox>
         <dataGrid id="payAdjustmentsDataGrid"
                   width="100%"
                   minHeight="20em"
-                  dataContainer="payAdjustmentsDc">
+                  dataContainer="payAdjustmentsDc" themeNames="column-borders compact row-stripes">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>
@@ -50,16 +50,20 @@
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
-                <column property="payPeriod"/>
-                <column property="adjustment"/>
-                <column property="localityRate"/>
-                <column property="oldLocalityRate"/>
-                <column property="salaryCap"/>
-                <column property="ratesFinal"/>
-                <column property="memo"/>
-                <column property="createdByString"/>
-                <column property="netIncrease"/>
-                <column property="ratesFinalString"/>
+                <column property="payPeriod.startDate" width="140px" header="Effective Date" textAlign="END"/>
+                <column property="adjustment" width="100px" textAlign="END" header="ECI"/>
+                <column property="localityRate" width="120px" textAlign="END"/>
+                <column property="oldLocalityRate" width="120px" textAlign="END"/>
+                <column property="netIncrease" width="120px" textAlign="END"/>
+                <column property="salaryCap" width="120px" textAlign="END">
+                    <numberRenderer numberFormat="#,##0"/>
+                </column>
+                <column property="ratesFinalString" width="100px"/>
+                <column property="memo" autoWidth="true"/>
+                <column property="createdBy" visible="false"/>
+                <column property="createdDate" visible="false"/>
+                <column property="lastModifiedBy" visible="false"/>
+                <column property="lastModifiedDate" visible="false"/>-->
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

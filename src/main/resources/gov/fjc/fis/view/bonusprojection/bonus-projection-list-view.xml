@@ -40,13 +40,13 @@
             <button id="editBtn" action="bonusProjectionsDataGrid.edit"/>
             <button id="excelExportBtn" action="bonusProjectionsDataGrid.excelExport"/>
             <button id="removeBtn" action="bonusProjectionsDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="bonusProjectionsDl"/>
+            <simplePagination id="pagination" dataLoader="bonusProjectionsDl" autoLoad="true"/>
         </hbox>
         <dataGrid id="bonusProjectionsDataGrid"
                   width="100%"
                   minHeight="20em"
                   dataContainer="bonusProjectionsDc"
-                  columnReorderingAllowed="true">
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>
