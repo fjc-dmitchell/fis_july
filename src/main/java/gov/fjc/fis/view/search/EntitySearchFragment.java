@@ -30,8 +30,9 @@ public abstract class EntitySearchFragment extends Fragment<VerticalLayout> {
     @Subscribe(target = Target.HOST_CONTROLLER)
     protected final void onHostReady(final View.ReadyEvent event) {
         for (var component : UiComponentUtils.getComponents(root)) {
-            if (component instanceof PropertyFilter<?>) {
-                addFilterCondition((PropertyFilter<?>) component);
+            if (component instanceof PropertyFilter<?> propertyFilter) {
+//                addFilterCondition((PropertyFilter<?>) component);
+                addFilterCondition(propertyFilter);
             }
         }
         additionalFragmentActions();
@@ -58,11 +59,13 @@ public abstract class EntitySearchFragment extends Fragment<VerticalLayout> {
         }
     }
 
-    public void addCategoryObjectClass(EntityComboBox<Category> category, EntityComboBox<ObjectClass> objectClass) {
+    public void addCategoryObjectClass(EntityComboBox<Category> categorySearchField,
+                                       EntityComboBox<ObjectClass> objectClassSearchField) {
         // by default, do nothing. Subclasses can override this method.
     }
 
-    public void addBranchGroup(EntityComboBox<Branch> branch, EntityComboBox<Group> group) {
+    public void addBranchGroup(EntityComboBox<Branch> branchSearchField,
+                               EntityComboBox<Group> groupSearchField) {
         // by default, do nothing. Subclasses can override this method.
     }
 }

@@ -68,6 +68,7 @@
                                     </actions>
                                 </entityComboBox>
                             </hbox>
+
                             <hbox id="bocBox" width="100%" visible="false">
                                 <entityComboBox id="categorySearchField" itemsContainer="categoriesDc"
                                                 metaClass="fis_Category" width="22em">

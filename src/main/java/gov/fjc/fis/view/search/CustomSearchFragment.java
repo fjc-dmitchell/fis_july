@@ -508,21 +508,34 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
 
     @Subscribe(id = "clearSearchBtn", subject = "clickListener")
     protected void onClearSearchBtnClick(final ClickEvent<JmixButton> event) {
-        clearCustomSearchParameters();
-//        clearCustomSearchFields();
+        clearSearchFields();
     }
 
-    private void clearCustomSearchParameters() {
-        Set<String> params = new HashSet<>(hostLoader.getParameters().keySet());
-        params.forEach(hostLoader::removeParameter);
-
+    private void clearSearchFields() {
         divisionSearchField.setValue(null);
+        categorySearchField.setValue(null);
+        objectClassSearchField.setValue(null);
         if (!fjcFoundation) {
             fundSearchField.setValue(null);
         }
         if (subFragment != null) {
             ((EntitySearchFragment) subFragment).clearPropertyFilters();
         }
+    }
+
+    private void clearCustomSearchParameters() {
+        // remove query conditions from data loader
+        Set<String> params = new HashSet<>(hostLoader.getParameters().keySet());
+        params.forEach(hostLoader::removeParameter);
+
+        clearSearchFields();
+//        divisionSearchField.setValue(null);
+//        if (!fjcFoundation) {
+//            fundSearchField.setValue(null);
+//        }
+//        if (subFragment != null) {
+//            ((EntitySearchFragment) subFragment).clearPropertyFilters();
+//        }
 
 //        customFilters.forEach((key, value) -> value.setValue(null));
     }
@@ -550,7 +563,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         customConditions.add(JpqlCondition.create("obj.budgetObjectClass = :bocFilterField", objectClassJoin).skipNullOrEmpty());
         customConditions.add(JpqlCondition.create("bch.branchCode = :branchCodeFilterField", branchJoin).skipNullOrEmpty());
         customConditions.add(JpqlCondition.create("grp.groupCode = :groupCodeFilterField", groupJoin).skipNullOrEmpty());
-        if(hostEntityName.equals("fis_ActivityProjection")) {
+        if (hostEntityName.equals("fis_ActivityProjection")) {
             customConditions.add(JpqlCondition.create("e.amount <> 0", null).skipNullOrEmpty());
         }
         customConditions.addAll(subFragmentConditions);

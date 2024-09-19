@@ -18,31 +18,28 @@ public class InvoiceSearchFragment extends EntitySearchFragment {
     @ViewComponent
     private HorizontalLayout bocBox;
 
-    private EntityComboBox<Category> categorySearchField;
-    private EntityComboBox<ObjectClass> objectClassSearchField;
+//    private EntityComboBox<Category> categorySearchField;
+//    private EntityComboBox<ObjectClass> objectClassSearchField;
 
     @Override
     protected void additionalFragmentActions() {
-        ((JmixSelect<Boolean>) obligationStatusSearch.getValueComponent()).setItemLabelGenerator(status -> {
-            if (status == null) {
-                return "";
-            }
-            return status ? "Open" : "Closed";
-        });
+        ((JmixSelect<Boolean>) obligationStatusSearch.getValueComponent())
+                .setItemLabelGenerator(status -> status == null ? "" : status ? "Open" : "Closed");
     }
 
     @Override
-    public void addCategoryObjectClass(EntityComboBox<Category> category, EntityComboBox<ObjectClass> objectClass) {
-        categorySearchField = category;
+    public void addCategoryObjectClass(EntityComboBox<Category> categorySearchField,
+                                       EntityComboBox<ObjectClass> objectClassSearchField) {
+//        categorySearchField = category;
         mocBox.add(categorySearchField);
-        objectClassSearchField = objectClass;
+//        objectClassSearchField = objectClass;
         bocBox.add(objectClassSearchField);
     }
 
-    @Override
-    public void clearPropertyFilters() {
-        super.clearPropertyFilters();
-        categorySearchField.setValue(null);
-        objectClassSearchField.setValue(null);
-    }
+//    @Override
+//    public void clearPropertyFilters() {
+//        super.clearPropertyFilters();
+//        categorySearchField.setValue(null);
+//        objectClassSearchField.setValue(null);
+//    }
 }
