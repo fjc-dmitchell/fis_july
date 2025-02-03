@@ -4,22 +4,23 @@ import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.entity.Fund;
 import gov.fjc.fis.entity.dto.CategoryDto;
 import gov.fjc.fis.entity.dto.DivisionDto;
+import gov.fjc.fis.entity.dto.ObligationDto;
 import gov.fjc.fis.reportdata.StatusOfFundsReportData;
 import gov.fjc.fis.service.*;
+import io.jmix.core.DataManager;
 import io.jmix.core.entity.KeyValueEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component("fis_StatusOfFundsReportService")
 public class StatusOfFundsReportService {
 
+    @Autowired
+    protected DataManager dataManager;
     @Autowired
     private FundService fundService;
     @Autowired
@@ -43,8 +44,71 @@ public class StatusOfFundsReportService {
         return reportData;
     }
 
-    public List<CategoryDto> getStatusOfFundsCategoryData(Appropriation appropriation, int scale) {
-        return getCategoryData(appropriation, scale, false);
+    public List<CategoryDto> getStatusOfFundsCategoryData(Appropriation appropriation, int scale, boolean showDefaultCategories) {
+        var categoryDtos = new ArrayList<>(getCategoryData(appropriation, scale, showDefaultCategories));
+
+        var oneYearAppropriation = appropriation.getOneYearAmount();
+        var twoYearAppropriation = appropriation.getTwoYearAmount();
+
+        var oneYearAlloc = categoryDtos.stream().map(CategoryDto::getTotalOneYearAllocations).reduce(BigDecimal.ZERO, BigDecimal::add);
+        var twoYearAlloc = categoryDtos.stream().map(CategoryDto::getTotalTwoYearAllocations).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        var unallocated = dataManager.create(CategoryDto.class);
+        unallocated.setTitleAndCode("ALLOCATION DISCREPANCY");
+        unallocated.setTotalOneYearAllocations(oneYearAppropriation.subtract(oneYearAlloc));
+        unallocated.setTotalTwoYearAllocations(twoYearAppropriation.subtract(twoYearAlloc));
+        unallocated.setShowOnReport(false);
+        categoryDtos.add(unallocated);
+
+        return categoryDtos.stream().filter(CategoryDto::getShowOnReport).toList();
+    }
+
+//    public List<CategoryDto> getStatusOfFundsCategorySpending(Appropriation appropriation, int scale) {
+//        var categoryDtos = new ArrayList<>(getCategoryData(appropriation, scale, true));
+//
+//        var oneYearAppropriation = appropriation.getOneYearAmount();
+//        var twoYearAppropriation = appropriation.getTwoYearAmount();
+//
+//        var oneYearAlloc = categoryDtos.stream().map(CategoryDto::getTotalOneYearAllocations).reduce(BigDecimal.ZERO, BigDecimal::add);
+//        var twoYearAlloc = categoryDtos.stream().map(CategoryDto::getTotalTwoYearAllocations).reduce(BigDecimal.ZERO, BigDecimal::add);
+//
+//        var unallocated = dataManager.create(CategoryDto.class);
+//        unallocated.setTitleAndCode("UNALLOCATED FUNDS");
+//        unallocated.setTotalOneYearAllocations(oneYearAppropriation.subtract(oneYearAlloc));
+//        unallocated.setTotalTwoYearAllocations(twoYearAppropriation.subtract(twoYearAlloc));
+//        unallocated.setShowOnReport(false);
+//        categoryDtos.add(unallocated);
+//
+//        return categoryDtos.stream().filter(CategoryDto::getShowOnReport).toList();
+//    }
+
+    public List<CategoryDto> getStatusOfFundsCategoryDataWithUnused(Appropriation appropriation, int scale) {
+        var oneYearAppropriation = appropriation.getOneYearAmount();
+        var twoYearAppropriation = appropriation.getTwoYearAmount();
+        var totalAppropriation = oneYearAppropriation.add(twoYearAppropriation);
+
+        var categoryDtos = new ArrayList<>(getCategoryData(appropriation, scale, false));
+
+        var oneYearProj = categoryDtos.stream().map(CategoryDto::getTotalOneYearProjections).reduce(BigDecimal.ZERO, BigDecimal::add);
+        var twoYearProj = categoryDtos.stream().map(CategoryDto::getTotalTwoYearProjections).reduce(BigDecimal.ZERO, BigDecimal::add);
+        var totalProj = oneYearProj.add(twoYearProj);
+        var oneYearOblig = categoryDtos.stream().map(CategoryDto::getTotalOneYearObligations).reduce(BigDecimal.ZERO, BigDecimal::add);
+        var twoYearOblig = categoryDtos.stream().map(CategoryDto::getTotalTwoYearObligations).reduce(BigDecimal.ZERO, BigDecimal::add);
+        var totalOblig = oneYearOblig.add(twoYearOblig);
+        var oneYearReim = categoryDtos.stream().map(CategoryDto::getTotalOneYearReimbursements).reduce(BigDecimal.ZERO, BigDecimal::add);
+        var twoYearReim = categoryDtos.stream().map(CategoryDto::getTotalTwoYearReimbursements).reduce(BigDecimal.ZERO, BigDecimal::add);
+        var totalReim = oneYearReim.add(twoYearReim);
+
+        var unused = dataManager.create(CategoryDto.class);
+        unused.setTitleAndCode("UNSPENT FUNDS");
+        unused.setTotalOneYearObligations(oneYearAppropriation.add(oneYearReim).subtract(oneYearProj).subtract(oneYearOblig));
+        unused.setTotalTwoYearObligations(twoYearAppropriation.add(twoYearReim).subtract(twoYearProj).subtract(twoYearOblig));
+        unused.setTotalObligations(totalAppropriation.add(totalReim).subtract(totalProj).subtract(totalOblig));
+
+        unused.setShowOnReport(false);
+        categoryDtos.add(unused);
+
+        return categoryDtos.stream().filter(CategoryDto::getShowOnReport).toList();
     }
 
     private List<CategoryDto> getCategoryData(Appropriation appropriation, int scale, boolean showDefaultCategories) {
