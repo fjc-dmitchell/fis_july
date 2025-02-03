@@ -30,7 +30,7 @@
             <textField id="twoYearAmountField" property="twoYearAmount" width="10em"/>
 <!--            <textField id="totalAmountField" property="totalAmount" tabIndex="-1"/>-->
         </formLayout>
-<!--        <p id="createdByString"/>-->
+        <p id="createdByString"/>
         <hbox id="detailActions">
             <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>

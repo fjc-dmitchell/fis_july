@@ -25,8 +25,6 @@ import static java.util.Objects.requireNonNullElse;
 @JmixEntity
 @Table(name = "FIS_APPROPRIATION_ADJUSTMENT", indexes = {
         @Index(name = "IDX_FIS_APPROPRIATION_ADJUSTMENT_APPROPRIATION", columnList = "APPROPRIATION_ID")
-}, uniqueConstraints = {
-        @UniqueConstraint(name = "IDX_FIS_APPROPRIATION_ADJUSTMENT_UNQ_APPROPRIATION_DATE", columnNames = {"APPROPRIATION_ID", "ADJUSTMENT_DATE"})
 })
 @Entity(name = "fis_AppropriationAdjustment")
 public class AppropriationAdjustment {

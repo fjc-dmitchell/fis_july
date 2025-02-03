@@ -12,7 +12,6 @@ import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Route(value = "appropriationAdjustments/:id", layout = MainView.class)
 @ViewController("fis_AppropriationAdjustment.detail")
@@ -23,14 +22,14 @@ public class AppropriationAdjustmentDetailView extends StandardDetailView<Approp
     private EntityStates entityStates;
     @ViewComponent
     private TypedDatePicker<LocalDate> adjustmentDateField;
-//    @ViewComponent
-//    private Paragraph createdByString;
+    @ViewComponent
+    private Paragraph createdByString;
 
     @Subscribe
     public void onBeforeShow(final BeforeShowEvent event) {
         if (entityStates.isNew(getEditedEntity())) {
             adjustmentDateField.setValue(LocalDate.now());
         }
-//        createdByString.setText(getEditedEntity().getCreatedByString());
+        createdByString.setText(getEditedEntity().getCreatedByString());
     }
 }
