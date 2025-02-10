@@ -18,7 +18,6 @@ import io.jmix.flowui.Fragments;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.fragment.Fragment;
-import io.jmix.flowui.fragment.FragmentData;
 import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -154,8 +153,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         if (hostLoader == null) {
             throw new IllegalStateException("hostLoader is null in SearchFragment");
         }
-        Class<?> hostEntityClass = hostDataContainer.getEntityMetaClass().getJavaClass();
-        // would this be better? hostDataContainer.getEntityMetaClass().getJavaClass().getSimpleName()
         hostEntityName = hostDataContainer.getEntityMetaClass().getName();
     }
 
@@ -298,18 +295,23 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     private void configureSubFragment(Class<? extends EntitySearchFragment> fragmentClass,
                                       String dataContainerId,
                                       String dataLoaderId) {
-        FragmentData fragmentData = this.getFragmentData();
-        searchTabSheetCustomSearchTab.setVisible(true);
 
-        fragmentData.registerContainer(dataContainerId, hostContainer);
-        fragmentData.registerLoader(dataLoaderId, hostLoader);
-        FragmentUtils.setFragmentData(this, fragmentData);
+        // to this fragment, add container and loader with ids required by sub-fragment
+//        FragmentData fragmentData = this.getFragmentData();
+        this.getFragmentData().registerContainer(dataContainerId, hostContainer);
+        this.getFragmentData().registerLoader(dataLoaderId, hostLoader);
+//        FragmentUtils.setFragmentData(this, fragmentData);
+
+        // create the sub-fragment, add components, get property filter conditions
         subFragment = fragments.create(this, fragmentClass);
         ((EntitySearchFragment) subFragment).addCategoryObjectClass(categorySearchField, objectClassSearchField);
         ((EntitySearchFragment) subFragment).addBranchGroup(branchSearchField, groupSearchField);
         subFragmentConditions = ((EntitySearchFragment) subFragment).getPropertyFilterConditions();
+
+        // add sub fragment to this view and set visibility
         subFragmentSearchBox.add(subFragment);
         subFragmentSearchBox.setVisible(true);
+        searchTabSheetCustomSearchTab.setVisible(true);
     }
 
     private void setBfyBtnCaption() {
@@ -402,7 +404,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         } else {
             divisionCode = event.getValue().getDivisionCode();
         }
-        checkBranchGroup();
+        checkBranchAndGroup();
     }
 
 //    @Subscribe("branchSearchField")
@@ -529,13 +531,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         params.forEach(hostLoader::removeParameter);
 
         clearSearchFields();
-//        divisionSearchField.setValue(null);
-//        if (!fjcFoundation) {
-//            fundSearchField.setValue(null);
-//        }
-//        if (subFragment != null) {
-//            ((EntitySearchFragment) subFragment).clearPropertyFilters();
-//        }
 
 //        customFilters.forEach((key, value) -> value.setValue(null));
     }
@@ -579,14 +574,22 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
      *
      * @param event custom event
      */
-    @Async
+//    @Async
+//    @EventListener
+//    public void handleAsyncEvent(FiscalYearChangeEvent event) {
+//        fiscalYears = appropriationService.getBfyFilterField(sessionData);
+//        setBfyBtnCaption();
+//        checkDivision();
+//        checkObjectClass();
+//        checkBranchAndGroup();
+//    }
     @EventListener
-    public void handleAsyncEvent(FiscalYearChangeEvent event) {
+    public void handleFiscalYearChangeEvent(FiscalYearChangeEvent event) {
         fiscalYears = appropriationService.getBfyFilterField(sessionData);
         setBfyBtnCaption();
         checkDivision();
         checkObjectClass();
-        checkBranchGroup();
+        checkBranchAndGroup();
     }
 
     private void checkDivision() {
@@ -622,9 +625,8 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         }
     }
 
-    private void checkBranchGroup() {
+    private void checkBranchAndGroup() {
         branchesDl.load();
-        groupsDl.load();
         if (branchSearchField.getValue() != null) {
             branchSearchField.setValue(
                     branchesDl.getContainer().getItems().stream()
@@ -633,6 +635,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                             .orElse(null)
             );
         }
+        groupsDl.load();
         if (groupSearchField.getValue() != null) {
             groupSearchField.setValue(
                     groupsDl.getContainer().getItems().stream()
