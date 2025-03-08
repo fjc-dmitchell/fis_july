@@ -104,6 +104,17 @@ public final class FisUtilities {
         return requireNonNullElse(firstAmount, BigDecimal.ZERO).add(requireNonNullElse(secondAmount, BigDecimal.ZERO));
     }
 
+    // same as above but variable number of arguments. for now, for testing only 2025-01-31
+    public static BigDecimal add(BigDecimal... numbers) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (BigDecimal num : numbers) {
+            if (num != null) {
+                sum = sum.add(num);
+            }
+        }
+        return sum;
+    }
+
     public static String getDateTimeReportString(LocalDateTime dateTime) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a");
         return dtf.format(dateTime);
@@ -148,6 +159,7 @@ public final class FisUtilities {
 
     /**
      * Determine presence of non-zero, non-null BigDecimal parameter
+     *
      * @param decimals one or more BigDecimal parameters, null values allowed but ignored
      * @return boolean representing presence of a negative or positive BigDecimal value
      */

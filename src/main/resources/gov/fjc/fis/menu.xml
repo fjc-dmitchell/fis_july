@@ -21,13 +21,14 @@
         <item view="fis_Fund.list" title="msg://gov.fjc.fis.view.fund/fundListView.title"/>
         <item view="fis_ActivityProjection.list"
               title="msg://gov.fjc.fis.view.activityprojection/activityProjectionListView.title"/>
+        <item view="fis_Vendor.list" title="msg://gov.fjc.fis.view.vendor/vendorListView.title"/>
     </menu>
     <menu id="jifms" description="msg://gov.fjc.fis/menu_config.jifms.description"
           title="msg://gov.fjc.fis/menu_config.jifms.title">
         <item view="fis_Document.list" title="msg://gov.fjc.fis.view.document/documentListView.title"/>
     </menu>
     <menu id="salaryProjections" description="msg://gov.fjc.fis/menu_config.salaryProjections.description"
-          title="msg://gov.fjc.fis/menu_config.salaryProjections.title">
+          title="msg://gov.fjc.fis/menu_config.salaryProjections.title" icon="vaadin:users">
         <item view="fis_Position.list" title="msg://gov.fjc.fis.view.position/positionListView.title"/>
         <item view="fis_PositionAction.list"
               title="msg://gov.fjc.fis.view.positionaction/positionActionListView.title"/>
@@ -37,6 +38,7 @@
         <item view="fis_PayPeriod.list" title="msg://gov.fjc.fis.view.payperiod/payPeriodListView.title"/>
         <item view="fis_PayAdjustment.list" title="msg://gov.fjc.fis.view.payadjustment/payAdjustmentListView.title"/>
         <item view="fis_ActionCode.list" title="msg://gov.fjc.fis.view.actioncode/actionCodeListView.title"/>
+        <item view="fis_PayGrade.list" title="msg://gov.fjc.fis.view.paygrade/payGradeListView.title"/>
     </menu>
     <menu id="foundation" description="msg://gov.fjc.fis/menu_config.foundation.description"
           title="msg://gov.fjc.fis/menu_config.foundation.title">
@@ -50,7 +52,7 @@
               title="msg://gov.fjc.fis.view.fundcontrolnotice/fundControlNoticeListView.title"/>
     </menu>
     <menu id="fjcreports" description="msg://gov.fjc.fis/menu_config.fjcreports.description"
-          title="msg://gov.fjc.fis/menu_config.fjcreports.title">
+          title="msg://gov.fjc.fis/menu_config.fjcreports.title" icon="vaadin:file-table">
         <item bean="fis_ReportRouter" beanMethod="openStatusOfFundsReport"
               description="msg://gov.fjc.fis/menu_config.fis_ReportRouter#openStatusOfFundsReport.description"
               title="Status of Funds"/>
@@ -59,9 +61,10 @@
               title="Education Programs"/>
         <item bean="fis_ReportRouter" beanMethod="openBudgetRequestReport"
               title="msg://gov.fjc.fis.view.report.budgetrequestreport/budgetRequestReportView.title"/>
+        <item bean="fis_EducationProgramsAnalysis" beanMethod="generateReportData" title="Program Analysis"/>
     </menu>
     <menu id="forms" description="msg://gov.fjc.fis/menu_config.forms.description"
-          title="msg://gov.fjc.fis/menu_config.forms.title">
+          title="msg://gov.fjc.fis/menu_config.forms.title" icon="vaadin:form">
         <item view="fis_DistanceLearning.list"
               title="msg://gov.fjc.fis.view.distancelearning/distanceLearningListView.title"/>
         <item view="fis_Ape.list" title="msg://gov.fjc.fis.view.ape/apeListView.title"/>
@@ -70,4 +73,6 @@
         <item view="fis_User.list" title="msg://gov.fjc.fis.view.user/UserListView.title"/>
         <item view="fis_UserMessage.list" title="msg://gov.fjc.fis.view.usermessage/userMessageListView.title"/>
     </menu>
+    <item view="flowui_UserSettingsItem.list"
+          title="msg://gov.fjc.fis.view.usersettingsitem/userSettingsItemListView.title"/>
 </menu-config>
