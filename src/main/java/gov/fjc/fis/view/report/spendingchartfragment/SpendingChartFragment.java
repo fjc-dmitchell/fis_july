@@ -11,7 +11,6 @@ import io.jmix.chartsflowui.data.item.MapDataItem;
 import io.jmix.chartsflowui.kit.component.model.DataSet;
 import io.jmix.chartsflowui.kit.data.chart.ListChartItems;
 import io.jmix.core.LoadContext;
-import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
@@ -50,14 +49,18 @@ public class SpendingChartFragment extends Fragment<VerticalLayout> {
 
     public void setAppropriation(Appropriation appropriation) {
         this.appropriation = appropriation;
-    }
-
-    public void reloadAppropriation() {
         categorySpendDl.load();
         categorySofDl.load();
         refreshAllocationsChart();
         refreshSpendingChart();
     }
+
+//    public void reloadAppropriation() {
+//        categorySpendDl.load();
+//        categorySofDl.load();
+//        refreshAllocationsChart();
+//        refreshSpendingChart();
+//    }
 
     @Subscribe(target = Target.HOST_CONTROLLER)
     protected void onHostReady(final View.ReadyEvent event) {

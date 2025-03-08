@@ -4,11 +4,14 @@
         <collection id="divisionBalancesDc" class="gov.fjc.fis.entity.dto.DivisionDto">
             <loader id="divisionBalancesDl" readOnly="true"/>
         </collection>
+        <collection id="divisionBalances2Dc" class="gov.fjc.fis.entity.dto.DivisionDto">
+            <loader id="divisionBalances2Dl" readOnly="true"/>
+        </collection>
     </data>
     <content>
         <vbox id="root">
             <details id="oneYearDetails" opened="true">
-                <dataGrid dataContainer="divisionBalancesDc"
+                <dataGrid id="oneYearDataGrid" dataContainer="divisionBalancesDc"
                           aggregatable="true" selectionMode="NONE"
                           themeNames="no-row-borders column-borders compact row-stripes"
                           allRowsVisible="true" width="950px">
@@ -61,9 +64,10 @@
                         </column>
                     </columns>
                 </dataGrid>
+                <p id="oneYearWarning" classNames="fjc-warning" visible="false"/>
             </details>
             <details id="twoYearDetails" opened="true">
-                <dataGrid dataContainer="divisionBalancesDc"
+                <dataGrid id="twoYearDataGrid" dataContainer="divisionBalances2Dc"
                           aggregatable="true" selectionMode="NONE"
                           themeNames="no-row-borders column-borders compact row-stripes"
                           allRowsVisible="true" width="950px">
@@ -116,6 +120,7 @@
                         </column>
                     </columns>
                 </dataGrid>
+                <p id="twoYearWarning" classNames="fjc-warning" visible="false"/>
             </details>
         </vbox>
     </content>
