@@ -16,6 +16,7 @@
         <urlQueryParameters>
             <pagination component="pagination"/>
         </urlQueryParameters>
+        <settings auto="true"/>
     </facets>
     <actions>
         <action id="selectAction" type="lookup_select"/>
@@ -32,7 +33,8 @@
         <dataGrid id="appropriationsDataGrid"
                   width="470px"
                   minHeight="20em"
-                  dataContainer="appropriationsDc" selectionMode="SINGLE" themeNames="column-borders compact row-stripes">
+                  dataContainer="appropriationsDc" themeNames="column-borders compact row-stripes"
+                  columnReorderingAllowed="true">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>
@@ -48,6 +50,10 @@
                     <numberRenderer numberFormat="#,##0"/>
                 </column>
                 <column property="totalAmount" header="Total" textAlign="END" width="130px">
+                    <numberRenderer numberFormat="#,##0"/>
+                </column>
+                <column property="totalAdjustment" header="Total Appropriation Adjustments" textAlign="END"
+                        width="130px" visible="false">
                     <numberRenderer numberFormat="#,##0"/>
                 </column>
             </columns>

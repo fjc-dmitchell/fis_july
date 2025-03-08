@@ -25,6 +25,21 @@ public class AppropriationService {
                 .list();
     }
 
+    /**
+     * adhoc request for multi-year program analysis.
+     *
+     * @param budgetFiscalYears list of fiscal year strings
+     * @return List of appropriation entities
+     */
+    public List<Appropriation> getAppropriations(List<String> budgetFiscalYears) {
+        return dataManager.load(Appropriation.class)
+                .query("SELECT a FROM fis_Appropriation a"
+                        + " WHERE a.budgetFiscalYear IN :budgetFiscalYears"
+                        + " ORDER BY a.budgetFiscalYear DESC")
+                .parameter("budgetFiscalYears", budgetFiscalYears)
+                .list();
+    }
+
     public Appropriation getBfyEntryAppropriation(SessionData sessionData) {
         Appropriation bfyEntry = (Appropriation) sessionData.getAttribute("bfyEntry");
         if (bfyEntry == null) {
@@ -99,14 +114,16 @@ public class AppropriationService {
     }
 
     public String getCurrentBfy() {
-        Date today = new Date();
-        String thisYear = new SimpleDateFormat("yyyy").format(today);
-        int thisYearInt = Integer.parseInt(new SimpleDateFormat("yyyy").format(today));
-
+        SimpleDateFormat mdyFormat = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
         try {
-            Date firstOfCalendarYear = new SimpleDateFormat("MM/dd/yyyy").parse("1/1/" + thisYear);
-            Date firstOfFiscalYear = new SimpleDateFormat("MM/dd/yyyy").parse("10/1/" + thisYear);
-            if ((firstOfCalendarYear.compareTo(today)) * (today.compareTo(firstOfFiscalYear)) >= 0) {
+            Date today = mdyFormat.parse(mdyFormat.format(new Date()));
+            String thisYear = yearFormat.format(today);
+            int thisYearInt = Integer.parseInt(thisYear);
+
+            Date firstDayOfCalendarYear = mdyFormat.parse("01/01/" + thisYear);
+            Date lastDayOfFiscalYear = mdyFormat.parse("09/30/" + thisYear);
+            if ((firstDayOfCalendarYear.compareTo(today)) * (today.compareTo(lastDayOfFiscalYear)) >= 0) {
                 return thisYear;
             } else {
                 return String.valueOf(thisYearInt + 1);
@@ -128,6 +145,18 @@ public class AppropriationService {
                         " where a.budgetFiscalYear = :bFy")
                 .parameter("bFy", getCurrentBfy())
                 .optional().orElse(null);
+    }
+
+    public Appropriation getCurrentOrLatestOpenBudgetFiscalYear() {
+        return dataManager.load(Appropriation.class)
+                .query("SELECT a FROM fis_Appropriation a" +
+                        " WHERE a.status=TRUE AND a.budgetFiscalYear = :bFy")
+                .parameter("bFy", getCurrentBfy())
+                .optional().orElse(dataManager.load(Appropriation.class)
+                        .query("SELECT a FROM fis_Appropriation a"
+                                + " WHERE a.budgetFiscalYear ="
+                                + " (SELECT MAX(e.budgetFiscalYear) FROM fis_Appropriation e WHERE e.status=TRUE)")
+                        .optional().orElse(null));
     }
 
     /**

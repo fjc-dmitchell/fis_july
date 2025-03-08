@@ -5,6 +5,7 @@ import gov.fjc.fis.view.report.budgetrequestreport.BudgetRequestReportView;
 import gov.fjc.fis.view.report.educationprogramsreport.EducationProgramsReportView;
 import gov.fjc.fis.view.report.statusoffundsreport.StatusOfFundsReportView;
 import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.component.UiComponentUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,14 +15,14 @@ public class ReportRouter {
     private DialogWindows dialogWindows;
 
     public void openStatusOfFundsReport() {
-        dialogWindows.view(null, StatusOfFundsReportView.class).open().setWidth(20, Unit.EM);
+        dialogWindows.view(UiComponentUtils.getCurrentView(), StatusOfFundsReportView.class).open().setWidth(20, Unit.EM);
     }
 
     public void openEducationProgramsReport() {
-        dialogWindows.view(null, EducationProgramsReportView.class).open();
+        dialogWindows.view(UiComponentUtils.getCurrentView(), EducationProgramsReportView.class).open();
     }
 
     public void openBudgetRequestReport() {
-        dialogWindows.view(null, BudgetRequestReportView.class).open();
+        dialogWindows.view(UiComponentUtils.getCurrentView(), BudgetRequestReportView.class).open();
     }
 }

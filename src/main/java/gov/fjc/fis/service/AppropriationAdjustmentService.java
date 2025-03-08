@@ -1,10 +1,8 @@
 package gov.fjc.fis.service;
 
 import gov.fjc.fis.entity.Appropriation;
-import gov.fjc.fis.entity.AppropriationAdjustment;
 import gov.fjc.fis.entity.Fund;
 import gov.fjc.fis.entity.dto.AmountsDto;
-import gov.fjc.fis.entity.dto.CategoryDto;
 import io.jmix.core.DataManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,6 +20,7 @@ public class AppropriationAdjustmentService {
     @Autowired
     private FundService fundService;
 
+    // why is this here rather than reimbursement service?
     BigDecimal sumReimbursements(Appropriation appropriation, Fund fund) {
         return dataManager.loadValue(
                         "SELECT COALESCE(SUM(r.amount),0)"
@@ -34,6 +33,34 @@ public class AppropriationAdjustmentService {
                                 + " AND fund = :fund", BigDecimal.class)
                 .parameter("appropriation", appropriation)
                 .parameter("fund", fund)
+                .one();
+    }
+
+    public BigDecimal sumAppropriationAdjustments(Appropriation appropriation) {
+        return dataManager.loadValue(
+                        "SELECT COALESCE(SUM(adj.oneYearAmount),0)+COALESCE(SUM(adj.twoYearAmount),0)"
+                                + " FROM fis_AppropriationAdjustment adj"
+                                + " INNER JOIN fis_Appropriation app ON app= adj.appropriation"
+                                + " WHERE app = :appropriation", BigDecimal.class)
+                .parameter("appropriation", appropriation)
+                .one();
+    }
+
+    public BigDecimal sumOneYearAdjustments(Appropriation appropriation) {
+        return dataManager.loadValue(
+                        "SELECT COALESCE(SUM(adj.oneYearAmount),0)"
+                                + " FROM fis_AppropriationAdjustment adj"
+                                + " WHERE adj.appropriation = :appropriation", BigDecimal.class)
+                .parameter("appropriation", appropriation)
+                .one();
+    }
+
+    public BigDecimal sumTwoYearAdjustments(Appropriation appropriation) {
+        return dataManager.loadValue(
+                        "SELECT COALESCE(SUM(adj.twoYearAmount),0)"
+                                + " FROM fis_AppropriationAdjustment adj"
+                                + " WHERE adj.appropriation = :appropriation", BigDecimal.class)
+                .parameter("appropriation", appropriation)
                 .one();
     }
 

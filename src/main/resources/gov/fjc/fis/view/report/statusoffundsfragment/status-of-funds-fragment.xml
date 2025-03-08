@@ -5,6 +5,9 @@
         <collection id="categorySofDc" class="gov.fjc.fis.entity.dto.CategoryDto">
             <loader id="categorySofDl" readOnly="true"/>
         </collection>
+        <collection id="categorySof2Dc" class="gov.fjc.fis.entity.dto.CategoryDto">
+            <loader id="categorySof2Dl" readOnly="true"/>
+        </collection>
     </data>
     <content>
         <vbox id="root">
@@ -65,7 +68,7 @@
                     </dataGrid>
                 </details>
                 <details id="twoYearDetails" summaryText="Two Year Appropriation" opened="true">
-                    <dataGrid id="categoryDtoesDataGrid2" dataContainer="categorySofDc"
+                    <dataGrid id="categoryDtoesDataGrid2" dataContainer="categorySof2Dc"
                               aggregatable="true" selectionMode="NONE"
                               themeNames="no-row-borders column-borders compact row-stripes"
                               allRowsVisible="true" width="950px">

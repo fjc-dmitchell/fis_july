@@ -60,39 +60,37 @@ public class Appropriation {
     @NotNull
     private BigDecimal twoYearAmount = BigDecimal.ZERO;
 
-    @Column(name = "ADJUSTMENT", precision = 19, scale = 2)
-    private BigDecimal adjustment;
-
-    @Column(name = "STATUS", nullable = false)
     @NotNull
-    private Boolean status = false;
+    @Column(name = "ONE_YEAR_ADJUSTMENT", nullable = false)
+    private BigDecimal oneYearAdjustment = BigDecimal.ZERO;
 
+    @NotNull
+    @Column(name = "TWO_YEAR_ADJUSTMENT", nullable = false)
+    private BigDecimal twoYearAdjustment = BigDecimal.ZERO;
+
+    @Column(name = "STATUS")
+    private Boolean status = false;
     @Column(name = "VERSION", nullable = false, columnDefinition = "INT DEFAULT 1")
     @Version
     private Integer version;
-
     @CreatedBy
     @Column(name = "CREATED_BY")
     private String createdBy;
-
     @CreatedDate
     @Column(name = "CREATED_DATE")
     private OffsetDateTime createdDate;
-
     @LastModifiedBy
     @Column(name = "LAST_MODIFIED_BY")
     private String lastModifiedBy;
-
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
 
-    public BigDecimal getAdjustment() {
-        return adjustment;
-    }
 
-    public void setAdjustment(BigDecimal adjustment) {
-        this.adjustment = adjustment;
+    @DependsOnProperties({"status"})
+    @JmixProperty
+    public String getStatusString() {
+        return status ? "Open" : "Closed";
     }
 
     public Boolean getStatus() {
@@ -139,6 +137,12 @@ public class Appropriation {
         return getTotalNullAllowed(oneYearAmount, twoYearAmount);
     }
 
+    @DependsOnProperties({"oneYearAdjustment", "twoYearAdjustment"})
+    @JmixProperty
+    public BigDecimal getTotalAdjustment() {
+        return getTotalNullAllowed(oneYearAdjustment, twoYearAdjustment);
+    }
+
     public BigDecimal getOneYearAmount() {
         return oneYearAmount;
     }
@@ -153,6 +157,22 @@ public class Appropriation {
 
     public void setTwoYearAmount(BigDecimal twoYearAmount) {
         this.twoYearAmount = requireNonNullElse(twoYearAmount, BigDecimal.ZERO);
+    }
+
+    public BigDecimal getOneYearAdjustment() {
+        return oneYearAdjustment;
+    }
+
+    public void setOneYearAdjustment(BigDecimal oneYearAdjustment) {
+        this.oneYearAdjustment = requireNonNullElse(oneYearAdjustment, BigDecimal.ZERO);
+    }
+
+    public BigDecimal getTwoYearAdjustment() {
+        return twoYearAdjustment;
+    }
+
+    public void setTwoYearAdjustment(BigDecimal twoYearAdjustment) {
+        this.twoYearAdjustment = requireNonNullElse(twoYearAdjustment, BigDecimal.ZERO);
     }
 
     public String getBudgetFiscalYear() {
