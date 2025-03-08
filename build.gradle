@@ -1,5 +1,5 @@
 plugins {
-    id 'io.jmix' version '2.3.1'
+    id 'io.jmix' version '2.5.0'
     id 'java'
 }
 
@@ -7,12 +7,12 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'com.vaadin'
 
 jmix {
-    bomVersion = '2.3.1'
+    bomVersion = '2.5.0'
     projectId = 'fis'
 }
 
 group = 'gov.fjc'
-version = '2.1.0-SNAPSHOT'
+version = '2.1.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -22,6 +22,9 @@ repositories {
 }
 
 dependencies {
+    // 2024-12-13 DEM added liquibase dependencey due to bug:
+    // https://github.com/jmix-framework/jmix/issues/3888
+    implementation 'org.liquibase:liquibase-core:4.25.0!!'
     implementation 'io.jmix.core:jmix-core-starter'
     implementation 'io.jmix.data:jmix-eclipselink-starter'
     implementation 'io.jmix.security:jmix-security-starter'
@@ -52,6 +55,11 @@ dependencies {
 
 bootJar {
     launchScript()
+}
+
+configurations.implementation {
+    exclude group: 'com.vaadin', module: 'hilla'
+    exclude group: 'com.vaadin', module: 'hilla-dev'
 }
 
 test {
