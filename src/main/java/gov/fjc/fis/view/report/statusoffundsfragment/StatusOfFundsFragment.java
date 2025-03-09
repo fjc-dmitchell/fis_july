@@ -56,7 +56,7 @@ public class StatusOfFundsFragment extends Fragment<VerticalLayout> {
     @Install(to = "categorySof2Dl", target = Target.DATA_LOADER)
     protected List<CategoryDto> categorySof2DlLoadDelegate(final LoadContext<CategoryDto> loadContext) {
         var twoYearCategories = categoryBalances.stream().filter(CategoryDto::isTwoYearCategory).toList();
-//        twoYearDetails.setVisible(!twoYearDivisions.isEmpty());
+        twoYearDetails.setVisible(!twoYearCategories.isEmpty());
         return twoYearCategories;
     }
 

@@ -31,7 +31,7 @@
             <simplePagination id="pagination" dataLoader="appropriationsDl" autoLoad="true"/>
         </hbox>
         <dataGrid id="appropriationsDataGrid"
-                  width="470px"
+                  width="485px"
                   minHeight="20em"
                   dataContainer="appropriationsDc" themeNames="column-borders compact row-stripes"
                   columnReorderingAllowed="true">
