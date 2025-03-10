@@ -7,6 +7,7 @@ import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.event.FiscalYearChangeEvent;
 import gov.fjc.fis.service.AppropriationService;
 import gov.fjc.fis.view.main.MainView;
+import gov.fjc.fis.view.reconciliationfragment.ReconciliationFragment;
 import gov.fjc.fis.view.report.divisionbalancefragment.DivisionBalanceFragment;
 import gov.fjc.fis.view.report.spendingchartfragment.SpendingChartFragment;
 import gov.fjc.fis.view.report.statusoffundsfragment.StatusOfFundsFragment;
@@ -41,9 +42,12 @@ public class DashboardView extends StandardView {
     private SpendingChartFragment spendFragment;
     @ViewComponent
     private DivisionBalanceFragment balanceFragment;
+    @ViewComponent
+    private ReconciliationFragment reconFragment;
 
     @Subscribe
     protected void onInit(final InitEvent event) {
+        reconFragment.setApplicationContext(getApplicationContext());
         appropriationRefresh();
         appropriationsDl.load();
     }
@@ -59,6 +63,7 @@ public class DashboardView extends StandardView {
         sofFragment.setAppropriation(appropriation);
         spendFragment.setAppropriation(appropriation);
         balanceFragment.setAppropriation(appropriation);
+        reconFragment.setAppropriation(appropriation);
     }
 
     private void appropriationRefresh() {

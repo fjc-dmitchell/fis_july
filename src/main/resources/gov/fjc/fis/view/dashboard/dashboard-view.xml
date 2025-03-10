@@ -21,6 +21,9 @@
                 <fragment id="spendFragment"
                           class="gov.fjc.fis.view.report.spendingchartfragment.SpendingChartFragment"/>
             </tab>
+            <tab id="reconciliation" label="Reconciliation">
+                <fragment id="reconFragment" class="gov.fjc.fis.view.reconciliationfragment.ReconciliationFragment"/>
+            </tab>
         </tabSheet>
     </layout>
 </view>
