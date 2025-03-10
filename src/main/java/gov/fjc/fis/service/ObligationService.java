@@ -2,8 +2,8 @@ package gov.fjc.fis.service;
 
 import gov.fjc.fis.entity.*;
 import gov.fjc.fis.entity.dto.ActivityDto;
-import gov.fjc.fis.entity.dto.DivisionDto;
 import gov.fjc.fis.entity.dto.ObligationDto;
+import gov.fjc.fis.entity.dto.ReconciliationDto;
 import io.jmix.core.DataManager;
 import io.jmix.core.entity.KeyValueEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +25,69 @@ public class ObligationService {
     private FundService fundService;
     @Autowired
     private AppropriationService appropriationService;
+    @Autowired
+    private CategoryService categoryService;
 
     // Todo: refactor as getObligationsByEntity(Entity entity)
+
+    /**
+     * reconcilation pivot table 3/9/20205
+     *
+     * @param appropriation
+     * @return
+     */
+    public List<KeyValueEntity> getObligationPivotData(Appropriation appropriation) {
+        var funds = List.of(fundService.getAppropriationOneYearFund(), fundService.getAppropriationTwoYearFund());
+        var excludeCategories = categoryService.getFundTransferCategories(appropriation);
+
+        return dataManager.loadValues(
+                        "SELECT app.budgetFiscalYear, fund.fundCode, dv.budgetOrg, dv.title,"
+                                + " obl.documentNumber, cat.masterObjectClass, cat.title, obj.budgetObjectClass,"
+                                + " obl.documentDate, obl.amount, obl.vendor, obl.ein, obl.aoSyncDate"
+                                + " FROM fis_Obligation obl"
+                                + " INNER JOIN fis_ObjectClass obj ON obj=obl.objectClass"
+                                + " INNER JOIN fis_Category cat ON cat=obj.category"
+                                + " INNER JOIN fis_Activity act ON act=obl.activity"
+                                + " INNER JOIN fis_Division dv ON dv=act.division"
+                                + " INNER JOIN fis_Appropriation app ON app=dv.appropriation"
+                                + " INNER JOIN fis_Fund fund ON fund=act.fund"
+                                + " WHERE app=:appropriation AND fund IN :funds AND cat NOT IN :excludeCategories"
+                                + " ORDER BY dv.budgetOrg, obl.documentNumber, obj.budgetObjectClass")
+                .parameter("appropriation", appropriation)
+                .parameter("funds", funds)
+                .parameter("excludeCategories", excludeCategories)
+                .properties("budgetFiscalYear", "fundCode", "budgetOrg", "divisionTitle", "documentNumber",
+                        "masterObjectClass", "categoryTitle", "budgetObjectClass", "documentDate", "amount",
+                        "vendor", "ein", "aoSyncDate")
+                .list();
+
+    }
+
+    // this should probably be moved to reconcilation report service
+    public List<ReconciliationDto> getReconciliationDto(Appropriation appropriation) {
+        var reconciliationData = getObligationPivotData(appropriation);
+        List<ReconciliationDto> reconciliationDtos = new ArrayList<>();
+        ReconciliationDto dto;
+
+        for (var kvEntity : reconciliationData) {
+            dto = dataManager.create(ReconciliationDto.class);
+            dto.setBudgetFiscalYear(kvEntity.getValue("budgetFiscalYear"));
+            dto.setFundCode(kvEntity.getValue("fundCode"));
+            dto.setBudgetOrg(kvEntity.getValue("budgetOrg"));
+            dto.setDivisionTitle(kvEntity.getValue("divisionTitle"));
+            dto.setDocumentNumber(kvEntity.getValue("documentNumber"));
+            dto.setMasterObjectClass(kvEntity.getValue("masterObjectClass"));
+            dto.setCategoryTitle(kvEntity.getValue("categoryTitle"));
+            dto.setBudgetObjectClass(kvEntity.getValue("budgetObjectClass"));
+            dto.setDocumentDate(kvEntity.getValue("documentDate"));
+            dto.setAmount(kvEntity.getValue("amount"));
+            dto.setVendor(kvEntity.getValue("vendor"));
+            dto.setEin(kvEntity.getValue("ein"));
+            dto.setAoSyncDate(kvEntity.getValue("aoSyncDate"));
+            reconciliationDtos.add(dto);
+        }
+        return reconciliationDtos;
+    }
 
     public List<Obligation> getObligations(ObjectClass objectClass) {
         return dataManager.load(Obligation.class)
@@ -299,8 +360,9 @@ public class ObligationService {
 
     /**
      * get obligations from list of obligationDtos that match activity id
+     *
      * @param obligationDtos list of obligationDtos that may contain activity id
-     * @param activityId id of activity entity
+     * @param activityId     id of activity entity
      * @return list of matching obligationDtos
      */
     public List<ObligationDto> getObligationDtosForActivity(List<ObligationDto> obligationDtos, Integer activityId) {
@@ -311,6 +373,7 @@ public class ObligationService {
     public List<ObligationDto> getObligationDtosForCategory(List<ObligationDto> obligationDtos, Integer categoryId) {
         return obligationDtos.stream().filter(obligationDto -> obligationDto.getCategoryId().equals(categoryId)).toList();
     }
+
     public List<ObligationDto> getObligationDtosForMasterObjectClass(List<ObligationDto> obligationDtos, String masterObjectClass) {
         return obligationDtos.stream().filter(obligationDto -> obligationDto.getMasterObjectClass().equals(masterObjectClass)).toList();
     }
@@ -436,6 +499,19 @@ public class ObligationService {
                 .properties("moc", "divcode", "fund", "amount")
                 .parameter("appropriation", appropriation)
                 .parameter("funds", funds)
+                .list();
+    }
+
+    public List<KeyValueEntity> sumObligations(List<Division> divisions, Fund fund) {
+        return dataManager.loadValues(
+                        "SELECT act.fund, act.division, COALESCE(SUM(obl.amount),0)"
+                                + " FROM fis_Activity act"
+                                + " INNER JOIN fis_Obligation obl ON act=obl.activity"
+                                + " WHERE act.division IN :divisions AND act.fund=:fund"
+                                + " GROUP BY act.fund, act.division")
+                .parameter("divisions", divisions)
+                .parameter("fund", fund)
+                .properties("fund", "division", "amount")
                 .list();
     }
 

@@ -668,4 +668,15 @@ public class CategoryDto {
         setTotalTwoYearBalance(totalTwoYearAllocations.subtract(totalTwoYearObligations).subtract(totalTwoYearProjections).add(totalTwoYearReimbursements));
     }
 
+    /**
+     * isTwoYearCategory determines whether any two year amounts are populated for the CategoryDto
+     * @return true if the CategoryDto if any two year amount is non-zero
+     */
+    public Boolean isTwoYearCategory() {
+        return (totalTwoYearAllocations.compareTo(BigDecimal.ZERO) != 0)
+                || (totalTwoYearProjections.compareTo(BigDecimal.ZERO) != 0)
+                || (totalTwoYearObligations.compareTo(BigDecimal.ZERO) != 0)
+                || (totalTwoYearReimbursements.compareTo(BigDecimal.ZERO) != 0);
+    }
+
 }

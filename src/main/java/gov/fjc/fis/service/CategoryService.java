@@ -61,6 +61,17 @@ public class CategoryService {
 
     }
 
+    public Category getCategoryByCode(List<Appropriation> appropriations, String moc) {
+        return dataManager.load(Category.class)
+                .query("SELECT c FROM fis_Category c"
+                        + " WHERE c.masterObjectClass = :moc"
+                        + " AND c.appropriation.budgetFiscalYear = (SELECT MAX(e.budgetFiscalYear)"
+                        + " FROM fis_Appropriation e WHERE e IN :appropriations)")
+                .parameter("moc", moc)
+                .parameter("appropriations", appropriations)
+                .optional().orElse(null);
+    }
+
     public List<Category> getCompensationAndBenefits(List<Appropriation> appropriations) {
         return dataManager.load(Category.class)
                 .query("SELECT cat FROM fis_Category cat" +
@@ -69,6 +80,21 @@ public class CategoryService {
                         " AND app in :appropriations")
                 .parameter("comp_benefits", getCompensationAndBenefits())
                 .parameter("appropriations", appropriations)
+                .list();
+    }
+
+    /**
+     * for reconciliation, exclude categories 90 and 91 which FJC has used for fund transfers
+     *
+     * @param appropriation
+     * @return List of Category entities
+     */
+    public List<Category> getFundTransferCategories(Appropriation appropriation) {
+        return dataManager.load(Category.class)
+                .query("SELECT e FROM fis_Category e"
+                        + " WHERE e.appropriation=:appropriation"
+                        + " AND e.masterObjectClass IN ('90','91')")
+                .parameter("appropriation", appropriation)
                 .list();
     }
 
