@@ -1,0 +1,180 @@
+package gov.fjc.fis.entity;
+
+import io.jmix.core.DeletePolicy;
+import io.jmix.core.entity.annotation.OnDeleteInverse;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+
+import static java.util.Objects.requireNonNullElse;
+
+@JmixEntity
+@Table(name = "FIS_DIVISION_ALLOCATION_AUDIT", indexes = {
+        @Index(name = "IDX_FIS_DIVISION_ALLOCATION_AUDIT_DIVISION", columnList = "DIVISION_ID"),
+        @Index(name = "IDX_FIS_DIVISION_ALLOCATION_AUDIT_CATEGORY", columnList = "CATEGORY_ID")
+})
+@Entity(name = "fis_DivisionAllocationAudit")
+public class DivisionAllocationAudit {
+    @Column(name = "ID", nullable = false)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @OnDeleteInverse(DeletePolicy.CASCADE)
+    @JoinColumn(name = "DIVISION_ID", nullable = false)
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private Division division;
+
+    @OnDeleteInverse(DeletePolicy.DENY)
+    @JoinColumn(name = "CATEGORY_ID", nullable = false)
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private Category category;
+
+    @Column(name = "OLD_ONE_YEAR_AMOUNT", precision = 19, scale = 2)
+    private BigDecimal oldOneYearAmount;
+    @Column(name = "NEW_ONE_YEAR_AMOUNT", precision = 19, scale = 2)
+    private BigDecimal newOneYearAmount;
+    @Column(name = "OLD_TWO_YEAR_AMOUNT", precision = 19, scale = 2)
+    private BigDecimal oldTwoYearAmount;
+    @Column(name = "NEW_TWO_YEAR_AMOUNT", precision = 19, scale = 2)
+    private BigDecimal newTwoYearAmount;
+
+    @Column(name = "CHANGE_TYPE", nullable = false, length = 1)
+    @NotNull
+    private String changeType;
+    @Column(name = "VERSION", nullable = false)
+    @Version
+    private Integer version;
+    @CreatedBy
+    @Column(name = "CREATED_BY")
+    private String createdBy;
+    @CreatedDate
+    @Column(name = "CREATED_DATE")
+    private OffsetDateTime createdDate;
+    @Column(name = "ATTRIBUTE_CHANGES")
+    private String attributeChanges;
+
+    public String getAttributeChanges() {
+        return attributeChanges;
+    }
+
+    public void setAttributeChanges(String attributeChanges) {
+        this.attributeChanges = attributeChanges;
+    }
+
+    public AuditChangeType getChangeType() {
+        return changeType == null ? null : AuditChangeType.fromId(changeType);
+    }
+
+    public void setChangeType(AuditChangeType changeType) {
+        this.changeType = changeType == null ? null : changeType.getId();
+    }
+
+    @JmixProperty
+    public BigDecimal getTwoYearChangeAmount() {
+        return requireNonNullElse(newTwoYearAmount, BigDecimal.ZERO).subtract(requireNonNullElse(oldTwoYearAmount, BigDecimal.ZERO));
+    }
+
+    @JmixProperty
+    public BigDecimal getOneYearChangeAmount() {
+        return requireNonNullElse(newOneYearAmount, BigDecimal.ZERO).subtract(requireNonNullElse(oldOneYearAmount, BigDecimal.ZERO));
+    }
+
+    @JmixProperty
+    public String getChangeTypeString() {
+        return null;
+    }
+
+    @JmixProperty
+    public String getCreatedByString() {
+        return null;
+    }
+
+    public BigDecimal getNewTwoYearAmount() {
+        return newTwoYearAmount;
+    }
+
+    public void setNewTwoYearAmount(BigDecimal newTwoYearAmount) {
+        this.newTwoYearAmount = newTwoYearAmount;
+    }
+
+    public BigDecimal getOldTwoYearAmount() {
+        return oldTwoYearAmount;
+    }
+
+    public void setOldTwoYearAmount(BigDecimal oldTwoYearAmount) {
+        this.oldTwoYearAmount = oldTwoYearAmount;
+    }
+
+    public BigDecimal getNewOneYearAmount() {
+        return newOneYearAmount;
+    }
+
+    public void setNewOneYearAmount(BigDecimal newOneYearAmount) {
+        this.newOneYearAmount = newOneYearAmount;
+    }
+
+    public BigDecimal getOldOneYearAmount() {
+        return oldOneYearAmount;
+    }
+
+    public void setOldOneYearAmount(BigDecimal oldOneYearAmount) {
+        this.oldOneYearAmount = oldOneYearAmount;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Division getDivision() {
+        return division;
+    }
+
+    public void setDivision(Division division) {
+        this.division = division;
+    }
+
+    public OffsetDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(OffsetDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+}
