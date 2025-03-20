@@ -20,7 +20,7 @@ import static java.util.Objects.requireNonNullElse;
 
 @JmixEntity
 @Table(name = "FIS_APPROPRIATION", uniqueConstraints = {
-        @UniqueConstraint(name = "IDX_FIS_APPROPRIATION_UNQ", columnNames = {"BFY"})
+        @UniqueConstraint(name = "IDX_FIS_APPROPRIATION_UNQ", columnNames = {"BUDGET_FISCAL_YEAR"})
 })
 @Entity(name = "fis_Appropriation")
 public class Appropriation {
@@ -46,7 +46,7 @@ public class Appropriation {
 
     @Pattern(message = "The Budget Fiscal Year must contain four digits", regexp = "^(19|20)[0-9]{2}$")
     @InstanceName
-    @Column(name = "BFY", nullable = false, length = 4)
+    @Column(name = "BUDGET_FISCAL_YEAR", nullable = false, length = 4)
     @NotNull
     private String budgetFiscalYear;
 
