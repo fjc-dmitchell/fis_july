@@ -55,6 +55,10 @@ public class Division {
     @OneToMany(mappedBy = "division")
     private List<DivisionAllocation> allocations;
 
+    @OrderBy("createdDate DESC")
+    @Composition
+    @OneToMany(mappedBy = "division")
+    private List<DivisionAllocationAudit> auditAllocations;
     @Composition
     @OrderBy("branchCode")
     @OneToMany(mappedBy = "division")
@@ -108,6 +112,14 @@ public class Division {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    public List<DivisionAllocationAudit> getAuditAllocations() {
+        return auditAllocations;
+    }
+
+    public void setAuditAllocations(List<DivisionAllocationAudit> auditAllocations) {
+        this.auditAllocations = auditAllocations;
+    }
 
     public Integer getSortCode() {
         return sortCode;

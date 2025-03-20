@@ -22,6 +22,7 @@
         <formLayout id="form" dataContainer="fundDc">
             <textField id="fundCodeField" property="fundCode"/>
             <textField id="titleField" property="title"/>
+            <textArea id="memoField" property="memo" minHeight="5em"/>
         </formLayout>
         <p id="createdByString"/>
         <hbox id="detailActions">

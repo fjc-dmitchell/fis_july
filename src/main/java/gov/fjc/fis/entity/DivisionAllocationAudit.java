@@ -1,7 +1,9 @@
 package gov.fjc.fis.entity;
 
+import gov.fjc.fis.FisUtilities;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import jakarta.persistence.*;
@@ -10,8 +12,11 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
+import static gov.fjc.fis.FisUtilities.convertOffsetDateTimeToLocalDateTime;
+import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
 import static java.util.Objects.requireNonNullElse;
 
 @JmixEntity
@@ -59,15 +64,21 @@ public class DivisionAllocationAudit {
     @CreatedDate
     @Column(name = "CREATED_DATE")
     private OffsetDateTime createdDate;
-    @Column(name = "ATTRIBUTE_CHANGES")
-    private String attributeChanges;
+    @Column(name = "UPDATED_ATTRIBUTES")
+    private String updatedAttributes;
 
-    public String getAttributeChanges() {
-        return attributeChanges;
+    public String getUpdatedAttributes() {
+        return updatedAttributes;
     }
 
-    public void setAttributeChanges(String attributeChanges) {
-        this.attributeChanges = attributeChanges;
+    public void setUpdatedAttributes(String updatedAttributes) {
+        this.updatedAttributes = updatedAttributes;
+    }
+
+    @DependsOnProperties({"createdDate"})
+    @JmixProperty
+    public LocalDateTime getAuditDate() {
+        return convertOffsetDateTimeToLocalDateTime(createdDate);
     }
 
     public AuditChangeType getChangeType() {
@@ -88,14 +99,10 @@ public class DivisionAllocationAudit {
         return requireNonNullElse(newOneYearAmount, BigDecimal.ZERO).subtract(requireNonNullElse(oldOneYearAmount, BigDecimal.ZERO));
     }
 
-    @JmixProperty
-    public String getChangeTypeString() {
-        return null;
-    }
-
+    @DependsOnProperties({"createdBy", "createdDate"})
     @JmixProperty
     public String getCreatedByString() {
-        return null;
+        return FisUtilities.getCreatedModifiedString(createdBy, createdDate);
     }
 
     public BigDecimal getNewTwoYearAmount() {

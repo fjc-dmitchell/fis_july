@@ -1,26 +1,24 @@
 package gov.fjc.fis.view.division;
 
-import gov.fjc.fis.entity.Division;
-
-import gov.fjc.fis.view.main.MainView;
-
 import com.vaadin.flow.router.Route;
+import gov.fjc.fis.entity.Division;
+import gov.fjc.fis.view.main.MainView;
 import gov.fjc.fis.view.search.CustomSearchFragment;
 import io.jmix.flowui.view.*;
 
+
 @Route(value = "divisions", layout = MainView.class)
-@ViewController("fis_Division.list")
-@ViewDescriptor("division-list-view.xml")
+@ViewController(id = "fis_Division.list")
+@ViewDescriptor(path = "division-list-view.xml")
 @LookupComponent("divisionsDataGrid")
 @DialogMode(width = "64em")
 public class DivisionListView extends StandardListView<Division> {
-
     @ViewComponent
     private CustomSearchFragment searchFragment;
 
     private boolean fjcFoundation = false;
 
-    protected void setFjcFoundation() {
+    public void setFjcFoundation() {
         this.fjcFoundation = true;
     }
 

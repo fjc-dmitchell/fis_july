@@ -95,6 +95,7 @@ public class DivisionService {
      */
     public List<Division> getDivisionSearchList(List<Appropriation> fiscalYears, boolean foundation) {
         fiscalYears = fiscalYears.stream().sorted(Comparator.comparing(Appropriation::getBudgetFiscalYear).reversed()).toList();
+        var foundationFund = fundService.getFoundationFund();
         List<Division> divisionList = new ArrayList<>();
         Set<String> divisionCodes = null;
 
@@ -109,13 +110,24 @@ public class DivisionService {
                             .parameter("year", year)
                             .parameter("divisionCodes", divisionCodes)
                             .parameter("foundation", foundation)
-                            .parameter("foundationFund", fundService.getFoundationFund())
+                            .parameter("foundationFund", foundationFund)
                             .list();
             divisionList.addAll(divisionsInBfyList);
             divisionCodes = divisionList.stream().map(Division::getDivisionCode).collect(Collectors.toSet());
         }
 
         return divisionList.stream().sorted(Comparator.comparing(Division::getDivisionCode)).toList();
+    }
+
+    public Division getDivisionByCode(List<Appropriation> appropriations, String divisionCode) {
+        return dataManager.load(Division.class)
+                .query("SELECT d FROM fis_Division d"
+                        + " WHERE d.divisionCode = :divisionCode"
+                        + " AND d.appropriation.budgetFiscalYear = (SELECT MAX(e.budgetFiscalYear)"
+                        + " FROM fis_Appropriation e WHERE e IN :appropriations)")
+                .parameter("divisionCode", divisionCode)
+                .parameter("appropriations", appropriations)
+                .optional().orElse(null);
     }
 
     public List<Division> getDivisions(Appropriation appropriation, Fund fund) {

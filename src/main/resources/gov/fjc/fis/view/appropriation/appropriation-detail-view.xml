@@ -68,7 +68,7 @@
                     </tab>
                     <tab id="adjustmentsTab" label="Appropriation Adjustments">
                         <vbox>
-                            <h5 text="Adjustments to the appropriation (e.g., recision, sequestration, reimbursement)"/>
+                            <h5 text="Adjustments to the appropriation (e.g., rescission, sequestration, reimbursement)"/>
                             <hbox id="buttonsPanel" classNames="buttons-panel">
                                 <button action="adjustmentsDataGrid.create"/>
                                 <button action="adjustmentsDataGrid.edit"/>

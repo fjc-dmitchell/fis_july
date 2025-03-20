@@ -61,6 +61,41 @@ public class DivisionDto {
 
     private BigDecimal currentTwoYearReimbursed = BigDecimal.ZERO;
 
+    ;;
+
+    private BigDecimal oneYearBalance = BigDecimal.ZERO;
+
+    private BigDecimal twoYearBalance = BigDecimal.ZERO;
+
+
+    /**
+     * isTwoYearDivision determines whether any two year amounts are populated for the DivisionDto
+     *
+     * @return true if the DivisionDto if any two year amount is non-zero
+     */
+    public Boolean isTwoYearDivision() {
+        return (twoYearAllocations.compareTo(BigDecimal.ZERO) != 0)
+                || (twoYearProjections.compareTo(BigDecimal.ZERO) != 0)
+                || (twoYearObligations.compareTo(BigDecimal.ZERO) != 0)
+                || (twoYearReimbursements.compareTo(BigDecimal.ZERO) != 0);
+    }
+
+    public BigDecimal getTwoYearBalance() {
+        return twoYearBalance;
+    }
+
+    public void setTwoYearBalance(BigDecimal twoYearBalance) {
+        this.twoYearBalance = twoYearBalance;
+    }
+
+    public BigDecimal getOneYearBalance() {
+        return oneYearBalance;
+    }
+
+    public void setOneYearBalance(BigDecimal oneYearBalance) {
+        this.oneYearBalance = oneYearBalance;
+    }
+
     public String getFundCode() {
         return fundCode;
     }
@@ -336,6 +371,4 @@ public class DivisionDto {
     public void setId(Integer id) {
         this.id = id;
     }
-
-
 }

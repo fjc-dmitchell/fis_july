@@ -1,6 +1,7 @@
 package gov.fjc.fis.service;
 
 import gov.fjc.fis.entity.*;
+import gov.fjc.fis.entity.dto.DivisionDto;
 import io.jmix.core.DataManager;
 import io.jmix.core.entity.KeyValueEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +11,15 @@ import java.util.List;
 
 @Component("fis_DivisionAllocationService")
 public class DivisionAllocationService {
+    private final DivisionService divisionService;
+    private final FundService fundService;
     @Autowired
     private DataManager dataManager;
+
+    public DivisionAllocationService(DivisionService divisionService, FundService fundService) {
+        this.divisionService = divisionService;
+        this.fundService = fundService;
+    }
 
     /**
      * use when setting allocations during division edit?
@@ -60,6 +68,19 @@ public class DivisionAllocationService {
                 .properties("moc", "divcode", "oneyearamount", "twoyearamount")
                 .parameter("appropriation", appropriation)
                 .parameter("funds", funds)
+                .list();
+    }
+
+    public List<KeyValueEntity> sumDivisionAllocations(List<Division> divisions) {
+        return dataManager.loadValues(
+                        "SELECT dv, dv.title, COALESCE(SUM(alloc.oneYearAmount),0), COALESCE(SUM(alloc.twoYearAmount),0)"
+                                + " FROM fis_Division dv"
+                                + " LEFT JOIN fis_DivisionAllocation alloc ON dv=alloc.division"
+                                + " WHERE dv IN :divisions"
+                                + " GROUP BY dv.id, dv.divisionCode, dv.title"
+                                + " ORDER BY dv.divisionCode")
+                .parameter("divisions", divisions)
+                .properties("division", "title", "oneYearAllocations", "twoYearAllocations")
                 .list();
     }
 }

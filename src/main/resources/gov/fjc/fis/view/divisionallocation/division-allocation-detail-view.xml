@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://divisionAllocationDetailView.title"
-      focusComponent="oneYearAmountField">
+      focusComponent="categoryField">
     <data>
         <instance id="divisionAllocationDc"
                   class="gov.fjc.fis.entity.DivisionAllocation">
@@ -9,7 +9,7 @@
                 <property name="totalAmount"/>
                 <property name="createdByString"/>
             </fetchPlan>
-            <loader/>
+            <loader id="divisionAllocationDl"/>
         </instance>
         <collection id="categoriesDc" class="gov.fjc.fis.entity.Category">
             <loader id="categoriesDl" readOnly="true"/>
@@ -23,27 +23,28 @@
         <action id="closeAction" type="detail_close"/>
     </actions>
     <layout>
-        <formLayout id="form" dataContainer="divisionAllocationDc" labelsPosition="ASIDE" colspan="1" maxWidth="30em">
+        <formLayout id="form" dataContainer="divisionAllocationDc" labelsPosition="ASIDE" width="40em">
             <responsiveSteps>
                 <responsiveStep minWidth="0" columns="1"/>
             </responsiveSteps>
             <formItem>
-                <entityComboBox id="categoryField" property="category" itemsContainer="categoriesDc"/>
+                <entityComboBox id="categoryField" property="category" itemsContainer="categoriesDc" maxWidth="20em"/>
             </formItem>
             <formItem>
-                <textField id="oneYearAmountField" property="oneYearAmount" required="true" maxWidth="15em"
-                />
+                <textField id="oneYearAmountField" property="oneYearAmount" maxWidth="10em" datatype="decimal"/>
             </formItem>
             <formItem>
-                <textField id="twoYearAmountField" property="twoYearAmount" required="true" maxWidth="10em"/>
+                <textField id="twoYearAmountField" property="twoYearAmount" maxWidth="10em" datatype="decimal"/>
             </formItem>
             <formItem>
-                <textField id="totalAmountField" property="totalAmount" readOnly="true" maxWidth="10em" tabIndex="-1"/>
+                <textField id="totalAmountField" property="totalAmount"
+                           maxWidth="10em" readOnly="true"/>
             </formItem>
         </formLayout>
+        <p id="createdByString"/>
         <hbox id="detailActions">
-            <button id="saveAndCloseBtn" action="saveAction"/>
-            <button id="closeBtn" action="closeAction"/>
+            <button id="saveAndCloseButton" action="saveAction"/>
+            <button id="closeButton" action="closeAction"/>
         </hbox>
     </layout>
 </view>

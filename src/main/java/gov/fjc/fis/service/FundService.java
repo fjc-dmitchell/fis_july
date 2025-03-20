@@ -1,11 +1,13 @@
 package gov.fjc.fis.service;
 
+import gov.fjc.fis.entity.Division;
 import gov.fjc.fis.entity.Fund;
 import io.jmix.core.DataManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Component("fis_FundService")
@@ -13,6 +15,8 @@ public class FundService {
 
     @Autowired
     private DataManager dataManager;
+//    @Autowired
+//    private DivisionService divisionService;
 
     // this is the only place in FIS that references fund codes
     private final String oneYearFund = "092800";
@@ -41,6 +45,15 @@ public class FundService {
 
     public Fund getJitfFund() {
         return getFundByCode(jitfFund);
+    }
+
+    public List<Fund> getAppropriationFunds() {
+        var funds = Arrays.asList(oneYearFund, twoYearFund);
+        return dataManager.load(Fund.class)
+                .query("SELECT f FROM fis_Fund f"
+                        + " WHERE f.fundCode IN :funds")
+                .parameter("funds", funds)
+                .list();
     }
 
     public List<Fund> getFundSearchList(boolean foundation) {
@@ -73,6 +86,23 @@ public class FundService {
                 .parameter("twoYearFund", twoYearFund)
                 .list();
     }
+
+    /**
+     * used by Activity and search to restrict funds for a given Division
+     *
+     * @param division a persisted Division entity
+     * @return List of valid Funds for division
+     */
+//    public List<Fund> getDivisionFundList(Division division) {
+//        List<Fund> funds = new ArrayList<>();
+//        funds.add(division.getFund());
+//        var EducationDivision = divisionService.getEducationDivision(division.getAppropriation());
+//        if (division.equals(EducationDivision)) {
+//            funds.add(getAppropriationTwoYearFund());
+//        }
+//        return funds;
+//    }
+//
 
     /**
      * Used in reporting, turn single fund into collection of funds. Purpose is to allow

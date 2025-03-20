@@ -233,6 +233,21 @@ public class AppropriationService {
         return day;
     }
 
+    /**
+     * Determine if Appropriation is for fiscal year prior to 2014. Used to determine
+     * how allocations should be performed
+     *
+     * @param appropriation Appropriation to check status of
+     * @return Boolean
+     */
+    public Boolean isAppropriationBefore2014(Appropriation appropriation) {
+        var oldAppropriations = dataManager.load(Appropriation.class)
+                .query("SELECT a FROM fis_Appropriation a"
+                        + " WHERE a.budgetFiscalYear < '2014'")
+                .list();
+        return oldAppropriations.contains(appropriation);
+    }
+
 //    public BigDecimal getSpendingAuthority(Appropriation appropriation, AppropriationType appropriationType) {
 //        List<KeyValueEntity> keyValueEntity = dataManager.loadValues(
 //                        "SELECT a.oneYearAmount, a.twoYearAmount," +

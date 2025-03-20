@@ -10,6 +10,7 @@
         </collection>
     </data>
     <facets>
+        <settings auto="true"/>
         <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
             <pagination component="pagination"/>
@@ -25,6 +26,7 @@
             <button id="editBtn" action="fundsDataGrid.edit"/>
             <button id="excelExportBtn" action="fundsDataGrid.excelExport"/>
             <button id="removeBtn" action="fundsDataGrid.remove"/>
+            <gridColumnVisibility dataGrid="fundsDataGrid" icon="COG"/>
             <simplePagination id="pagination" dataLoader="fundsDl"/>
         </hbox>
         <dataGrid id="fundsDataGrid"

@@ -36,11 +36,6 @@ public class DivisionAllocationEventListener {
             audit.setDivision(allocation.getDivision());
             audit.setCategory(allocation.getCategory());
 
-            var changes = event.getChanges().getAttributes().stream()
-                    .filter(change -> change.equals("oneYearAmount") || change.equals("twoYearAmount"))
-                    .toList().toString();
-            audit.setAttributeChanges(changes);
-
             if (event.getChanges().isChanged("oneYearAmount")) {
                 audit.setOldOneYearAmount(event.getChanges().getOldValue("oneYearAmount"));
                 audit.setNewOneYearAmount(allocation.getOneYearAmount());
@@ -54,6 +49,10 @@ public class DivisionAllocationEventListener {
                 audit.setChangeType(AuditChangeType.CREATED);
             } else {
                 audit.setChangeType(AuditChangeType.UPDATED);
+                var changes = event.getChanges().getAttributes().stream()
+                        .filter(change -> change.equals("oneYearAmount") || change.equals("twoYearAmount"))
+                        .toList().toString();
+                audit.setUpdatedAttributes(changes);
             }
         }
         dataManager.save(audit);

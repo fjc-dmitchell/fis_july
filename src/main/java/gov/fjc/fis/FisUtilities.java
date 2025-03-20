@@ -8,6 +8,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -21,6 +23,20 @@ public final class FisUtilities {
 
     private FisUtilities() {
         // don't allow this class to be instantiated
+    }
+
+    public static String getCreatedModifiedString(String createdBy, OffsetDateTime createdDate) {
+        String createdByStr = "";
+        DateTimeFormatter f = DateTimeFormatter.ofPattern("M/d/yyyy");
+
+        if (createdDate != null) {
+            createdByStr += "Created on " + f.format(createdDate);
+            if (createdBy != null) {
+                createdByStr += " by " + createdBy;
+            }
+            createdByStr += ". ";
+        }
+        return createdByStr;
     }
 
     public static String getCreatedModifiedString(String createdBy, OffsetDateTime createdDate,
@@ -182,6 +198,11 @@ public final class FisUtilities {
         calendar.add(Calendar.DATE, -days);
 
         return calendar.getTime();
+    }
+
+    public static LocalDateTime convertOffsetDateTimeToLocalDateTime(OffsetDateTime offsetDateTime) {
+        ZonedDateTime zoned = offsetDateTime.atZoneSameInstant(ZoneId.of("America/New_York"));
+        return zoned.toLocalDateTime();
     }
 
     public static int getNumberOfDaysFromToday(Date date) {

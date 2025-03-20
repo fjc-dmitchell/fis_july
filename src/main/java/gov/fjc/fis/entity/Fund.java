@@ -39,6 +39,9 @@ public class Fund {
     @NotNull
     private String title;
 
+    @Column(name = "MEMO")
+    @Lob
+    private String memo;
     @Column(name = "VERSION", nullable = false, columnDefinition = "INT DEFAULT 1")
     @Version
     private Integer version;
@@ -58,6 +61,14 @@ public class Fund {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
 
     @DependsOnProperties({"title", "fundCode"})
     @JmixProperty
