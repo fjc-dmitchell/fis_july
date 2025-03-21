@@ -1,6 +1,7 @@
 package gov.fjc.fis.entity;
 
 import io.jmix.core.DeletePolicy;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.annotation.*;
 import jakarta.persistence.*;
@@ -39,13 +40,12 @@ public class Group {
     @NotNull
     private String groupCode;
 
-    @InstanceName
     @Column(name = "TITLE", nullable = false)
     @NotNull
     private String title;
 
-    @Column(name = "SORT_CODE", nullable = false)
     @NotNull
+    @Column(name = "SORT_CODE", nullable = false)
     private Integer sortCode = 0;
 
     @Composition
@@ -177,5 +177,13 @@ public class Group {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @InstanceName
+    @DependsOnProperties({"division", "groupCode"})
+    public String getInstanceName(MetadataTools metadataTools) {
+        return String.format("%s %s",
+                metadataTools.format(division),
+                metadataTools.format(groupCode));
     }
 }
