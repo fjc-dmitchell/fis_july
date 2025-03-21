@@ -25,6 +25,8 @@ import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
         @Index(name = "IDX_FIS_ACTIVITY_DIVISION_FUND", columnList = "DIVISION_ID, FUND_ID"),
         @Index(name = "IDX_FIS_ACTIVITY_DIVISION_BRANCH", columnList = "DIVISION_ID, BRANCH_ID"),
         @Index(name = "IDX_FIS_ACTIVITY_DIVISION_GROUP", columnList = "DIVISION_ID, GROUP_ID"),
+        @Index(name = "IDX_FIS_ACTIVITY_BRANCH", columnList = "BRANCH_ID"),
+        @Index(name = "IDX_FIS_ACTIVITY_GROUP", columnList = "GROUP_ID"),
         @Index(name = "IDX_FIS_ACTIVITY_DIVISION_FUND_ENDDATE", columnList = "DIVISION_ID, FUND_ID, END_DATE")
 }, uniqueConstraints = {
         @UniqueConstraint(name = "IDX_FIS_ACTIVITY_UNQ", columnNames = {"DIVISION_ID", "ACTIVITY_NUMBER"})
@@ -122,6 +124,11 @@ public class Activity {
     @OneToMany(mappedBy = "activity")
     private List<ActivityProjection> projections;
 
+    @OrderBy("createdDate DESC")
+    @Composition
+    @OneToMany(mappedBy = "activity")
+    private List<ActivityProjectionAudit> auditProjections;
+
     @Composition
     @OneToMany(mappedBy = "activity")
     private List<ActivityReimbursement> reimbursements;
@@ -162,6 +169,20 @@ public class Activity {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    @DependsOnProperties({"activityNumber"})
+    @JmixProperty
+    public String getGenericActivityNumber() {
+        return activityNumber.length() < 2 ? activityNumber : activityNumber.substring(0, 2).concat("%");
+    }
+
+    public List<ActivityProjectionAudit> getAuditProjections() {
+        return auditProjections;
+    }
+
+    public void setAuditProjections(List<ActivityProjectionAudit> auditProjections) {
+        this.auditProjections = auditProjections;
+    }
 
     public void setInitialProjection(BigDecimal initialProjection) {
         this.initialProjection = initialProjection;
