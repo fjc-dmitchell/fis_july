@@ -22,10 +22,10 @@ public class ActivityFragment extends Fragment<VerticalLayout> {
     private CollectionLoader<Activity> activitiesDl;
     @Autowired
     private ActivityService activityService;
-    private Object entity;
+    private Object hostEntity;
 
     public void setEntity(Object entity) {
-        this.entity = entity;
+        this.hostEntity = entity;
     }
 
     @Subscribe(target = Target.HOST_CONTROLLER)
@@ -36,9 +36,9 @@ public class ActivityFragment extends Fragment<VerticalLayout> {
     @Install(to = "activitiesDl", target = Target.DATA_LOADER)
     protected List<Activity> activitiesDlLoadDelegate(final LoadContext<Activity> loadContext) {
         List<Activity> activities = new ArrayList<>();
-        switch (entity.getClass().getSimpleName()) {
-            case "Group" -> activities = activityService.getActivities((Group) entity);
-            case "Branch" -> activities = activityService.getActivities((Branch) entity);
+        switch (hostEntity.getClass().getSimpleName()) {
+            case "Group" -> activities = activityService.getActivities((Group) hostEntity);
+            case "Branch" -> activities = activityService.getActivities((Branch) hostEntity);
         }
         return activities;
     }
