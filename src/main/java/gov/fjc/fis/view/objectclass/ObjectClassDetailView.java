@@ -1,15 +1,97 @@
 package gov.fjc.fis.view.objectclass;
 
+import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import gov.fjc.fis.entity.Appropriation;
+import gov.fjc.fis.entity.Category;
 import gov.fjc.fis.entity.ObjectClass;
 
+import gov.fjc.fis.service.AppropriationService;
+import gov.fjc.fis.service.CategoryService;
+import gov.fjc.fis.view.activityprojectionfragment.ActivityProjectionFragment;
 import gov.fjc.fis.view.main.MainView;
 
 import com.vaadin.flow.router.Route;
+import io.jmix.core.EntityStates;
+import io.jmix.core.LoadContext;
+import io.jmix.core.session.SessionData;
+import io.jmix.flowui.Fragments;
+import io.jmix.flowui.component.combobox.EntityComboBox;
+import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 @Route(value = "objectClasses/:id", layout = MainView.class)
 @ViewController("fis_ObjectClass.detail")
 @ViewDescriptor("object-class-detail-view.xml")
 @EditedEntityContainer("objectClassDc")
 public class ObjectClassDetailView extends StandardDetailView<ObjectClass> {
+    @Autowired
+    private SessionData sessionData;
+    @Autowired
+    private EntityStates entityStates;
+    @Autowired
+    private ReadOnlyViewsSupport readOnlyViewsSupport;
+
+    @Autowired
+    private AppropriationService appropriationService;
+    @Autowired
+    private CategoryService categoryService;
+    @Autowired
+    private Fragments fragments;
+
+    @ViewComponent
+    private CollectionLoader<Category> categoriesDl;
+    @ViewComponent
+    private TypedTextField<Object> appropriationField;
+    @ViewComponent
+    private EntityComboBox<Category> categoryField;
+    @ViewComponent
+    private TypedTextField<Object> budgetObjectClassField;
+    @ViewComponent
+    private VerticalLayout tabBox;
+    @ViewComponent
+    private VerticalLayout projectionsBox;
+    @ViewComponent
+    private Paragraph createdByString;
+
+    private Appropriation appropriation;
+
+    @Subscribe
+    protected void onBeforeShow(final BeforeShowEvent event) {
+        var objectClass = getEditedEntity();
+
+        if (entityStates.isNew(objectClass)) {
+            appropriation = appropriationService.getBfyEntryAppropriation(sessionData);
+            categoriesDl.load();
+            categoryField.focus();
+        } else {
+            appropriation = objectClass.getCategory().getAppropriation();
+            if ((!appropriation.getStatus())) {
+                readOnlyViewsSupport.setViewReadOnly(this, true);
+            } else {
+                categoryField.setReadOnly(true);
+                budgetObjectClassField.setReadOnly(true);
+            }
+            ActivityProjectionFragment fragment = fragments.create(this, ActivityProjectionFragment.class);
+            fragment.setEntity(objectClass);
+            projectionsBox.add(fragment);
+            tabBox.setVisible(true);
+        }
+        appropriationField.setValue(appropriation.getBudgetFiscalYear());
+        createdByString.setText(objectClass.getCreatedByString());
+    }
+
+    @Install(to = "categoriesDl", target = Target.DATA_LOADER)
+    protected List<Category> categoriesDlLoadDelegate(final LoadContext<Category> loadContext) {
+        return categoryService.getCategoriesForBfy(appropriation);
+    }
+
+    @Install(to = "categoryField", subject = "itemLabelGenerator")
+    protected Object categoryFieldItemLabelGenerator(final Category category) {
+        return category.getTitleAndCode();
+    }
 }
