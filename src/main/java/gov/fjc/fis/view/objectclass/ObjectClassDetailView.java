@@ -1,6 +1,8 @@
 package gov.fjc.fis.view.objectclass;
 
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.entity.Category;
@@ -16,6 +18,7 @@ import io.jmix.core.EntityStates;
 import io.jmix.core.LoadContext;
 import io.jmix.core.session.SessionData;
 import io.jmix.flowui.Fragments;
+import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.model.CollectionLoader;
@@ -35,6 +38,8 @@ public class ObjectClassDetailView extends StandardDetailView<ObjectClass> {
     private EntityStates entityStates;
     @Autowired
     private ReadOnlyViewsSupport readOnlyViewsSupport;
+    @Autowired
+    private Notifications notifications;
 
     @Autowired
     private AppropriationService appropriationService;
@@ -93,5 +98,35 @@ public class ObjectClassDetailView extends StandardDetailView<ObjectClass> {
     @Install(to = "categoryField", subject = "itemLabelGenerator")
     protected Object categoryFieldItemLabelGenerator(final Category category) {
         return category.getTitleAndCode();
+    }
+
+    @Subscribe("categoryField")
+    protected void onCategoryFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Category>, Category> event) {
+        checkObjectClass();
+    }
+
+    @Subscribe("budgetObjectClassField")
+    protected void onBudgetObjectClassFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<TypedTextField<?>, ?> event) {
+        checkObjectClass();
+    }
+
+    private void checkObjectClass() {
+        if (categoryField.getValue() != null && budgetObjectClassField.getValue() != null) {
+            var moc = categoryField.getValue().getMasterObjectClass();
+            var boc = budgetObjectClassField.getValue();
+            if (boc.isEmpty()) {
+                budgetObjectClassField.setValue(moc);
+                budgetObjectClassField.focus();
+            }
+            if (boc.length() == 4) {
+                if (!boc.substring(0, 2).equals(moc)) {
+                    notifications.create("Budget Object Class must start with ".concat(moc))
+                            .withThemeVariant(NotificationVariant.LUMO_ERROR)
+                            .show();
+                    budgetObjectClassField.setValue(moc);
+                    budgetObjectClassField.focus();
+                }
+            }
+        }
     }
 }
