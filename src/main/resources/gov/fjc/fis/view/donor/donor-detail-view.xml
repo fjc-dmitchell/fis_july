@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://donorDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="donorDc"
+                  class="gov.fjc.fis.entity.Donor">
+            <fetchPlan extends="_base"/>
+            <loader id="donorDl"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="donorDc">
+            <textField id="organizationField" property="organization"/>
+            <textField id="address1Field" property="address1"/>
+            <textField id="address2Field" property="address2"/>
+            <textField id="cityField" property="city"/>
+            <textField id="stateField" property="state"/>
+            <textField id="zipcodeField" property="zipcode"/>
+            <textField id="contactField" property="contact"/>
+            <textField id="phoneField" property="phone"/>
+            <textField id="faxField" property="fax"/>
+            <textField id="emailField" property="email"/>
+            <textArea id="memoField" height="9.5em" property="memo"/>
+        </formLayout>
+        <hbox id="detailActions">
+            <button id="saveAndCloseBtn" action="saveAction"/>
+            <button id="closeBtn" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>
