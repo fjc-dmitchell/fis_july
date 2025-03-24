@@ -1,5 +1,6 @@
 package gov.fjc.fis.entity;
 
+import gov.fjc.fis.FisUtilities;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
@@ -11,9 +12,11 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static gov.fjc.fis.FisUtilities.convertOffsetDateTimeToLocalDateTime;
 import static java.util.Objects.requireNonNullElse;
 
 @JmixEntity
@@ -56,6 +59,17 @@ public class ActivityProjectionAudit {
     @Column(name = "CREATED_DATE")
     private OffsetDateTime createdDate;
 
+    @DependsOnProperties({"createdDate"})
+    @JmixProperty
+    public LocalDateTime getAuditDate() {
+        return convertOffsetDateTimeToLocalDateTime(createdDate);
+    }
+
+    @JmixProperty
+    public String getCreatedByString() {
+        return FisUtilities.getCreatedModifiedString(createdBy, createdDate);
+    }
+
     public void setChangeType(AuditChangeType changeType) {
         this.changeType = changeType == null ? null : changeType.getId();
     }
@@ -69,16 +83,6 @@ public class ActivityProjectionAudit {
     public String getCreatedDateString() {
         DateTimeFormatter f = DateTimeFormatter.ofPattern("M/d/yyyy HH:mm");
         return f.format(createdDate);
-    }
-
-    @JmixProperty
-    public String getChangeTypeString() {
-        return switch (changeType) {
-            case "I" -> "Insert";
-            case "U" -> "Update";
-            case "D" -> "Delete";
-            default -> null;
-        };
     }
 
     public Activity getActivity() {
