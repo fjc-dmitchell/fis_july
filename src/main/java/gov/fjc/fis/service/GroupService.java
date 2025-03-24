@@ -1,6 +1,7 @@
 package gov.fjc.fis.service;
 
 import gov.fjc.fis.entity.Appropriation;
+import gov.fjc.fis.entity.Branch;
 import gov.fjc.fis.entity.Division;
 import gov.fjc.fis.entity.Group;
 import io.jmix.core.DataManager;
@@ -18,7 +19,7 @@ public class GroupService {
     @Autowired
     private DataManager dataManager;
 
-    public List<Group> getGroupsForDivision(Division division) {
+    public List<Group> getGroups(Division division) {
         return dataManager.load(Group.class)
                 .query("SELECT e FROM fis_Group e"
                         + " WHERE e.division = :division"
@@ -47,5 +48,16 @@ public class GroupService {
         }
 
         return groupList.stream().sorted(Comparator.comparing(Group::getGroupCode)).toList();
+    }
+
+    public Group getGroupByCode(List<Appropriation> appropriations, String groupCode) {
+        return dataManager.load(Group.class)
+                .query("SELECT g FROM fis_Group g"
+                        + " WHERE g.groupCode = :groupCode"
+                        + " AND g.division.appropriation.budgetFiscalYear = (SELECT MAX(e.budgetFiscalYear)"
+                        + " FROM fis_Appropriation e WHERE e IN :appropriations)")
+                .parameter("groupCode", groupCode)
+                .parameter("appropriations", appropriations)
+                .optional().orElse(null);
     }
 }

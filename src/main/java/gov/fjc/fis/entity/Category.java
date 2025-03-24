@@ -6,6 +6,7 @@ import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,6 +17,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
+import static gov.fjc.fis.FisUtilities.toUpperNullAllowed;
 
 @JmixEntity
 @Table(name = "FIS_CATEGORY", indexes = {
@@ -36,7 +38,8 @@ public class Category {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Appropriation appropriation;
 
-    @Length(message = "The MOC should be 2 characters", min = 2, max = 2)
+    @Pattern(message = "MOC must contain 2 digits.", regexp = "^[0-9]{2}$")
+    @Length(message = "The MOC must contain 2 digits.", min = 2, max = 2)
     @Column(name = "MOC", nullable = false, length = 2)
     @NotNull
     private String masterObjectClass;
@@ -115,7 +118,7 @@ public class Category {
     }
 
     public void setMasterObjectClass(String masterObjectClass) {
-        this.masterObjectClass = masterObjectClass;
+        this.masterObjectClass = toUpperNullAllowed(masterObjectClass);
     }
 
     public Appropriation getAppropriation() {

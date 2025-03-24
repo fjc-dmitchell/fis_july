@@ -54,10 +54,10 @@ public class DivisionDetailView extends StandardDetailView<Division> {
     private TypedTextField<String> divisionCodeField;
     @ViewComponent
     private EntityComboBox<Fund> fundsComboBox;
-    @ViewComponent("branchesDataGrid.branchRemoveAction")
-    private RemoveAction<Branch> branchesDataGridBranchRemoveAction;
-    @ViewComponent("groupsDataGrid.groupRemoveAction")
-    private RemoveAction<Group> groupsDataGridGroupRemoveAction;
+//    @ViewComponent("branchesDataGrid.branchRemoveAction")
+//    private RemoveAction<Branch> branchesDataGridBranchRemoveAction;
+//    @ViewComponent("groupsDataGrid.groupRemoveAction")
+//    private RemoveAction<Group> groupsDataGridGroupRemoveAction;
     @ViewComponent
     private JmixButton updateDivisionAllocations;
     @ViewComponent
@@ -84,7 +84,8 @@ public class DivisionDetailView extends StandardDetailView<Division> {
         fundsDl.load();
 
         if (entityStates.isNew(division)) {
-            var appropriation = (Appropriation) sessionData.getAttribute("bfyEntry");
+            var appropriation = appropriationService.getBfyEntryAppropriation(sessionData);
+//            var appropriation = (Appropriation) sessionData.getAttribute("bfyEntry");
             division.setAppropriation(appropriation);
             appropriationField.setReadOnly(true);
             if (!fjcFoundation) {
@@ -111,23 +112,23 @@ public class DivisionDetailView extends StandardDetailView<Division> {
         return fundService.getFundSearchList(fjcFoundation);
     }
 
-    @Subscribe("branchesDataGrid")
-    protected void onBranchesDataGridSelection(final SelectionEvent<DataGrid<Branch>, Branch> event) {
-        if (!readOnly) {
-            var selectedBranch = event.getFirstSelectedItem();
-            selectedBranch.ifPresent(branch -> branchesDataGridBranchRemoveAction
-                    .setEnabled(branch.getNumberActivities().equals(0)));
-        }
-    }
+//    @Subscribe("branchesDataGrid")
+//    protected void onBranchesDataGridSelection(final SelectionEvent<DataGrid<Branch>, Branch> event) {
+//        if (!readOnly) {
+//            var selectedBranch = event.getFirstSelectedItem();
+//            selectedBranch.ifPresent(branch -> branchesDataGridBranchRemoveAction
+//                    .setEnabled(branch.getNumberActivities().equals(0)));
+//        }
+//    }
 
-    @Subscribe("groupsDataGrid")
-    protected void onGroupsDataGridSelection(final SelectionEvent<DataGrid<Group>, Group> event) {
-        if (!readOnly) {
-            var selectedGroup = event.getFirstSelectedItem();
-            selectedGroup.ifPresent(group -> groupsDataGridGroupRemoveAction
-                    .setEnabled(group.getNumberActivities().equals(0)));
-        }
-    }
+//    @Subscribe("groupsDataGrid")
+//    protected void onGroupsDataGridSelection(final SelectionEvent<DataGrid<Group>, Group> event) {
+//        if (!readOnly) {
+//            var selectedGroup = event.getFirstSelectedItem();
+//            selectedGroup.ifPresent(group -> groupsDataGridGroupRemoveAction
+//                    .setEnabled(group.getNumberActivities().equals(0)));
+//        }
+//    }
 
     @Subscribe(id = "allocationsDc", target = Target.DATA_CONTAINER)
     protected void onAllocationsDcCollectionChange(final CollectionContainer.CollectionChangeEvent<DivisionAllocation> event) {

@@ -35,8 +35,7 @@ public class UserMessage {
     @Column(name = "POST_DATE", nullable = false)
     private Date postDate = new Date();
 
-    @Column(name = "PUBLISHED", nullable = false)
-    @NotNull
+    @Column(name = "PUBLISHED")
     private Boolean published = false;
 
     @Column(name = "VERSION", nullable = false)

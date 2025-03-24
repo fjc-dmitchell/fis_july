@@ -1,17 +1,28 @@
 package gov.fjc.fis.view.branch;
 
 import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import gov.fjc.fis.entity.Appropriation;
+import gov.fjc.fis.entity.Division;
 import gov.fjc.fis.entity.Branch;
 
+import gov.fjc.fis.service.AppropriationService;
+import gov.fjc.fis.service.DivisionService;
 import gov.fjc.fis.view.activityfragment.ActivityFragment;
 import gov.fjc.fis.view.main.MainView;
 
 import com.vaadin.flow.router.Route;
-import gov.fjc.fis.view.obligationfragment.ObligationFragment;
+import io.jmix.core.EntityStates;
+import io.jmix.core.LoadContext;
+import io.jmix.core.session.SessionData;
 import io.jmix.flowui.Fragments;
+import io.jmix.flowui.component.combobox.EntityComboBox;
+import io.jmix.flowui.component.details.JmixDetails;
+import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 @Route(value = "branches/:id", layout = MainView.class)
 @ViewController("fis_Branch.detail")
@@ -19,26 +30,72 @@ import org.springframework.beans.factory.annotation.Autowired;
 @EditedEntityContainer("branchDc")
 public class BranchDetailView extends StandardDetailView<Branch> {
     @Autowired
+    private SessionData sessionData;
+    @Autowired
+    private EntityStates entityStates;
+    @Autowired
+    private ReadOnlyViewsSupport readOnlyViewsSupport;
+    @Autowired
+    private AppropriationService appropriationService;
+    @Autowired
+    private DivisionService divisionService;
+    @Autowired
     private Fragments fragments;
+
+    @ViewComponent
+    private CollectionLoader<Division> divisionsDl;
+    @ViewComponent
+    private TypedTextField<String> budgetFiscalYearField;
+    @ViewComponent
+    private EntityComboBox<Division> divisionsComboBox;
+    @ViewComponent
+    private TypedTextField<String> branchCodeField;
+    @ViewComponent
+    private JmixDetails activityDetails;
     @ViewComponent
     private Paragraph createdByString;
-    @ViewComponent
-    private HorizontalLayout activitiesFragment;
-    @ViewComponent
-    private HorizontalLayout obligationsFragment;
+
+    Appropriation appropriation;
+    boolean fjcFoundation;
+
+    public void setFoundation(boolean foundation) {
+        this.fjcFoundation = foundation;
+    }
 
     @Subscribe
     protected void onBeforeShow(final BeforeShowEvent event) {
-        var group = getEditedEntity();
-        createdByString.setText(group.getCreatedByString());
+        var branch = getEditedEntity();
+        if (entityStates.isNew(branch)) {
+            appropriation = appropriationService.getBfyEntryAppropriation(sessionData);
+            divisionsDl.load();
+            budgetFiscalYearField.setValue(appropriation.getBudgetFiscalYear());
+            divisionsComboBox.focus();
+        } else {
+            appropriation = branch.getDivision().getAppropriation();
+            budgetFiscalYearField.setValue(appropriation.getBudgetFiscalYear());
+            divisionsComboBox.setValue(branch.getDivision());
+            activityDetails.setVisible(true);
+            if (!appropriation.getStatus()) {
+                readOnlyViewsSupport.setViewReadOnly(this, true);
+            } else {
+                divisionsComboBox.setReadOnly(true);
+                branchCodeField.setReadOnly(true);
+            }
+        }
+        createdByString.setText(branch.getCreatedByString());
 
         ActivityFragment fragment = fragments.create(this, ActivityFragment.class);
-        fragment.setEntity(group);
-        activitiesFragment.add(fragment);
+        fragment.setEntity(branch);
+        activityDetails.add(fragment);
+    }
 
-        ObligationFragment obligationFragment= fragments.create(this, ObligationFragment.class);
-        obligationFragment.setEntity(group);
+    @Install(to = "divisionsDl", target = Target.DATA_LOADER)
+    protected List<Division> divisionsDlLoadDelegate(final LoadContext<Division> loadContext) {
+        return divisionService.getDivisions(appropriation, fjcFoundation);
+    }
 
-        obligationsFragment.add(obligationFragment);
+    @Install(to = "divisionsComboBox", subject = "itemLabelGenerator")
+    protected Object divisionsComboBoxItemLabelGenerator(final Division division) {
+        return division.getTitleAndCode();
     }
 }

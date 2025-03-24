@@ -114,10 +114,6 @@ public class ObjectClassDetailView extends StandardDetailView<ObjectClass> {
         if (categoryField.getValue() != null && budgetObjectClassField.getValue() != null) {
             var moc = categoryField.getValue().getMasterObjectClass();
             var boc = budgetObjectClassField.getValue();
-            if (boc.isEmpty()) {
-                budgetObjectClassField.setValue(moc);
-                budgetObjectClassField.focus();
-            }
             if (boc.length() == 4) {
                 if (!boc.substring(0, 2).equals(moc)) {
                     notifications.create("Budget Object Class must start with ".concat(moc))
@@ -126,6 +122,9 @@ public class ObjectClassDetailView extends StandardDetailView<ObjectClass> {
                     budgetObjectClassField.setValue(moc);
                     budgetObjectClassField.focus();
                 }
+            } else {
+                budgetObjectClassField.setValue(moc);
+                budgetObjectClassField.focus();
             }
         }
     }

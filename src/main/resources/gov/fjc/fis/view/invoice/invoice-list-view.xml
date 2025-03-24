@@ -9,6 +9,7 @@
         </collection>
     </data>
     <facets>
+        <settings auto="true"/>
         <dataLoadCoordinator auto="false"/>
         <urlQueryParameters>
             <pagination component="pagination"/>
@@ -37,7 +38,7 @@
         <dataGrid id="invoicesDataGrid"
                   minHeight="20em"
                   dataContainer="invoicesDc"
-                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes" selectionMode="NONE">
             <!--                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes" width="1440px">-->
             <actions>
                 <action id="create" type="list_create"/>
@@ -46,6 +47,7 @@
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
+                <column property="obligation.activity.fund.fundCode" header="Fund" visible="false"/>
                 <column property="obligation.activity.division.appropriation.budgetFiscalYear" header="BFY"
                         width="70px"/>
                 <column property="obligation.activity.division.divisionCode" header="Division"

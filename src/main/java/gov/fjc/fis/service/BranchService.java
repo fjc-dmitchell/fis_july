@@ -2,6 +2,7 @@ package gov.fjc.fis.service;
 
 import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.entity.Branch;
+import gov.fjc.fis.entity.Category;
 import gov.fjc.fis.entity.Division;
 import io.jmix.core.DataManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,18 @@ public class BranchService {
         return branchList.stream().sorted(Comparator.comparing(Branch::getBranchCode)).toList();
     }
 
-    public List<Branch> getBranchesForDivision(Division division) {
+    public Branch getBranchByCode(List<Appropriation> appropriations, String branchCode) {
+        return dataManager.load(Branch.class)
+                .query("SELECT b FROM fis_Branch b"
+                        + " WHERE b.branchCode = :branchCode"
+                        + " AND b.division.appropriation.budgetFiscalYear = (SELECT MAX(e.budgetFiscalYear)"
+                        + " FROM fis_Appropriation e WHERE e IN :appropriations)")
+                .parameter("branchCode", branchCode)
+                .parameter("appropriations", appropriations)
+                .optional().orElse(null);
+    }
+
+    public List<Branch> getBranches(Division division) {
         return dataManager.load(Branch.class)
                 .query("SELECT e FROM fis_Branch e"
                         + " WHERE e.division = :division"

@@ -6,6 +6,7 @@ import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,6 +17,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
+import static gov.fjc.fis.FisUtilities.toUpperNullAllowed;
 
 @JmixEntity
 @Table(name = "FIS_OBJECT_CLASS", indexes = {
@@ -36,7 +38,8 @@ public class ObjectClass {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Category category;
 
-    @Length(message = "The BOC should be 4 characters", min = 4, max = 4)
+    @Pattern(message = "BOC must contain 4 digits", regexp = "^[0-9]{4}$")
+    @Length(message = "The BOC must contain 4 digits.", min = 4, max = 4)
     @Column(name = "BOC", nullable = false, length = 4)
     @NotNull
     private String budgetObjectClass;
@@ -127,7 +130,7 @@ public class ObjectClass {
     }
 
     public void setBudgetObjectClass(String budgetObjectClass) {
-        this.budgetObjectClass = budgetObjectClass;
+        this.budgetObjectClass = toUpperNullAllowed(budgetObjectClass);
     }
 
     public Category getCategory() {

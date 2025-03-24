@@ -14,7 +14,7 @@
                 <dataGrid id="oneYearDataGrid" dataContainer="divisionBalancesDc"
                           aggregatable="true" selectionMode="NONE"
                           themeNames="no-row-borders column-borders compact row-stripes"
-                          allRowsVisible="true" width="950px">
+                          allRowsVisible="true" width="955px">
                     <columns>
                         <column property="title" header="Division" textAlign="START" width="335px" sortable="false"/>
                         <column property="oneYearAllocations" header="Allocations" textAlign="END" width="120px"
@@ -70,7 +70,7 @@
                 <dataGrid id="twoYearDataGrid" dataContainer="divisionBalances2Dc"
                           aggregatable="true" selectionMode="NONE"
                           themeNames="no-row-borders column-borders compact row-stripes"
-                          allRowsVisible="true" width="950px">
+                          allRowsVisible="true" width="955px">
                     <columns>
                         <column property="title" header="Division" textAlign="START" width="335px" sortable="false"/>
                         <column property="twoYearAllocations" header="Allocations" textAlign="END" width="120px"

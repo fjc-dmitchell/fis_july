@@ -59,6 +59,7 @@ public class Division {
     @Composition
     @OneToMany(mappedBy = "division")
     private List<DivisionAllocationAudit> auditAllocations;
+
     @Composition
     @OrderBy("branchCode")
     @OneToMany(mappedBy = "division")
