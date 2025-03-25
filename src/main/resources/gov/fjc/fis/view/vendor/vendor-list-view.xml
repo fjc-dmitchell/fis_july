@@ -45,6 +45,7 @@
             <button id="editButton" action="vendorsDataGrid.edit"/>
             <button id="excelExportButton" action="vendorsDataGrid.excelExport"/>
             <button id="removeButton" action="vendorsDataGrid.remove"/>
+            <gridColumnVisibility dataGrid="vendorsDataGrid" icon="COG"/>
             <simplePagination id="pagination" dataLoader="vendorsDl" autoLoad="true"/>
         </hbox>
         <dataGrid id="vendorsDataGrid"
@@ -57,9 +58,6 @@
                 <action id="edit" type="list_edit"/>
                 <action id="excelExport" type="grdexp_excelExport"/>
                 <action id="remove" type="list_remove"/>
-                <gridColumnVisibility dataGrid="vendorsDataGrid" icon="COG"/>
-                <simplePagination id="pagination" dataLoader="vendorsDl" autoLoad="true"
-                                  itemsPerPageDefaultValue="250"/>
             </actions>
             <columns resizable="true">
                 <column property="active"/>
