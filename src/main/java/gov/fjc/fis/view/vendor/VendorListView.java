@@ -1,5 +1,6 @@
 package gov.fjc.fis.view.vendor;
 
+import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.Route;
 import gov.fjc.fis.entity.Vendor;
 import gov.fjc.fis.view.main.MainView;
@@ -12,4 +13,5 @@ import io.jmix.flowui.view.*;
 @LookupComponent("vendorsDataGrid")
 @DialogMode(width = "64em")
 public class VendorListView extends StandardListView<Vendor> {
+
 }

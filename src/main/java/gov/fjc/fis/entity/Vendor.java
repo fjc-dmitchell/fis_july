@@ -1,7 +1,9 @@
 package gov.fjc.fis.entity;
 
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.CreatedBy;
@@ -10,6 +12,8 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.OffsetDateTime;
+
+import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
 
 @JmixEntity
 @Table(name = "FIS_VENDOR")
@@ -43,6 +47,8 @@ public class Vendor {
     private String duns;
     @Column(name = "CAGE", length = 5)
     private String cage;
+    @Column(name = "ACTIVE")
+    private Boolean active;
     @Column(name = "VERSION", nullable = false, columnDefinition = "INT DEFAULT 1")
     @Version
     private Integer version;
@@ -58,6 +64,20 @@ public class Vendor {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    @DependsOnProperties({"createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"})
+    @JmixProperty
+    public String getCreatedByString() {
+        return getCreatedModifiedString(createdBy, createdDate, lastModifiedBy, lastModifiedDate);
+    }
 
     public String getCage() {
         return cage;

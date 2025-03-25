@@ -25,12 +25,27 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
+        <details summaryText="Filters" opened="true">
+            <hbox>
+                <propertyFilter id="namePropertyFilter"
+                                property="name"
+                                operation="CONTAINS"
+                                operationEditable="true"
+                                dataLoader="vendorsDl"/>
+                <propertyFilter id="cityPropertyFilter"
+                                property="city"
+                                operation="CONTAINS"
+                                operationEditable="false"
+                                dataLoader="vendorsDl"/>
+                <propertyFilter property="active" operation="EQUAL" dataLoader="vendorsDl"/>
+            </hbox>
+        </details>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createButton" action="vendorsDataGrid.create"/>
             <button id="editButton" action="vendorsDataGrid.edit"/>
             <button id="excelExportButton" action="vendorsDataGrid.excelExport"/>
             <button id="removeButton" action="vendorsDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="vendorsDl"/>
+            <simplePagination id="pagination" dataLoader="vendorsDl" autoLoad="true"/>
         </hbox>
         <dataGrid id="vendorsDataGrid"
                   width="100%"
@@ -42,19 +57,23 @@
                 <action id="edit" type="list_edit"/>
                 <action id="excelExport" type="grdexp_excelExport"/>
                 <action id="remove" type="list_remove"/>
+                <gridColumnVisibility dataGrid="vendorsDataGrid" icon="COG"/>
+                <simplePagination id="pagination" dataLoader="vendorsDl" autoLoad="true"
+                                  itemsPerPageDefaultValue="250"/>
             </actions>
             <columns resizable="true">
-                <column property="name"/>
-                <column property="ein"/>
-                <column property="vendorCode"/>
-                <column property="addressCode"/>
-                <column property="address1"/>
-                <column property="address2"/>
-                <column property="city"/>
-                <column property="state"/>
-                <column property="zipCode"/>
-                <column property="duns"/>
-                <column property="cage"/>
+                <column property="active"/>
+                <column property="name" width="550px"/>
+                <column property="ein" width="150px"/>
+                <column property="vendorCode" width="150px"/>
+                <column property="addressCode" width="150px"/>
+                <column property="duns" width="150px"/>
+                <column property="cage" width="150px"/>
+                <column property="address1" width="400px"/>
+                <column property="address2" visible="false"/>
+                <column property="city" width="180px"/>
+                <column property="state" width="110px"/>
+                <column property="zipCode" width="150px"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">
