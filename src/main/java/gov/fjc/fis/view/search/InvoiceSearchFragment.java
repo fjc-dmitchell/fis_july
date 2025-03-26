@@ -19,20 +19,18 @@ public class InvoiceSearchFragment extends EntitySearchFragment {
     private HorizontalLayout bocBox;
     @ViewComponent
     private PropertyFilter<Object> invoiceNumberSearch;
-
+    @ViewComponent
+    private PropertyFilter<Object> invoiceAmountSearch;
     @ViewComponent
     private PropertyFilter<Object> invoiceDateSearch;
     @ViewComponent
     private PropertyFilter<Object> invoicePaidDateSearch;
-
     @ViewComponent
-    private PropertyFilter<Object> vendorSearch;
+    private PropertyFilter<Object> ObligationVendorSearch;
     @ViewComponent
     private PropertyFilter<Boolean> obligationStatusSearch;
     @ViewComponent
-    private PropertyFilter<Object> docnumSearch;
-    @ViewComponent
-    private PropertyFilter<Object> amountSearch;
+    private PropertyFilter<Object> ObligationDocnumSearch;
 
     @Override
     protected void additionalFragmentActions() {
@@ -50,10 +48,10 @@ public class InvoiceSearchFragment extends EntitySearchFragment {
                     invoiceNumberSearch.setValue(value);
                     break;
                 case "amount":
-                    amountSearch.setValue(value);
+                    invoiceAmountSearch.setValue(value);
                     break;
                 case "amount_op":
-                    amountSearch.setOperation((PropertyFilter.Operation) value);
+                    invoiceAmountSearch.setOperation((PropertyFilter.Operation) value);
                     break;
                 case "invoiceDate":
                     invoiceDateSearch.setValue(value);
@@ -68,10 +66,10 @@ public class InvoiceSearchFragment extends EntitySearchFragment {
                     invoicePaidDateSearch.setOperation((PropertyFilter.Operation) value);
                     break;
                 case "obligation.documentNumber":
-                    docnumSearch.setValue(value);
+                    ObligationDocnumSearch.setValue(value);
                     break;
                 case "obligation.vendor":
-                    vendorSearch.setValue(value);
+                    ObligationVendorSearch.setValue(value);
                     break;
                 case "obligation.status":
                     obligationStatusSearch.setValue((Boolean) value);

@@ -23,6 +23,7 @@
 
     <actions>
         <action id="showDivisionAction"/>
+        <action id="showSubsetAction"/>
     </actions>
 
     <content>
@@ -50,21 +51,21 @@
                             <hbox id="bfyBox" width="100%" alignItems="CENTER">
                                 <span text="Budget Fiscal Years"/>
                                 <textField id="fiscalYearsField" datatype="string" readOnly="true"
-                                           width="60em" />
+                                           width="60em"/>
                             </hbox>
                             <hbox id="divFundBox" width="100%" alignItems="CENTER">
                                 <span text="Division"/>
                                 <entityComboBox id="divisionSearchField" itemsContainer="divisionsDc"
                                                 metaClass="fis_Division" width="30em">
                                     <actions>
-                                        <action id="clear" type="entity_clear" icon="vaadin:close-small"/>
+                                        <action id="clearDivision" type="entity_clear" icon="vaadin:close-small"/>
                                     </actions>
                                 </entityComboBox>
                                 <span text="Fund"/>
                                 <entityComboBox id="fundSearchField" itemsContainer="fundsDc"
                                                 metaClass="fis_Fund" width="16em">
                                     <actions>
-                                        <action id="clear" type="entity_clear" icon="vaadin:close-small"/>
+                                        <action id="clearFund" type="entity_clear" icon="vaadin:close-small"/>
                                     </actions>
                                 </entityComboBox>
                             </hbox>
@@ -73,13 +74,13 @@
                                 <entityComboBox id="categorySearchField" itemsContainer="categoriesDc"
                                                 metaClass="fis_Category" width="22em">
                                     <actions>
-                                        <action id="clear" type="entity_clear" icon="vaadin:close-small"/>
+                                        <action id="clearMoc" type="entity_clear" icon="vaadin:close-small"/>
                                     </actions>
                                 </entityComboBox>
                                 <entityComboBox id="objectClassSearchField" itemsContainer="objectClassesDc"
                                                 metaClass="fis_ObjectClass" width="32em">
                                     <actions>
-                                        <action id="clear" type="entity_clear" icon="vaadin:close-small"/>
+                                        <action id="clearBoc" type="entity_clear" icon="vaadin:close-small"/>
                                     </actions>
                                 </entityComboBox>
                             </hbox>
@@ -89,7 +90,7 @@
                                 <entityComboBox id="branchSearchField" itemsContainer="branchesDc"
                                                 metaClass="fis_Branch" width="30em">
                                     <actions>
-                                        <action id="clear" type="entity_clear" icon="vaadin:close-small"/>
+                                        <action id="clearBranch" type="entity_clear" icon="vaadin:close-small"/>
                                     </actions>
                                 </entityComboBox>
 
@@ -97,7 +98,7 @@
                                 <entityComboBox id="groupSearchField" itemsContainer="groupsDc"
                                                 metaClass="fis_Group" width="35em">
                                     <actions>
-                                        <action id="clear" type="entity_clear" icon="vaadin:close-small"/>
+                                        <action id="clearGroup" type="entity_clear" icon="vaadin:close-small"/>
                                     </actions>
                                 </entityComboBox>
                             </hbox>
@@ -113,7 +114,20 @@
                             </hbox>
                         </vbox>
                     </tab>
-
+                    <tab id="subsetTab" label="Subset and Related" visible="false">
+                        <vbox>
+                            <h1>Select rows and click button</h1>
+                            <hbox>
+                                <button id="showSubsetBtn" action="showSubsetAction" text="Show Subset (0)"
+                                        enabled="false" width="175px"/>
+                                <button id="showActivityBtn" action="showSubsetAction" text="Show Activity"
+                                        enabled="false"/>
+                                <button id="showBranchBtn" action="showSubsetAction" text="Show Branch"
+                                        enabled="false"/>
+                                <button id="showGroupBtn" action="showSubsetAction" text="Show Group" enabled="false"/>
+                            </hbox>
+                        </vbox>
+                    </tab>
                 </tabSheet>
             </details>
         </vbox>

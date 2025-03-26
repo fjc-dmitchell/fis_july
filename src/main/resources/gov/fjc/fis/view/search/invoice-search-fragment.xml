@@ -11,7 +11,7 @@
                 <propertyFilter id="invoiceNumberSearch" property="invoiceNumber" operation="STARTS_WITH"
                                 dataLoader="invoicesDl" operationTextVisible="false" label="Invoice Number"
                                 autoApply="false"/>
-                <propertyFilter id="amountSearch" property="amount" operation="EQUAL" dataLoader="invoicesDl"
+                <propertyFilter id="invoiceAmountSearch" property="amount" operation="EQUAL" dataLoader="invoicesDl"
                                 operationEditable="true" label="Invoice Amount" autoApply="false"/>
             </hbox>
             <hbox>
@@ -27,9 +27,9 @@
                 <hbox id="bocBox" spacing="false"/>
             </hbox>
             <hbox>
-                <propertyFilter id="docnumSearch" property="obligation.documentNumber" operation="CONTAINS"
+                <propertyFilter id="ObligationDocnumSearch" property="obligation.documentNumber" operation="CONTAINS"
                                 dataLoader="invoicesDl" label="Obligation DIN" autoApply="false"/>
-                <propertyFilter id="vendorSearch" property="obligation.vendor" operation="CONTAINS"
+                <propertyFilter id="ObligationVendorSearch" property="obligation.vendor" operation="CONTAINS"
                                 dataLoader="invoicesDl" operationTextVisible="false" label="Obligation Vendor"
                                 width="25em" autoApply="false"/>
                 <propertyFilter id="obligationStatusSearch" property="obligation.status" operation="EQUAL"
