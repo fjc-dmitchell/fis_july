@@ -16,36 +16,36 @@
             <hbox>
                 <propertyFilter id="docnumSearch" property="documentNumber" operation="CONTAINS"
                                 dataLoader="obligationsDl"
-                                label="Document ID" width="18em"/>
+                                label="Document ID" width="18em" autoApply="false"/>
                 <propertyFilter id="vendorSearch" property="vendor" operation="CONTAINS" dataLoader="obligationsDl"
-                                label="Vendor" width="25em"/>
+                                label="Vendor" width="25em" autoApply="false"/>
                 <propertyFilter id="actnumSearch" property="activity.activityNumber" operation="CONTAINS"
-                                dataLoader="obligationsDl" label="Activity Number" width="13em"/>
+                                dataLoader="obligationsDl" label="Activity Number" width="13em" autoApply="false"/>
             </hbox>
             <hbox>
                 <propertyFilter id="amountSearch" property="amount" operation="EQUAL" dataLoader="obligationsDl"
-                                label="Amount" operationEditable="true"/>
+                                label="Amount" operationEditable="true" autoApply="false"/>
                 <propertyFilter id="statusSearch" property="status" operation="EQUAL" dataLoader="obligationsDl"
-                                label="Status" width="11em"/>
+                                label="Status" width="11em" autoApply="false"/>
                 <propertyFilter id="bpoSearch" property="blanketPurchaseOrder" operation="EQUAL"
                                 dataLoader="obligationsDl"
-                                label="Blanket Purchase Order" width="18em"/>
+                                label="Blanket Purchase Order" width="18em" autoApply="false"/>
             </hbox>
             <hbox>
                 <propertyFilter id="programStartSearch" property="activity.startDate" operation="GREATER_OR_EQUAL"
                                 dataLoader="obligationsDl" label="Program Start Date" operationEditable="true"
-                />
+                                autoApply="false"/>
                 <propertyFilter id="programEndSearch" property="activity.endDate" operation="LESS_OR_EQUAL"
                                 dataLoader="obligationsDl" label="Program End Date" operationEditable="true"
-                />
+                                autoApply="false"/>
             </hbox>
             <hbox>
                 <propertyFilter id="travelStartSearch" property="travelStartDate" operation="GREATER_OR_EQUAL"
                                 dataLoader="obligationsDl" label="Travel Start Date" operationEditable="true"
-                />
+                                autoApply="false"/>
                 <propertyFilter id="travelEndSearch" property="travelEndDate" operation="LESS_OR_EQUAL"
                                 dataLoader="obligationsDl" label="Travel End Date" operationEditable="true"
-                />
+                                autoApply="false"/>
             </hbox>
         </vbox>
     </content>
