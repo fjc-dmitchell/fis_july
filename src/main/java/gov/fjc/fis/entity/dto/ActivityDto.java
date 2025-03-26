@@ -71,6 +71,8 @@ public class ActivityDto {
     @Composition
     private List<ObjectClassDto> objectClassDtos;
 
+    private BigDecimal initialProjection;
+
     private BigDecimal totalProjected = BigDecimal.ZERO;
 
     private BigDecimal totalReimbursed = BigDecimal.ZERO;
@@ -106,6 +108,14 @@ public class ActivityDto {
     private BigDecimal currentTwoYearObligations = BigDecimal.ZERO;
 
     private BigDecimal currentTwoYearDisbursements = BigDecimal.ZERO;
+
+    public BigDecimal getInitialProjection() {
+        return initialProjection;
+    }
+
+    public void setInitialProjection(BigDecimal initialProjection) {
+        this.initialProjection = initialProjection;
+    }
 
     public ActivityFundingType getFundingType() {
         return fundingType == null ? null : ActivityFundingType.fromId(fundingType);

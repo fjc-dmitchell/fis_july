@@ -1,6 +1,7 @@
 package gov.fjc.fis.view.search;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.QueryParameters;
 import gov.fjc.fis.entity.Branch;
 import gov.fjc.fis.entity.Category;
 import gov.fjc.fis.entity.Group;
@@ -15,40 +16,54 @@ import io.jmix.flowui.view.Subscribe;
 import io.jmix.flowui.view.Target;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewComponent;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.util.Objects.requireNonNullElse;
 
 @FragmentDescriptor("entity-search-fragment.xml")
 public abstract class EntitySearchFragment extends Fragment<VerticalLayout> {
     @ViewComponent
     private VerticalLayout root;
 
-    private final List<Condition> propertyFilterConditions = new ArrayList<>();
-    private final List<PropertyFilter<?>> propertyFilters = new ArrayList<>();
+//    private final List<Condition> propertyFilterConditions = new ArrayList<>();
+    protected final List<PropertyFilter<?>> propertyFilters = new ArrayList<>();
 
     @Subscribe(target = Target.HOST_CONTROLLER)
-    protected final void onHostReady(final View.ReadyEvent event) {
+    protected void onHostReady(final View.ReadyEvent event) {
         for (var component : UiComponentUtils.getComponents(root)) {
             if (component instanceof PropertyFilter<?> propertyFilter) {
-                addFilterCondition(propertyFilter);
+//                addFilterCondition(propertyFilter);
+                propertyFilters.add(propertyFilter);
             }
         }
         additionalFragmentActions();
     }
 
-    private void addFilterCondition(PropertyFilter<?> filter) {
-        filter.setAutoApply(false);
-//        filter.setLabelPosition(SupportsLabelPosition.LabelPosition.TOP);
-        propertyFilters.add(filter);
-        propertyFilterConditions.add(filter.getQueryCondition());
-    }
+//    private void addFilterCondition(PropertyFilter<?> filter) {
+////        filter.setAutoApply(false);
+////        filter.setLabelPosition(SupportsLabelPosition.LabelPosition.TOP);
+//        propertyFilters.add(filter);
+////        propertyFilterConditions.add(filter.getQueryCondition());
+//    }
 
     protected void additionalFragmentActions() {
         // subclass may need to perform additional actions
     }
 
     public final List<Condition> getPropertyFilterConditions() {
+        List<Condition> propertyFilterConditions = new ArrayList<>();
+        for(var component: UiComponentUtils.getComponents(root)) {
+            if(component instanceof PropertyFilter<?> propertyFilter) {
+                propertyFilterConditions.add(propertyFilter.getQueryCondition());
+
+            }
+        }
         return propertyFilterConditions;
     }
 
@@ -57,6 +72,21 @@ public abstract class EntitySearchFragment extends Fragment<VerticalLayout> {
             filter.clear();
         }
     }
+
+    // new - used to set query params
+    public List<PropertyFilter<?>> getPropertyFilters() {
+        return propertyFilters;
+    }
+
+//    public void setPropertFilters(QueryParameters queryParameters) {
+//            Map<String, List<String>> parametersMap = queryParameters.getParameters();
+//
+//            for(PropertyFilter<?> filter : propertyFilters) {
+//               filter.getParent();
+//            }
+//    }
+
+    public abstract void setPropertyFilters(Map<String, Object> filters);
 
     public void addCategoryObjectClass(EntityComboBox<Category> categorySearchField,
                                        EntityComboBox<ObjectClass> objectClassSearchField) {
