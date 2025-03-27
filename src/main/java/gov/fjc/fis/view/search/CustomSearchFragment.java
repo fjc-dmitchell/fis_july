@@ -8,14 +8,19 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import gov.fjc.fis.entity.*;
 import gov.fjc.fis.event.FiscalYearChangeEvent;
+import gov.fjc.fis.event.SearchGridSelectedItemsEvent;
 import gov.fjc.fis.service.*;
 import io.jmix.core.LoadContext;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.session.SessionData;
+import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Fragments;
 import io.jmix.flowui.component.combobox.EntityComboBox;
+import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.propertyfilter.PropertyFilter;
+import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
@@ -28,7 +33,6 @@ import io.jmix.flowui.model.impl.CollectionContainerImpl;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,6 +43,8 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     private SessionData sessionData;
     @Autowired
     private Fragments fragments;
+    @Autowired
+    private Dialogs dialogs;
 
     /**
      * data loaders
@@ -79,6 +85,8 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
      */
     @ViewComponent("searchTabSheet.customSearchTab")
     private Tab searchTabSheetCustomSearchTab;
+    @ViewComponent("searchTabSheet.subsetTab")
+    private Tab searchTabSheetSubsetTab;
     @ViewComponent
     private VerticalLayout subFragmentSearchBox;
     @ViewComponent
@@ -101,6 +109,16 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     private JmixButton showDiv7Btn;
     @ViewComponent
     private JmixButton showDiv8Btn;
+    @ViewComponent
+    private JmixButton showGroupBtn;
+    @ViewComponent
+    private JmixButton showSubsetBtn;
+    @ViewComponent
+    private JmixButton showBranchBtn;
+    @ViewComponent
+    private JmixButton showActivityBtn;
+    @ViewComponent
+    private JmixTabSheet searchTabSheet;
     @ViewComponent
     private EntityComboBox<Fund> fundSearchField;
     @ViewComponent
@@ -128,24 +146,34 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     private String fundJoin;
     private String appropriationJoin;
     private String divisionJoin;
+    private String activityJoin;
     private String categoryJoin;
     private String objectClassJoin;
     private String obligationJoin;
     private String branchJoin;
     private String groupJoin;
-    private List<Condition> subFragmentConditions = new ArrayList<>();
+    //    private List<Condition> subFragmentConditions = new ArrayList<>();
     private Fragment<VerticalLayout> subFragment;
     private List<Appropriation> fiscalYears;
+    private List<Appropriation> searchYears;
     private String divisionCode;
     private String masterObjectClass;
     private boolean fjcFoundation;
     private Fund fjcFoundationFund;
+    private int firstResult;
+    private Integer tabIdx;
+    private Map<String, Object> sessionSearchParams;
+    private DataGrid<?> dataGrid;
+    private List<Integer> subsetIds;
+    private Group relatedGroup;
+    private Branch relatedBranch;
+    private Activity relatedActivity;
 
     /**
      * The hostDataContainer property must be explicitly set by the host invoking the fragment.
      * The hostDataContainer must have a dataLoader
      *
-     * @param hostDataContainer
+     * @param hostDataContainer dataContainer of host view
      */
     public void setHostDataContainer(CollectionContainer<?> hostDataContainer) {
         hostContainer = hostDataContainer;
@@ -165,6 +193,11 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         this.fjcFoundation = fjcFoundation;
     }
 
+    public void setDataGrid(DataGrid<?> dataGrid) {
+        this.dataGrid = dataGrid;
+        searchTabSheetSubsetTab.setVisible(true);
+    }
+
     @Subscribe(target = Target.HOST_CONTROLLER)
     protected void onHostAttach(final AttachEvent event) {
         if (hostContainer == null) {
@@ -172,14 +205,15 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         }
         configureHostEntity();
         fiscalYears = appropriationService.getBfyFilterField(sessionData);
+
         fjcFoundationFund = fundService.getFoundationFund();
-        setBfyBtnCaption();
-        fundsDl.load();
-        divisionsDl.load();
-        categoriesDl.load();
-        objectClassesDl.load();
-        branchesDl.load();
-        groupsDl.load();
+//        setBfyBtnCaption();
+//        fundsDl.load();
+//        divisionsDl.load();
+//        categoriesDl.load();
+//        objectClassesDl.load();
+//        branchesDl.load();
+//        groupsDl.load();
     }
 
     @Subscribe(target = Target.HOST_CONTROLLER)
@@ -189,7 +223,8 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
             fundSearchField.setReadOnly(true);
             // set visibility of division box?
         }
-        performSearch();
+        restoreSearchParameters();
+//        performSearch();
     }
 
     private void configureHostEntity() {
@@ -217,6 +252,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 fundJoin = "JOIN {E}.activity act JOIN act.fund f";
                 appropriationJoin = "JOIN {E}.activity act JOIN act.division dv JOIN dv.appropriation app";
                 divisionJoin = "JOIN {E}.activity act JOIN act.division dv";
+                activityJoin = "JOIN {E}.activity act";
                 categoryJoin = "JOIN {E}.objectClass obj JOIN obj.category cat";
                 objectClassJoin = "JOIN {E}.objectClass obj";
                 branchJoin = "JOIN {E}.activity act JOIN act.branch bch";
@@ -306,7 +342,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         subFragment = fragments.create(this, fragmentClass);
         ((EntitySearchFragment) subFragment).addCategoryObjectClass(categorySearchField, objectClassSearchField);
         ((EntitySearchFragment) subFragment).addBranchGroup(branchSearchField, groupSearchField);
-        subFragmentConditions = ((EntitySearchFragment) subFragment).getPropertyFilterConditions();
+//        subFragmentConditions = ((EntitySearchFragment) subFragment).getPropertyFilterConditions();
 
         // add sub fragment to this view and set visibility
         subFragmentSearchBox.add(subFragment);
@@ -316,7 +352,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
 
     private void setBfyBtnCaption() {
         if (fiscalYears.size() == 1) {
-            showBfyBtn.setText("Show all for " + fiscalYears.get(0).getBudgetFiscalYear());
+            showBfyBtn.setText("Show all for " + fiscalYears.getFirst().getBudgetFiscalYear());
         } else {
             showBfyBtn.setText("Show Search BFYs");
         }
@@ -388,14 +424,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         return group.getTitleAndCode();
     }
 
-    // parameter removals are probably redundant and can be removed
-//    @Subscribe("fundSearchField")
-//    protected void onFundSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Fund>, Fund> event) {
-//        if (fundSearchField.getValue() == null) {
-//            hostLoader.removeParameter("fundFilterField");
-//        }
-//    }
-
     @Subscribe("divisionSearchField")
     protected void onDivisionSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Division>, Division> event) {
         if (event.getValue() == null) {
@@ -406,20 +434,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         }
         checkBranchAndGroup();
     }
-
-//    @Subscribe("branchSearchField")
-//    protected void onBranchSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Branch>, Branch> event) {
-//        if (branchSearchField.getValue() == null) {
-//            hostLoader.removeParameter("branchCodeFilterField");
-//        }
-//    }
-
-//    @Subscribe("groupSearchField")
-//    protected void onGroupSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Group>, Group> event) {
-//        if (groupSearchField.getValue() == null) {
-//            hostLoader.removeParameter("groupCodeFilterField");
-//        }
-//    }
 
     @Subscribe("categorySearchField")
     protected void onCategorySearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Category>, Category> event) {
@@ -439,42 +453,127 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         objectClassesDl.load();
     }
 
-//    @Subscribe("objectClassSearchField")
-//    protected void onObjectClassSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<ObjectClass>, ObjectClass> event) {
-//        if (objectClassSearchField.getValue() == null) {
-//            hostLoader.removeParameter("bocFilterField");
-//        }
-//    }
-
     @Subscribe("showDivisionAction")
     public void onShowDivisionAction(final ActionPerformedEvent event) {
         if (FragmentUtils.getComponentId(event.getComponent()).isPresent()) {
             clearCustomSearchParameters();
             String btnId = FragmentUtils.getComponentId(event.getComponent()).get();
-            switch (btnId) {
-                case "showDiv1Btn" -> hostLoader.setParameter("divCodeFilterField", "1");
-                case "showDiv2Btn" -> hostLoader.setParameter("divCodeFilterField", "2");
-                case "showDiv3Btn" -> hostLoader.setParameter("divCodeFilterField", "3");
-                case "showDiv4Btn" -> hostLoader.setParameter("divCodeFilterField", "4");
-                case "showDiv5Btn" -> hostLoader.setParameter("divCodeFilterField", "5");
-                case "showDiv6Btn" -> hostLoader.setParameter("divCodeFilterField", "6");
-                case "showDiv7Btn" -> hostLoader.setParameter("divCodeFilterField", "7");
-                case "showDiv8Btn" -> hostLoader.setParameter("divCodeFilterField", "8");
+            divisionCode = switch (btnId) {
+                case "showDiv1Btn" -> "1";
+                case "showDiv2Btn" -> "2";
+                case "showDiv3Btn" -> "3";
+                case "showDiv4Btn" -> "4";
+                case "showDiv5Btn" -> "5";
+                case "showDiv6Btn" -> "6";
+                case "showDiv7Btn" -> "7";
+                case "showDiv8Btn" -> "8";
+                default -> null;
+            };
+
+            if (divisionCode != null) {
+                hostLoader.setParameter("divCodeFilterField", divisionCode);
+                performSearch();
             }
-            performSearch();
         }
     }
 
     @Subscribe(id = "showBfyBtn", subject = "clickListener")
     protected void onShowBfyBtnClick(final ClickEvent<JmixButton> event) {
-//        hostLoader.removeParameter("divCodeFilterField");
-//        clearSearchConditions
+        divisionCode = null;
         clearCustomSearchParameters();
+        sessionSearchParams.clear(); // is this correct? probably
+//        hostLoader.setParameter("bfyFilterField", searchYears);
         performSearch();
+    }
+
+    @Subscribe("searchTabSheet")
+    protected void onSearchTabSheetSelectedChange(final JmixTabSheet.SelectedChangeEvent event) {
+        tabIdx = event.getSource().getSelectedIndex();
+        if (tabIdx == 2) { // dataGrid may not be passed into search
+//            dataGrid.setMultiSelect(tabIdx.equals(2));
+            dataGrid.setMultiSelect(true);
+        }
+    }
+
+    @Subscribe("showSubsetAction")
+    protected void onShowSubsetAction(final ActionPerformedEvent event) {
+        var component = FragmentUtils.getComponentId(event.getComponent());
+        if (component.isPresent()) {
+            clearCustomSearchParameters();
+            // also need to clear prior load params...
+            String btnId = component.get();
+            var selectedItems = dataGrid.getSelectedItems();
+
+            if (hostEntityName.equals("fis_Activity")) {
+                if (btnId.equals("showSubsetBtn")) {
+                    subsetIds = ((Set<Activity>) selectedItems).stream().map(Activity::getId).toList();
+                    hostLoader.setParameter("idList", subsetIds);
+                }
+
+                if (selectedItems.size() == 1) {
+                    var firstItem = (Activity) selectedItems.stream().findFirst().get();
+                    switch (btnId) {
+                        case "showGroupBtn":
+                            hostLoader.setParameter("group", firstItem.getGroup());
+                            break;
+                        case "showBranchBtn":
+                            hostLoader.setParameter("branch", firstItem.getBranch());
+                            break;
+                        case "showActivityBtn":
+                            hostLoader.setParameter("genericActivityNumber", firstItem.getGenericActivityNumber());
+                            hostLoader.setParameter("division", firstItem.getDivision());
+                            break;
+                    }
+                }
+            }
+            if (hostEntityName.equals("fis_Obligation") || hostEntityName.equals("fis_Activity")) {
+                if (btnId.equals("showSubsetBtn")) {
+                    subsetIds = ((Set<Obligation>) selectedItems).stream().map(Obligation::getId).toList();
+                    hostLoader.setParameter("idList", subsetIds);
+                }
+
+                if (selectedItems.size() == 1) {
+                    var firstItem = (Obligation) selectedItems.stream().findFirst().get();
+                    relatedBranch = null;
+                    relatedGroup = null;
+                    relatedActivity = null;
+                    switch (btnId) {
+                        case "showGroupBtn":
+                            relatedGroup = firstItem.getActivity().getGroup();
+                            hostLoader.setParameter("relatedGroup", relatedGroup);
+                            break;
+                        case "showBranchBtn":
+                            relatedBranch = firstItem.getActivity().getBranch();
+                            hostLoader.setParameter("relatedBranch", relatedBranch);
+                            break;
+                        case "showActivityBtn":
+                            relatedActivity = firstItem.getActivity();
+                            hostLoader.setParameter("relatedActivity", relatedActivity);
+                            break;
+                    }
+                }
+            }
+            performSearch();
+            dataGrid.deselectAll();
+        }
     }
 
     @Subscribe(id = "customSearchBtn", subject = "clickListener")
     protected void onCustomSearchBtnClick(final ClickEvent<JmixButton> event) {
+//        hostLoader.setParameter("bfyFilterField", searchYears);
+        setLoaderParameters();
+        performSearch();
+    }
+
+    private void setLoaderParameters() {
+        hostLoader.removeParameter("idList");
+        hostLoader.removeParameter("relatedGroup");
+        hostLoader.removeParameter("relatedBranch");
+        hostLoader.removeParameter("relatedActivity");
+
+        hostLoader.removeParameter("genericActivityNumber");
+        hostLoader.removeParameter("division");
+
         if (fundSearchField.getValue() != null) {
             hostLoader.setParameter("fundFilterField", fundSearchField.getValue());
         } else {
@@ -505,7 +604,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         } else {
             hostLoader.removeParameter("groupCodeFilterField");
         }
-        performSearch();
     }
 
     @Subscribe(id = "clearSearchBtn", subject = "clickListener")
@@ -535,38 +633,196 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
 //        customFilters.forEach((key, value) -> value.setValue(null));
     }
 
-    private void performSearch() {
-        List<Condition> customConditions = new ArrayList<>();
+    private void saveSearchParameters() {
 
-        if (fundJoin != null) {
-            if (hostLoader.getParameter("fundFilterField") != null) {
-                customConditions.add(JpqlCondition.create("f = :fundFilterField", fundJoin));
-            } else {
-                if (fjcFoundation) {
-                    customConditions.add(JpqlCondition.createWithParameters("f = :foundationFund", fundJoin, Map.of("foundationFund", fjcFoundationFund)));
-                } else {
-                    customConditions.add(JpqlCondition.createWithParameters("f <> :foundationFund", fundJoin, Map.of("foundationFund", fjcFoundationFund)));
+        if (sessionSearchParams == null) {
+            sessionSearchParams = new HashMap<>();
+        }
+
+        tabIdx = tabIdx == null ? 0 : tabIdx;
+
+        sessionSearchParams.put("tab", tabIdx.toString());
+
+        sessionSearchParams.put("bfyFilterField", fiscalYears);
+        sessionSearchParams.put("quick_divisionCode", divisionCode);
+
+//        sessionSearchParams.put("bfyFilterField", fiscalYears);
+        sessionSearchParams.put("custom_fund", fundSearchField.getValue());
+        sessionSearchParams.put("custom_division", divisionSearchField.getValue());
+        sessionSearchParams.put("custom_category", categorySearchField.getValue());
+        sessionSearchParams.put("custom_objectClass", objectClassSearchField.getValue());
+        sessionSearchParams.put("custom_branch", branchSearchField.getValue());
+        sessionSearchParams.put("custom_group", groupSearchField.getValue());
+
+        sessionSearchParams.put("subset_idList", subsetIds);
+        sessionSearchParams.put("related_group", relatedGroup);
+        sessionSearchParams.put("related_branch", relatedBranch);
+        sessionSearchParams.put("related_activity", relatedActivity);
+
+        if (subFragment != null) {
+            List<PropertyFilter<?>> propertyFilters = ((EntitySearchFragment) subFragment).getPropertyFilters();
+            for (PropertyFilter<?> filter : propertyFilters) {
+                var name = filter.getProperty();
+                if (name != null) {
+                    String value = filter.getValue() != null ? filter.getValue().toString() : null;
+                    Object filterValue = filter.getValue();
+                    sessionSearchParams.put(name, filterValue);
+                    if (filter.isOperationEditable()) {
+                        sessionSearchParams.put(name.concat("_op"), filter.getOperation());
+                    }
                 }
             }
         }
-        hostLoader.setParameter("bfyFilterField", fiscalYears);
+
+
+        sessionData.setAttribute(hostEntityName.concat(".searchParams"), sessionSearchParams);
+    }
+
+    @ViewComponent
+    private JmixButton customSearchBtn;
+
+    private void loadEntityComboBoxes() {
+        setBfyBtnCaption();
+        fundsDl.load();
+        divisionsDl.load();
+        categoriesDl.load();
+        objectClassesDl.load();
+        branchesDl.load();
+        groupsDl.load();
+    }
+
+
+    private void restoreSearchParameters() {
+
+        // get entity search parameters
+        sessionSearchParams = (Map<String, Object>) sessionData.getAttribute(hostEntityName.concat(".searchParams"));
+
+        fiscalYears = appropriationService.getBfyFilterField(sessionData);
+
+        if (sessionSearchParams == null) {
+            loadEntityComboBoxes();
+            searchYears = fiscalYears;
+//            performSearch();
+        } else {
+            searchYears = (List<Appropriation>) sessionSearchParams.get("bfyFilterField");
+            loadEntityComboBoxes();
+
+            var tabParam = sessionSearchParams.get("tab");
+            if (tabParam != null) {
+                var tabIdx = Integer.parseInt((String) tabParam);
+                searchTabSheet.setSelectedIndex(tabIdx);
+
+                // quick serch
+                if (tabIdx == 0) {
+                    divisionCode = (String) sessionSearchParams.get("quick_divisionCode");
+                    if (divisionCode != null) {
+                        hostLoader.setParameter("divCodeFilterField", divisionCode);
+                    }
+//                    performSearch();
+                }
+
+                // custom search
+                if (tabIdx == 1) {
+                    sessionSearchParams.remove("quick_divisionCode");// shouldn't be necessary
+
+                    divisionSearchField.setValue((Division) sessionSearchParams.get("custom_division"));
+                    fundSearchField.setValue((Fund) sessionSearchParams.get("custom_fund"));
+                    categorySearchField.setValue((Category) sessionSearchParams.get("custom_category"));
+                    objectClassSearchField.setValue((ObjectClass) sessionSearchParams.get("custom_objectClass"));
+                    groupSearchField.setValue((Group) sessionSearchParams.get("custom_group"));
+                    branchSearchField.setValue((Branch) sessionSearchParams.get("custom_branch"));
+                    setLoaderParameters();
+
+                    if (subFragment != null) {
+                        ((EntitySearchFragment) subFragment).setPropertyFilters(sessionSearchParams);
+                    }
+
+//                    customSearchBtn.click();
+
+                    // did the user change the fiscal year between the change and the restore?
+                }
+
+                if (tabIdx == 2) {
+                    subsetIds = (List<Integer>) sessionSearchParams.get("subset_idList");
+                    hostLoader.setParameter("idList", subsetIds);
+                    relatedGroup = (Group) sessionSearchParams.get("related_group");
+                    hostLoader.setParameter("relatedGroup", relatedGroup);
+                    relatedBranch = (Branch) sessionSearchParams.get("related_branch");
+                    hostLoader.setParameter("relatedBranch", relatedBranch);
+                    relatedActivity = (Activity) sessionSearchParams.get("related_activity");
+                    hostLoader.setParameter("relatedActivity", relatedActivity);
+                }
+
+            }
+        }
+
+        performSearch();
+
+        // changeFiscalYears() ?
+        if (!searchYears.equals(fiscalYears)) {
+//            dialogs.createMessageDialog()
+//                    .withHeader("Warning")
+//                    .withText("The fiscal years have changed since the search was saved.")
+//                    .open();
+            changeFiscalYears();
+            searchYears = fiscalYears;
+            loadEntityComboBoxes();
+        }
+    }
+
+    private void performSearch() {
+        List<Condition> customConditions = new ArrayList<>();
+        List<Condition> subFragmentConditions = new ArrayList<>();
+
+        if (tabIdx != null && tabIdx.equals(2)) {
+            customConditions.add(JpqlCondition.create("e.id in :idList", null).skipNullOrEmpty());
+            customConditions.add(JpqlCondition.create("grp = :relatedGroup", groupJoin).skipNullOrEmpty());
+            customConditions.add(JpqlCondition.create("bch = :relatedBranch", branchJoin).skipNullOrEmpty());
+            if (hostEntityName.equals("fis_Activity")) {
+                customConditions.add(JpqlCondition.create("dv = :division", divisionJoin).skipNullOrEmpty());
+                customConditions.add(JpqlCondition.create("e.activityNumber like :genericActivityNumber", null).skipNullOrEmpty());
+            }
+            if (hostEntityName.equals("fis_Obligation")) {
+                customConditions.add(JpqlCondition.create("act = :relatedActivity", activityJoin).skipNullOrEmpty());
+            }
+        } else {
+
+            if (fundJoin != null) {
+                if (hostLoader.getParameter("fundFilterField") != null) {
+                    customConditions.add(JpqlCondition.create("f = :fundFilterField", fundJoin));
+                } else {
+                    if (fjcFoundation) {
+                        customConditions.add(JpqlCondition.createWithParameters("f = :foundationFund", fundJoin, Map.of("foundationFund", fjcFoundationFund)));
+                    } else {
+                        customConditions.add(JpqlCondition.createWithParameters("f <> :foundationFund", fundJoin, Map.of("foundationFund", fjcFoundationFund)));
+                    }
+                }
+            }
+            hostLoader.setParameter("bfyFilterField", searchYears);// this is an issue when idList is edited and returned after fy change
 
 //        customConditions.add(JpqlCondition.createWithParameters("app in :bfyFilterField", appropriationJoin, Map.of("bfyFilterField", fiscalYears)));
-        customConditions.add(JpqlCondition.create("app in :bfyFilterField", appropriationJoin).skipNullOrEmpty());
-        customConditions.add(JpqlCondition.create("dv.divisionCode = :divCodeFilterField", divisionJoin).skipNullOrEmpty());
-        customConditions.add(JpqlCondition.create("cat.masterObjectClass = :mocFilterField", categoryJoin).skipNullOrEmpty());
-        customConditions.add(JpqlCondition.create("obj.budgetObjectClass = :bocFilterField", objectClassJoin).skipNullOrEmpty());
-        customConditions.add(JpqlCondition.create("bch.branchCode = :branchCodeFilterField", branchJoin).skipNullOrEmpty());
-        customConditions.add(JpqlCondition.create("grp.groupCode = :groupCodeFilterField", groupJoin).skipNullOrEmpty());
-        if (hostEntityName.equals("fis_ActivityProjection")) {
-            customConditions.add(JpqlCondition.create("e.amount <> 0", null).skipNullOrEmpty());
+            customConditions.add(JpqlCondition.create("app in :bfyFilterField", appropriationJoin).skipNullOrEmpty());
+            customConditions.add(JpqlCondition.create("dv.divisionCode = :divCodeFilterField", divisionJoin).skipNullOrEmpty());
+            customConditions.add(JpqlCondition.create("cat.masterObjectClass = :mocFilterField", categoryJoin).skipNullOrEmpty());
+            customConditions.add(JpqlCondition.create("obj.budgetObjectClass = :bocFilterField", objectClassJoin).skipNullOrEmpty());
+            customConditions.add(JpqlCondition.create("bch.branchCode = :branchCodeFilterField", branchJoin).skipNullOrEmpty());
+            customConditions.add(JpqlCondition.create("grp.groupCode = :groupCodeFilterField", groupJoin).skipNullOrEmpty());
+//            customConditions.add(JpqlCondition.create("e.id in :idList", null).skipNullOrEmpty());
+            if (hostEntityName.equals("fis_ActivityProjection")) {
+                customConditions.add(JpqlCondition.create("e.amount <> 0", null).skipNullOrEmpty());
+            }
+            if (subFragment != null) {
+                subFragmentConditions = ((EntitySearchFragment) subFragment).getPropertyFilterConditions();
+                customConditions.addAll(subFragmentConditions);
+            }
         }
-        customConditions.addAll(subFragmentConditions);
 
+//        ((EntitySearchFragment) subFragment).applyPropertyFilters();
         hostLoader.setQuery(hostEntityQuery);
         hostLoader.setCondition(LogicalCondition.and(customConditions.toArray(new Condition[0])));
-        hostLoader.setFirstResult(0);
+        hostLoader.setFirstResult(firstResult);
         hostLoader.load();
+        saveSearchParameters();
     }
 
     /**
@@ -574,17 +830,29 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
      *
      * @param event custom event
      */
-//    @Async
-//    @EventListener
-//    public void handleAsyncEvent(FiscalYearChangeEvent event) {
-//        fiscalYears = appropriationService.getBfyFilterField(sessionData);
-//        setBfyBtnCaption();
-//        checkDivision();
-//        checkObjectClass();
-//        checkBranchAndGroup();
-//    }
     @EventListener
     public void handleFiscalYearChangeEvent(FiscalYearChangeEvent event) {
+        changeFiscalYears();
+        searchYears = fiscalYears;
+    }
+
+    /**
+     * updates button visibility depending on grid size
+     *
+     * @param event custom event
+     */
+    @EventListener
+    public void handleSearchGridSelectedItemsEvent(SearchGridSelectedItemsEvent event) {
+        var size = (Integer) sessionData.getAttribute("searchDataGridSize");
+        showGroupBtn.setEnabled(size == 1);
+        showBranchBtn.setEnabled(size == 1);
+        showActivityBtn.setEnabled(size == 1);
+        showSubsetBtn.setEnabled(size > 0);
+
+        showSubsetBtn.setText("Show Subset (".concat(String.valueOf(size)).concat(")"));
+    }
+
+    private void changeFiscalYears() {
         fiscalYears = appropriationService.getBfyFilterField(sessionData);
         setBfyBtnCaption();
         checkDivision();
