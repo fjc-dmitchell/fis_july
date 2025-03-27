@@ -18,12 +18,16 @@
         <action id="saveAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
-    <layout width="30em">
-        <formLayout id="form" dataContainer="fundDc">
-            <textField id="fundCodeField" property="fundCode"/>
-            <textField id="titleField" property="title"/>
-            <textArea id="memoField" property="memo" minHeight="5em"/>
-        </formLayout>
+    <layout expand="contentBox">
+        <vbox id="contentBox" css="overflow: auto" padding="false">
+            <vbox id="formWrapper" classNames="contrast-panel">
+                <formLayout id="form" dataContainer="fundDc">
+                    <textField id="fundCodeField" property="fundCode"/>
+                    <textField id="titleField" property="title"/>
+                    <textArea id="memoField" property="memo" minHeight="5em"/>
+                </formLayout>
+            </vbox>
+        </vbox>
         <p id="createdByString"/>
         <hbox id="detailActions">
             <button id="saveAndCloseBtn" action="saveAction"/>

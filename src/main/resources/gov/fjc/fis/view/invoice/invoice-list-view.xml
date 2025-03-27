@@ -59,6 +59,7 @@
                 <column property="obligation.documentNumber" header="Document ID" width="130px"/>
                 <column property="obligation.objectClass.budgetObjectClass" header="BOC" width="90px"/>
                 <column property="obligation.vendor" header="Vendor" width="350px"/>
+                <column property="obligation.statusString" header="Obl. Status" width="150px"/>
                 <column property="invoiceNumber" header="Invoice Number" width="250px"/>
                 <column property="invoiceDate" header="Invoice Date" textAlign="END" width="140px"/>
                 <column property="paymentDate" header="Payment Date" textAlign="END" width="140px"/>

@@ -102,7 +102,7 @@ public class EducationProgramsReportView extends StandardView {
 
     @Install(to = "branchesDl", target = Target.DATA_LOADER)
     private List<Branch> branchesDlLoadDelegate(final LoadContext<Branch> loadContext) {
-        return branchService.getBranchesForDivision(division);
+        return branchService.getBranches(division);
     }
 
     @Install(to = "branchSelectorField", subject = "itemLabelGenerator")

@@ -1,9 +1,6 @@
 package gov.fjc.fis.service;
 
-import gov.fjc.fis.entity.Activity;
-import gov.fjc.fis.entity.ActivityReimbursement;
-import gov.fjc.fis.entity.Appropriation;
-import gov.fjc.fis.entity.Fund;
+import gov.fjc.fis.entity.*;
 import gov.fjc.fis.entity.dto.ActivityDto;
 import gov.fjc.fis.entity.dto.ActivityReimbursementDto;
 import io.jmix.core.DataManager;
@@ -36,6 +33,32 @@ public class ActivityReimbursementService {
                         + " WHERE r.activity=:activity", BigDecimal.class)
                 .parameter("activity", activity)
                 .one();
+    }
+
+    public BigDecimal sumReimbursements(Appropriation appropriation) {
+        var funds = fundService.getAppropriationFunds();
+        return dataManager.loadValue("SELECT coalesce(sum(r.amount),0)"
+                        + " FROM fis_ActivityReimbursement r"
+                        + " INNER JOIN fis_Activity act ON r.activity=act"
+                        + " INNER JOIN fis_Division dv ON act.division=dv"
+                        + " WHERE dv.appropriation=:appropriation"
+                        + " AND act.fund IN :funds", BigDecimal.class)
+                .parameter("appropriation", appropriation)
+                .parameter("funds", funds)
+                .one();
+    }
+
+    public List<KeyValueEntity> sumActivityReimbursements(List<Division> divisions, Fund fund) {
+        return dataManager.loadValues(
+                        "SELECT act.fund, act.division, COALESCE(SUM(reim.amount),0)"
+                                + " FROM fis_Activity act"
+                                + " INNER JOIN fis_ActivityReimbursement reim ON act=reim.activity"
+                                + " WHERE act.division IN :divisions AND act.fund=:fund"
+                                + " GROUP BY act.fund, act.division")
+                .parameter("divisions", divisions)
+                .parameter("fund", fund)
+                .properties("fund", "division", "amount")
+                .list();
     }
 
     public List<ActivityReimbursementDto> getReimbursementDtosForMasterObjectClass(List<ActivityReimbursementDto> reimbursementDtos, String masterObjectClass) {
