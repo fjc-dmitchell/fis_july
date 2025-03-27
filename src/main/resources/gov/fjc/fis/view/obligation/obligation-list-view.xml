@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
-      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="msg://obligationListView.title"
       focusComponent="obligationsDataGrid">
     <data>
         <collection id="obligationsDc"
                     class="gov.fjc.fis.entity.Obligation">
             <fetchPlan extends="_base">
-                <property name="activity" fetchPlan="_base"/>
-                <property name="objectClass" fetchPlan="_base">
-                    <property name="category" fetchPlan="_base"/>
+                <property fetchPlan="_base" name="activity">
+                    <property name="fund" fetchPlan="_base"/>
+                </property>
+                <property fetchPlan="_base" name="objectClass">
+                    <property fetchPlan="_base" name="category"/>
                 </property>
             </fetchPlan>
-            <loader id="obligationsDl" readOnly="true">
-                <query>
-                    <![CDATA[select e from fis_Obligation e]]>
-                </query>
-            </loader>
+            <loader id="obligationsDl" readOnly="true"/>
         </collection>
     </data>
     <facets>
+        <settings auto="true"/>
         <dataLoadCoordinator auto="false"/>
         <urlQueryParameters>
             <pagination component="pagination"/>
@@ -49,7 +47,7 @@
                   width="100%"
                   minHeight="20em"
                   dataContainer="obligationsDc"
-                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes" selectionMode="NONE">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>
@@ -57,12 +55,15 @@
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
+                <column property="activity.fund.fundCode" header="Fund" visible="false"/>
                 <column property="activity.division.appropriation.budgetFiscalYear" header="BFY" width="70px"/>
                 <column property="activity.division.divisionCode" header="Division" width="90px" textAlign="CENTER"/>
                 <column property="objectClass.budgetObjectClass" header="BOC"/>
                 <column property="documentNumber" header="Document ID" width="130px"/>
                 <column property="activity.activityNumber" header="Activity"/>
                 <column property="activity.title" visible="false" width="350px" header="Activity Title"/>
+                <column property="activity.branch.branchCode" visible="false" header="Branch"/>
+                <column property="activity.group.groupCode" visible="false" header="Group"/>
                 <column property="vendor" width="350px"/>
                 <column property="statusString" header="Status"/>
                 <column property="amount" textAlign="END" width="130px">
