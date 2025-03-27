@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://branchDetailView.title"
-      focusComponent="form">
+      focusComponent="titleField">
     <data>
         <instance id="branchDc" class="gov.fjc.fis.entity.Branch">
-            <loader/>
+            <loader id="branchDl"/>
         </instance>
+        <collection id="divisionsDc" class="gov.fjc.fis.entity.Division" fetchPlan="_base">
+            <loader id="divisionsDl" readOnly="true"/>
+        </collection>
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
@@ -14,26 +17,29 @@
         <action id="saveAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
-    <layout>
-        <formLayout id="form" dataContainer="branchDc">
-            <entityPicker id="divisionField" property="division">
-                <actions>
-                    <action id="entityLookup" type="entity_lookup"/>
-                    <action id="entityClear" type="entity_clear"/>
-                </actions>
-            </entityPicker>
-            <textField id="branchCodeField" property="branchCode"/>
-            <textField id="titleField" property="title"/>
-            <textField id="sortCodeField" property="sortCode"/>
-        </formLayout>
-        <tabSheet width="100%">
-            <tab id="activitiesTab" label="Activities">
-                <hbox id="activitiesFragment"/>
-            </tab>
-            <tab id="obligationsTab" label="Obligations">
-                <hbox id="obligationsFragment"/>
-            </tab>
-        </tabSheet>
+    <layout expand="contentBox">
+        <vbox id="contentBox" css="overflow: auto" padding="false">
+            <vbox id="formWrapper" classNames="contrast-panel">
+                <formLayout id="form" dataContainer="branchDc">
+                    <vbox>
+                        <hbox>
+                            <textField id="budgetFiscalYearField" width="10em"
+                                       label="Budget Fiscal Year" datatype="string" readOnly="true"/>
+                            <entityComboBox id="divisionsComboBox" itemsContainer="divisionsDc" dataContainer="branchDc"
+                                            property="division" label="Division" width="25em"/>
+                        </hbox>
+                        <hbox>
+                            <textField id="branchCodeField" property="branchCode" width="10em" label="Branch Code"/>
+                            <textField id="titleField" property="title" width="33em" label="Title"/>
+                            <textField id="sortCodeField" property="sortCode" width="6em" label="Sort Code"/>
+                        </hbox>
+                    </vbox>
+                </formLayout>
+            </vbox>
+            <vbox classNames="contrast-panel">
+                <details id="activityDetails" opened="true" visible="false" summaryText="Activities"/>
+            </vbox>
+        </vbox>
         <p id="createdByString"/>
         <hbox id="detailActions">
             <button id="saveAndCloseBtn" action="saveAction"/>
