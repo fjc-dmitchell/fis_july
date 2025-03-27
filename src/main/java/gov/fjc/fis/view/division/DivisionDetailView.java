@@ -3,7 +3,6 @@ package gov.fjc.fis.view.division;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.Route;
 import gov.fjc.fis.entity.*;
 import gov.fjc.fis.service.AppropriationService;
@@ -12,9 +11,7 @@ import gov.fjc.fis.view.main.MainView;
 import io.jmix.core.EntityStates;
 import io.jmix.core.LoadContext;
 import io.jmix.core.session.SessionData;
-import io.jmix.flowui.action.list.RemoveAction;
 import io.jmix.flowui.component.combobox.EntityComboBox;
-import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.kit.component.button.JmixButton;
@@ -54,10 +51,6 @@ public class DivisionDetailView extends StandardDetailView<Division> {
     private TypedTextField<String> divisionCodeField;
     @ViewComponent
     private EntityComboBox<Fund> fundsComboBox;
-//    @ViewComponent("branchesDataGrid.branchRemoveAction")
-//    private RemoveAction<Branch> branchesDataGridBranchRemoveAction;
-//    @ViewComponent("groupsDataGrid.groupRemoveAction")
-//    private RemoveAction<Group> groupsDataGridGroupRemoveAction;
     @ViewComponent
     private JmixButton updateDivisionAllocations;
     @ViewComponent
@@ -70,7 +63,6 @@ public class DivisionDetailView extends StandardDetailView<Division> {
     private Paragraph createdByString;
 
     private boolean fjcFoundation;
-    private boolean readOnly;
     private BigDecimal computedOneYearAllocations;
     private BigDecimal computedTwoYearAllocations;
 
@@ -96,7 +88,6 @@ public class DivisionDetailView extends StandardDetailView<Division> {
             if ((!appropriation.getStatus())) {
                 readOnlyViewsSupport.setViewReadOnly(this, true);
                 updateDivisionAllocations.setEnabled(false);
-                readOnly = true;
             } else {
                 appropriationField.setReadOnly(true);
                 divisionCodeField.setReadOnly(true);
@@ -111,24 +102,6 @@ public class DivisionDetailView extends StandardDetailView<Division> {
     protected List<Fund> fundsDlLoadDelegate(final LoadContext<Fund> loadContext) {
         return fundService.getFundSearchList(fjcFoundation);
     }
-
-//    @Subscribe("branchesDataGrid")
-//    protected void onBranchesDataGridSelection(final SelectionEvent<DataGrid<Branch>, Branch> event) {
-//        if (!readOnly) {
-//            var selectedBranch = event.getFirstSelectedItem();
-//            selectedBranch.ifPresent(branch -> branchesDataGridBranchRemoveAction
-//                    .setEnabled(branch.getNumberActivities().equals(0)));
-//        }
-//    }
-
-//    @Subscribe("groupsDataGrid")
-//    protected void onGroupsDataGridSelection(final SelectionEvent<DataGrid<Group>, Group> event) {
-//        if (!readOnly) {
-//            var selectedGroup = event.getFirstSelectedItem();
-//            selectedGroup.ifPresent(group -> groupsDataGridGroupRemoveAction
-//                    .setEnabled(group.getNumberActivities().equals(0)));
-//        }
-//    }
 
     @Subscribe(id = "allocationsDc", target = Target.DATA_CONTAINER)
     protected void onAllocationsDcCollectionChange(final CollectionContainer.CollectionChangeEvent<DivisionAllocation> event) {

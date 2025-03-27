@@ -37,15 +37,16 @@
             <button id="editBtn" action="fundControlNoticesDataGrid.edit"/>
             <button id="excelExportBtn" action="fundControlNoticesDataGrid.excelExport"/>
             <button id="removeBtn" action="fundControlNoticesDataGrid.remove"/>
+            <gridColumnVisibility dataGrid="fundControlNoticesDataGrid" icon="COG"/>
             <simplePagination id="pagination" dataLoader="fundControlNoticesDl" autoLoad="true"
                               itemsPerPageDefaultValue="250"
                               itemsPerPageVisible="true" itemsPerPageItems="250,500,1000"/>
         </hbox>
         <dataGrid id="fundControlNoticesDataGrid"
-                  width="1290px"
+                  minWidth="1290px"
                   minHeight="20em"
                   dataContainer="fundControlNoticesDc"
-                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes" selectionMode="NONE">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>
@@ -53,6 +54,7 @@
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
+                <column property="obligation.activity.fund.fundCode" header="Fund" visible="false"/>
                 <column property="obligation.activity.division.appropriation.budgetFiscalYear" header="BFY"
                         width="70px"/>
                 <column property="obligation.activity.division.divisionCode" header="Division"
