@@ -141,8 +141,8 @@ public class Activity {
     @Column(name = "REPORT_NOTE")
     private String reportNote;
 
-    @Column(name = "PARTICIPANT_FINAL")
-    private Boolean participantFinal;
+    @Column(name = "PARTICIPANT_COUNT_FINAL")
+    private Boolean participantCountFinal;
 
     @Column(name = "ADDED_TO_PLAN")
     private Boolean addedToPlan;
@@ -169,6 +169,20 @@ public class Activity {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    public Boolean getParticipantCountFinal() {
+        return participantCountFinal;
+    }
+
+    public void setParticipantCountFinal(Boolean participantCountFinal) {
+        this.participantCountFinal = participantCountFinal;
+    }
+
+    @DependsOnProperties({"addedToPlan"})
+    @JmixProperty
+    public String getAddedToPlanString() {
+        return addedToPlan ? "Yes" : "No";
+    }
 
     @DependsOnProperties({"activityNumber"})
     @JmixProperty
@@ -240,14 +254,6 @@ public class Activity {
 
     public void setAddedToPlan(Boolean addedToPlan) {
         this.addedToPlan = addedToPlan;
-    }
-
-    public Boolean getParticipantFinal() {
-        return participantFinal;
-    }
-
-    public void setParticipantFinal(Boolean participantFinal) {
-        this.participantFinal = participantFinal;
     }
 
     public String getReportNote() {
