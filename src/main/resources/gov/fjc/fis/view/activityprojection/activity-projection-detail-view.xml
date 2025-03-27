@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://activityProjectionDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="activityProjectionDc"
+                  class="gov.fjc.fis.entity.ActivityProjection">
+            <fetchPlan extends="_base">
+                <property name="createdByString"/>
+            </fetchPlan>
+            <loader id="activityProjectionDl"/>
+        </instance>
+        <collection id="objectClassesDc" class="gov.fjc.fis.entity.ObjectClass">
+            <loader id="objectClassesDl" readOnly="true"/>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout expand="contentBox">
+        <vbox id="contentBox" css="overflow: auto" padding="false">
+        <vbox id="formWrapper" classNames="contrast-panel">
+            <formLayout id="form" dataContainer="activityProjectionDc" classNames="contrast-panel">
+                <responsiveSteps>
+                    <responsiveStep minWidth="0" columns="1" labelsPosition="ASIDE"/>
+                </responsiveSteps>
+                <formItem>
+                    <entityComboBox id="objectClassField" property="objectClass" itemsContainer="objectClassesDc"/>
+                </formItem>
+                <formItem>
+                    <textField id="amountField" property="amount"/>
+                </formItem>
+            </formLayout>
+        </vbox>
+        </vbox>
+        <p id="createdByString"/>
+        <hbox id="detailActions">
+            <button id="saveAndCloseButton" action="saveAction"/>
+            <button id="closeButton" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>
