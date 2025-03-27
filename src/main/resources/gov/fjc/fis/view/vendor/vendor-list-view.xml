@@ -25,7 +25,7 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
-        <details summaryText="Filters" opened="true">
+        <details summaryText="Filters" opened="true"  themeNames="filled">
             <hbox>
                 <propertyFilter id="namePropertyFilter"
                                 property="name"

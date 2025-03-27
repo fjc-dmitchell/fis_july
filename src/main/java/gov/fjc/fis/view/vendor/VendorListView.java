@@ -28,6 +28,7 @@ public class VendorListView extends StandardListView<Vendor> {
             Checkbox checkbox = uiComponents.create(Checkbox.class);
             checkbox.setValue(vendor.getActive());
             checkbox.setReadOnly(true);
+            checkbox.setEnabled(false);
             return checkbox;
         });
     }
