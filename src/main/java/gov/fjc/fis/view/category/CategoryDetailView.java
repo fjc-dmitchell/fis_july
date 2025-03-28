@@ -5,6 +5,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.entity.Category;
 
+import gov.fjc.fis.entity.DivisionAllocation;
+import gov.fjc.fis.entity.ObjectClass;
 import gov.fjc.fis.service.AppropriationService;
 import gov.fjc.fis.view.activityprojectionfragment.ActivityProjectionFragment;
 import gov.fjc.fis.view.main.MainView;
@@ -13,6 +15,7 @@ import com.vaadin.flow.router.Route;
 import io.jmix.core.EntityStates;
 import io.jmix.core.session.SessionData;
 import io.jmix.flowui.Fragments;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.view.*;
@@ -43,6 +46,10 @@ public class CategoryDetailView extends StandardDetailView<Category> {
     @ViewComponent
     private VerticalLayout projectionsBox;
     @ViewComponent
+    private DataGrid<ObjectClass> budgetObjectClassesDataGrid;
+    @ViewComponent
+    private DataGrid<DivisionAllocation> allocationsGrid;
+    @ViewComponent
     private Paragraph createdByString;
 
     @Subscribe
@@ -62,6 +69,10 @@ public class CategoryDetailView extends StandardDetailView<Category> {
                 appropriationField.setReadOnly(true);
                 masterObjectClassField.setReadOnly(true);
             }
+
+            allocationsGrid.setEmptyStateText("There are no allocations for ".concat(category.getTitleAndCode()));
+            budgetObjectClassesDataGrid.setEmptyStateText("There are no object classes for ".concat(category.getTitleAndCode()));
+
             ActivityProjectionFragment fragment = fragments.create(this, ActivityProjectionFragment.class);
             fragment.setEntity(category);
             projectionsBox.add(fragment);
