@@ -12,9 +12,8 @@ import org.springframework.data.annotation.CreatedDate;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.Calendar;
-import java.util.Date;
 
 import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
 
@@ -38,10 +37,9 @@ public class PayPeriod {
     @NotNull
     private Integer payPeriod;
 
-    @Column(name = "START_DATE", nullable = false)
-    @Temporal(TemporalType.DATE)
     @NotNull
-    private Date startDate;
+    @Column(name = "START_DATE", nullable = false)
+    private LocalDate startDate;
 
     @Column(name = "VERSION", nullable = false, columnDefinition = "INT DEFAULT 1")
     @Version
@@ -55,6 +53,14 @@ public class PayPeriod {
     @Column(name = "CREATED_DATE")
     private OffsetDateTime createdDate;
 
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
     @DependsOnProperties({"createdBy", "createdDate"})
     @JmixProperty
     public String getCreatedByString() {
@@ -63,15 +69,8 @@ public class PayPeriod {
 
     @DependsOnProperties({"startDate"})
     @JmixProperty
-    public Date getEndDate() {
-        if (startDate == null) {
-            return null;
-        } else {
-            Calendar c = Calendar.getInstance();
-            c.setTime(startDate);
-            c.add(Calendar.DATE, 13);
-            return c.getTime();
-        }
+    public LocalDate getEndDate() {
+        return startDate == null ? null : startDate.plusDays(13);
     }
 
     @DependsOnProperties({"startDate", "payPeriod", "payYear"})
@@ -79,14 +78,6 @@ public class PayPeriod {
     public String getStartDateDetailed() {
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         return String.format("%s (pp%d-%d)", dateFormat.format(startDate), payPeriod, payYear);
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
     }
 
     public Integer getPayYear() {
@@ -140,6 +131,6 @@ public class PayPeriod {
     @InstanceName
     @DependsOnProperties({"startDate"})
     public String getInstanceName(DatatypeFormatter datatypeFormatter) {
-        return datatypeFormatter.formatDate(startDate);
+        return datatypeFormatter.formatLocalDate(startDate);
     }
 }

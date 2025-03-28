@@ -507,17 +507,17 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         clearCustomSearchParameters();
         removeSubsetLoaderParameters();
 
-        var selectedItems = dataGrid.getSelectedItems();
+//        var selectedItems = dataGrid.getSelectedItems();
 
         switch (btnId) {
             case "showSubsetBtn":
-                subsetIds = null;
-                switch (hostEntityName) {
-                    case "fis_Activity" ->
-                            subsetIds = ((Set<Activity>) selectedItems).stream().map(Activity::getId).toList();
-                    case "fis_Obligation" ->
-                            subsetIds = ((Set<Obligation>) selectedItems).stream().map(Obligation::getId).toList();
-                }
+//                subsetIds = null;
+//                switch (hostEntityName) {
+//                    case "fis_Activity" ->
+//                            subsetIds = ((Set<Activity>) selectedItems).stream().map(Activity::getId).toList();
+//                    case "fis_Obligation" ->
+//                            subsetIds = ((Set<Obligation>) selectedItems).stream().map(Obligation::getId).toList();
+//                }
                 hostLoader.setParameter("idList", subsetIds);
                 break;
             case "showGroupBtn":
@@ -548,6 +548,16 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         var component = FragmentUtils.getComponentId(event.getComponent());
         if (component.isPresent()) {
             subsetButtonId = component.get();
+            if(subsetButtonId.equals("showSubsetBtn")) {
+                var selectedItems = dataGrid.getSelectedItems();
+                subsetIds = null;
+                switch (hostEntityName) {
+                    case "fis_Activity" ->
+                            subsetIds = ((Set<Activity>) selectedItems).stream().map(Activity::getId).toList();
+                    case "fis_Obligation" ->
+                            subsetIds = ((Set<Obligation>) selectedItems).stream().map(Obligation::getId).toList();
+                }
+            }
             setSubsetLoaderParameters(subsetButtonId);
         }
     }
