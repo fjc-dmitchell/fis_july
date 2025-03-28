@@ -143,6 +143,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     private CollectionLoader<?> hostLoader;
     private String hostEntityName;
     private String hostEntityQuery;
+    private Class hostEntityClass;
     private String fundJoin;
     private String appropriationJoin;
     private String divisionJoin;
@@ -168,6 +169,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     private Group relatedGroup;
     private Branch relatedBranch;
     private Activity relatedActivity;
+    private String subsetButtonId;
 
     /**
      * The hostDataContainer property must be explicitly set by the host invoking the fragment.
@@ -231,6 +233,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         hostEntityQuery = "SELECT e FROM ".concat(hostEntityName).concat(" e");
         switch (hostEntityName) {
             case "fis_Activity":
+                hostEntityClass = Activity.class;
                 hostLoader.setFetchPlan("activity-search-fetch-plan");
                 hostEntityQuery += " ORDER BY e.division.appropriation.budgetFiscalYear, e.division.divisionCode, e.activityNumber";
                 fundJoin = "JOIN {E}.fund f";
@@ -241,12 +244,18 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 branchJoin = "JOIN {E}.branch bch";
                 groupJoin = "JOIN {E}.group grp";
                 configureSubFragment(ActivitySearchFragment.class, "activitiesDc", "activitiesDl");
+                showActivityBtn.setText("Show Generic Activity");
                 break;
             case "fis_ActivityProjection":
                 appropriationJoin = "JOIN {E}.activity act JOIN act.division dv JOIN dv.appropriation app";
                 divisionJoin = "JOIN {E}.activity act JOIN act.division dv";
                 break;
+            case "fis_ActivityReimbursement":
+                appropriationJoin = "JOIN {E}.activity act JOIN act.division dv JOIN dv.appropriation app";
+                divisionJoin = "JOIN {E}.activity act JOIN act.division dv";
+                break;
             case "fis_Obligation":
+                hostEntityClass = Obligation.class;
                 hostLoader.setFetchPlan("obligation-search-fetch-plan");
                 hostEntityQuery += " ORDER BY e.activity.division.appropriation.budgetFiscalYear, e.activity.division.divisionCode, e.documentNumber, e.objectClass.budgetObjectClass";
                 fundJoin = "JOIN {E}.activity act JOIN act.fund f";
@@ -489,72 +498,57 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     @Subscribe("searchTabSheet")
     protected void onSearchTabSheetSelectedChange(final JmixTabSheet.SelectedChangeEvent event) {
         tabIdx = event.getSource().getSelectedIndex();
-        if (tabIdx == 2) { // dataGrid may not be passed into search
-//            dataGrid.setMultiSelect(tabIdx.equals(2));
-            dataGrid.setMultiSelect(true);
+        if (dataGrid != null) {
+            dataGrid.setMultiSelect(tabIdx.equals(2));
         }
+    }
+
+    private void setSubsetLoaderParameters(String btnId) {
+        clearCustomSearchParameters();
+        removeSubsetLoaderParameters();
+
+        var selectedItems = dataGrid.getSelectedItems();
+
+        switch (btnId) {
+            case "showSubsetBtn":
+                subsetIds = null;
+                switch (hostEntityName) {
+                    case "fis_Activity" ->
+                            subsetIds = ((Set<Activity>) selectedItems).stream().map(Activity::getId).toList();
+                    case "fis_Obligation" ->
+                            subsetIds = ((Set<Obligation>) selectedItems).stream().map(Obligation::getId).toList();
+                }
+                hostLoader.setParameter("idList", subsetIds);
+                break;
+            case "showGroupBtn":
+                hostLoader.setParameter("relatedGroup", relatedGroup);
+                break;
+            case "showBranchBtn":
+                hostLoader.setParameter("relatedBranch", relatedBranch);
+                break;
+            case "showActivityBtn":
+                switch (hostEntityName) {
+                    case "fis_Activity":
+                        hostLoader.removeParameter("relatedActivity");
+                        hostLoader.setParameter("genericActivityNumber", relatedActivity.getGenericActivityNumber());
+                        hostLoader.setParameter("relatedActivityDivision", relatedActivity.getDivision());
+                        break;
+                    case "fis_Obligation":
+                        hostLoader.setParameter("relatedActivity", relatedActivity);
+                        break;
+                }
+                break;
+        }
+        performSearch();
+        dataGrid.deselectAll();
     }
 
     @Subscribe("showSubsetAction")
     protected void onShowSubsetAction(final ActionPerformedEvent event) {
         var component = FragmentUtils.getComponentId(event.getComponent());
         if (component.isPresent()) {
-            clearCustomSearchParameters();
-            // also need to clear prior load params...
-            String btnId = component.get();
-            var selectedItems = dataGrid.getSelectedItems();
-
-            if (hostEntityName.equals("fis_Activity")) {
-                if (btnId.equals("showSubsetBtn")) {
-                    subsetIds = ((Set<Activity>) selectedItems).stream().map(Activity::getId).toList();
-                    hostLoader.setParameter("idList", subsetIds);
-                }
-
-                if (selectedItems.size() == 1) {
-                    var firstItem = (Activity) selectedItems.stream().findFirst().get();
-                    switch (btnId) {
-                        case "showGroupBtn":
-                            hostLoader.setParameter("group", firstItem.getGroup());
-                            break;
-                        case "showBranchBtn":
-                            hostLoader.setParameter("branch", firstItem.getBranch());
-                            break;
-                        case "showActivityBtn":
-                            hostLoader.setParameter("genericActivityNumber", firstItem.getGenericActivityNumber());
-                            hostLoader.setParameter("division", firstItem.getDivision());
-                            break;
-                    }
-                }
-            }
-            if (hostEntityName.equals("fis_Obligation") || hostEntityName.equals("fis_Activity")) {
-                if (btnId.equals("showSubsetBtn")) {
-                    subsetIds = ((Set<Obligation>) selectedItems).stream().map(Obligation::getId).toList();
-                    hostLoader.setParameter("idList", subsetIds);
-                }
-
-                if (selectedItems.size() == 1) {
-                    var firstItem = (Obligation) selectedItems.stream().findFirst().get();
-                    relatedBranch = null;
-                    relatedGroup = null;
-                    relatedActivity = null;
-                    switch (btnId) {
-                        case "showGroupBtn":
-                            relatedGroup = firstItem.getActivity().getGroup();
-                            hostLoader.setParameter("relatedGroup", relatedGroup);
-                            break;
-                        case "showBranchBtn":
-                            relatedBranch = firstItem.getActivity().getBranch();
-                            hostLoader.setParameter("relatedBranch", relatedBranch);
-                            break;
-                        case "showActivityBtn":
-                            relatedActivity = firstItem.getActivity();
-                            hostLoader.setParameter("relatedActivity", relatedActivity);
-                            break;
-                    }
-                }
-            }
-            performSearch();
-            dataGrid.deselectAll();
+            subsetButtonId = component.get();
+            setSubsetLoaderParameters(subsetButtonId);
         }
     }
 
@@ -565,14 +559,17 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         performSearch();
     }
 
-    private void setLoaderParameters() {
+    private void removeSubsetLoaderParameters() {
         hostLoader.removeParameter("idList");
         hostLoader.removeParameter("relatedGroup");
         hostLoader.removeParameter("relatedBranch");
         hostLoader.removeParameter("relatedActivity");
-
+        hostLoader.removeParameter("relatedActivityDivision");
         hostLoader.removeParameter("genericActivityNumber");
-        hostLoader.removeParameter("division");
+    }
+
+    private void setLoaderParameters() {
+        removeSubsetLoaderParameters();
 
         if (fundSearchField.getValue() != null) {
             hostLoader.setParameter("fundFilterField", fundSearchField.getValue());
@@ -658,6 +655,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         sessionSearchParams.put("related_group", relatedGroup);
         sessionSearchParams.put("related_branch", relatedBranch);
         sessionSearchParams.put("related_activity", relatedActivity);
+        sessionSearchParams.put("subset_button_id", subsetButtonId);
 
         if (subFragment != null) {
             List<PropertyFilter<?>> propertyFilters = ((EntitySearchFragment) subFragment).getPropertyFilters();
@@ -678,9 +676,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         sessionData.setAttribute(hostEntityName.concat(".searchParams"), sessionSearchParams);
     }
 
-    @ViewComponent
-    private JmixButton customSearchBtn;
-
     private void loadEntityComboBoxes() {
         setBfyBtnCaption();
         fundsDl.load();
@@ -690,7 +685,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         branchesDl.load();
         groupsDl.load();
     }
-
 
     private void restoreSearchParameters() {
 
@@ -744,13 +738,12 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
 
                 if (tabIdx == 2) {
                     subsetIds = (List<Integer>) sessionSearchParams.get("subset_idList");
-                    hostLoader.setParameter("idList", subsetIds);
                     relatedGroup = (Group) sessionSearchParams.get("related_group");
-                    hostLoader.setParameter("relatedGroup", relatedGroup);
                     relatedBranch = (Branch) sessionSearchParams.get("related_branch");
-                    hostLoader.setParameter("relatedBranch", relatedBranch);
                     relatedActivity = (Activity) sessionSearchParams.get("related_activity");
-                    hostLoader.setParameter("relatedActivity", relatedActivity);
+                    subsetButtonId = (String) sessionSearchParams.get("subset_button_id");
+
+                    setSubsetLoaderParameters(subsetButtonId);
                 }
 
             }
@@ -779,7 +772,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
             customConditions.add(JpqlCondition.create("grp = :relatedGroup", groupJoin).skipNullOrEmpty());
             customConditions.add(JpqlCondition.create("bch = :relatedBranch", branchJoin).skipNullOrEmpty());
             if (hostEntityName.equals("fis_Activity")) {
-                customConditions.add(JpqlCondition.create("dv = :division", divisionJoin).skipNullOrEmpty());
+                customConditions.add(JpqlCondition.create("dv = :relatedActivityDivision", divisionJoin).skipNullOrEmpty());
                 customConditions.add(JpqlCondition.create("e.activityNumber like :genericActivityNumber", null).skipNullOrEmpty());
             }
             if (hostEntityName.equals("fis_Obligation")) {
@@ -844,11 +837,34 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     @EventListener
     public void handleSearchGridSelectedItemsEvent(SearchGridSelectedItemsEvent event) {
         var size = (Integer) sessionData.getAttribute("searchDataGridSize");
-        showGroupBtn.setEnabled(size == 1);
-        showBranchBtn.setEnabled(size == 1);
-        showActivityBtn.setEnabled(size == 1);
-        showSubsetBtn.setEnabled(size > 0);
 
+        relatedGroup = null;
+        relatedBranch = null;
+        relatedActivity = null;
+
+        if (size == 1) {
+            var selectedItems = dataGrid.getSelectedItems();
+            switch (hostEntityName) {
+                case "fis_Activity":
+                    var activity = (Activity) selectedItems.stream().findFirst().get();
+                    relatedGroup = activity.getGroup();
+                    relatedBranch = activity.getBranch();
+                    relatedActivity = activity;
+                    break;
+                case "fis_Obligation":
+                    var obligation = (Obligation) selectedItems.stream().findFirst().get();
+                    relatedGroup = obligation.getActivity().getGroup();
+                    relatedBranch = obligation.getActivity().getBranch();
+                    relatedActivity = obligation.getActivity();
+                    break;
+            }
+        }
+
+        showGroupBtn.setEnabled(size == 1 && relatedGroup != null);
+        showBranchBtn.setEnabled(size == 1 && relatedBranch != null);
+        showActivityBtn.setEnabled(size == 1 && relatedActivity != null);
+
+        showSubsetBtn.setEnabled(size > 0);
         showSubsetBtn.setText("Show Subset (".concat(String.valueOf(size)).concat(")"));
     }
 

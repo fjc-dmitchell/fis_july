@@ -114,7 +114,7 @@
                             </hbox>
                         </vbox>
                     </tab>
-                    <tab id="subsetTab" label="Subset and Related" visible="false">
+                    <tab id="subsetTab" label="Subset and Related (experimental)" visible="false">
                         <vbox>
                             <h1>Select rows and click button</h1>
                             <hbox>
