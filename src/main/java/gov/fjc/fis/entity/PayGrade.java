@@ -1,8 +1,7 @@
 package gov.fjc.fis.entity;
 
-import io.jmix.core.metamodel.annotation.Composition;
-import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.core.metamodel.annotation.JmixProperty;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.metamodel.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.CreatedBy;
@@ -64,7 +63,6 @@ public class PayGrade {
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
 
-    @Transient
     @JmixProperty
     public String getLocalityString() {
         if (localityEntitled) {
@@ -192,5 +190,14 @@ public class PayGrade {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @InstanceName
+    @DependsOnProperties({"setid", "salAdminPlan", "grade"})
+    public String getInstanceName(MetadataTools metadataTools) {
+        return String.format("%s-%s-%s",
+                metadataTools.format(setid),
+                metadataTools.format(salAdminPlan),
+                metadataTools.format(grade));
     }
 }
