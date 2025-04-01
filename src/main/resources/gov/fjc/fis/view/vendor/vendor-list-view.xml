@@ -26,7 +26,7 @@
     </actions>
     <layout>
         <details summaryText="Filters" opened="true"  themeNames="filled">
-            <hbox>
+            <hbox id="searchBox">
                 <propertyFilter id="namePropertyFilter"
                                 property="name"
                                 operation="CONTAINS"
@@ -39,6 +39,10 @@
                                 dataLoader="vendorsDl"/>
                 <propertyFilter property="active" operation="EQUAL" dataLoader="vendorsDl"/>
             </hbox>
+            <hbox>
+                <button id="clearSearchBtn" text="Clear"
+                        icon="vaadin:eraser"/>
+            </hbox>
         </details>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createButton" action="vendorsDataGrid.create"/>
@@ -46,7 +50,9 @@
             <button id="excelExportButton" action="vendorsDataGrid.excelExport"/>
             <button id="removeButton" action="vendorsDataGrid.remove"/>
             <gridColumnVisibility dataGrid="vendorsDataGrid" icon="COG"/>
-            <simplePagination id="pagination" dataLoader="vendorsDl" autoLoad="true"/>
+            <simplePagination id="pagination" dataLoader="vendorsDl" autoLoad="true"
+                              itemsPerPageDefaultValue="250"
+                              itemsPerPageVisible="true" itemsPerPageItems="250,500,1000"/>
         </hbox>
         <dataGrid id="vendorsDataGrid"
                   width="100%"

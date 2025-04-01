@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
-      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="Judiciary Information Technology Fund"
       focusComponent="jitfsDataGrid">
     <data>
@@ -36,7 +35,7 @@
                   width="440px"
                   minHeight="20em"
                   dataContainer="jitfsDc"
-                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes" selectionMode="NONE">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>

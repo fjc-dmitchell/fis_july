@@ -28,7 +28,7 @@
             <textField id="phoneField" property="phone"/>
             <textField id="faxField" property="fax"/>
             <textField id="emailField" property="email"/>
-            <textArea id="memoField" height="9.5em" property="memo"/>
+            <textArea id="memoField" property="memo"/>
         </formLayout>
         <hbox id="detailActions">
             <button id="saveAndCloseBtn" action="saveAction"/>

@@ -28,7 +28,9 @@
             <button id="editBtn" action="branchesDataGrid.edit"/>
             <button id="excelExportBtn" action="branchesDataGrid.excelExport"/>
             <button id="removeBtn" action="branchesDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="branchesDl" itemsPerPageDefaultValue="250" autoLoad="true"/>
+            <simplePagination id="pagination" dataLoader="branchesDl" autoLoad="true"
+                              itemsPerPageDefaultValue="250"
+                              itemsPerPageVisible="true" itemsPerPageItems="250,500,1000"/>
         </hbox>
         <dataGrid id="branchesDataGrid"
                   minHeight="20em"

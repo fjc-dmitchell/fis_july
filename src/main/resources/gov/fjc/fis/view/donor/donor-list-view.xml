@@ -17,7 +17,6 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
-            <genericFilter component="genericFilter"/>
             <pagination component="pagination"/>
         </urlQueryParameters>
     </facets>
@@ -26,16 +25,18 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
-        <genericFilter id="genericFilter"
-                       dataLoader="donorsDl">
-            <properties include=".*"/>
-        </genericFilter>
+        <details summaryText="Filters" opened="true">
+            <propertyFilter property="organization" operation="CONTAINS" operationEditable="true"
+                            dataLoader="donorsDl"/>
+        </details>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createBtn" action="donorsDataGrid.create"/>
             <button id="editBtn" action="donorsDataGrid.edit"/>
             <button id="excelExportBtn" action="donorsDataGrid.excelExport"/>
             <button id="removeBtn" action="donorsDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="donorsDl" autoLoad="true"/>
+            <simplePagination id="pagination" dataLoader="donorsDl" autoLoad="true"
+                              itemsPerPageDefaultValue="250"
+                              itemsPerPageVisible="true" itemsPerPageItems="250,500,1000"/>
         </hbox>
         <dataGrid id="donorsDataGrid"
                   width="100%"

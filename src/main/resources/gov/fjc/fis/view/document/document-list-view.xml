@@ -27,7 +27,7 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
-        <details id="searchForm" summaryText="Search and Filter" themeNames="filled">
+        <details id="searchForm" summaryText="Search and Filter" themeNames="filled" opened="true">
             <tabSheet id="searchTabSheet">
                 <tab id="customSearchTab" label="Custom Search">
                     <vbox id="searchvbox" width="100%" themeNames="spacing-xs" spacing="false" padding="false">

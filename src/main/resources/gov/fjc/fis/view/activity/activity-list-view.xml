@@ -40,7 +40,8 @@
                   width="100%"
                   minHeight="20em"
                   dataContainer="activitiesDc"
-                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes" minWidth="1800px">
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes" minWidth="1800px"
+                  selectionMode="NONE">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>

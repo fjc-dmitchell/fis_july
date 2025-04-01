@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
-      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="Budget Object Class Categories"
       focusComponent="categoriesDataGrid">
     <data>
         <collection id="categoriesDc"
                     class="gov.fjc.fis.entity.Category">
             <fetchPlan extends="_base"/>
-            <loader id="categoriesDl" readOnly="true">
-                <query>
-                    <![CDATA[select e from fis_Category e]]>
-                </query>
-            </loader>
+            <loader id="categoriesDl" readOnly="true"/>
         </collection>
     </data>
     <facets>
@@ -35,7 +30,9 @@
             <button id="editBtn" action="categoriesDataGrid.edit"/>
             <button id="excelExportBtn" action="categoriesDataGrid.excelExport"/>
             <button id="removeBtn" action="categoriesDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="categoriesDl" autoLoad="true"/>
+            <simplePagination id="pagination" dataLoader="categoriesDl" autoLoad="true"
+                              itemsPerPageDefaultValue="250"
+                              itemsPerPageVisible="true" itemsPerPageItems="250,500,1000"/>
         </hbox>
         <dataGrid id="categoriesDataGrid"
                   width="610px"

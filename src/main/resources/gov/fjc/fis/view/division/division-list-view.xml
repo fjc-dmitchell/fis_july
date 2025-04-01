@@ -33,7 +33,9 @@
             <button id="excelExportButton" action="divisionsDataGrid.excelExportAction"/>
             <button id="removeButton" action="divisionsDataGrid.removeAction"/>
             <gridColumnVisibility dataGrid="divisionsDataGrid" icon="COG"/>
-            <simplePagination id="pagination" dataLoader="divisionsDl" autoLoad="true"/>
+            <simplePagination id="pagination" dataLoader="divisionsDl" autoLoad="true"
+                              itemsPerPageDefaultValue="250"
+                              itemsPerPageVisible="true" itemsPerPageItems="250,500,1000"/>
         </hbox>
         <dataGrid id="divisionsDataGrid"
                   width="1200px"

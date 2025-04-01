@@ -28,7 +28,9 @@
             <button id="editBtn" action="groupsDataGrid.edit"/>
             <button id="excelExportBtn" action="groupsDataGrid.excelExport"/>
             <button id="removeBtn" action="groupsDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="groupsDl" autoLoad="true" itemsPerPageDefaultValue="250"/>
+            <simplePagination id="pagination" dataLoader="groupsDl" autoLoad="true"
+                              itemsPerPageDefaultValue="250"
+                              itemsPerPageVisible="true" itemsPerPageItems="250,500,1000"/>
         </hbox>
         <dataGrid id="groupsDataGrid"
                   width="909px"
