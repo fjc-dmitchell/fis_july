@@ -38,7 +38,7 @@
                   width="410px"
                   minHeight="20em"
                   dataContainer="payPeriodsDc"
-                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes" selectionMode="NONE">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>

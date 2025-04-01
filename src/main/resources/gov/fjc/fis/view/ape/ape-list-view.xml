@@ -14,27 +14,27 @@
         </collection>
         <collection id="branchesDc" class="gov.fjc.fis.entity.Branch">
             <loader id="branchesDl" readOnly="true"/>
-<!--                <query>-->
-<!--                    <![CDATA[select e from fis_Branch e]]>-->
-<!--                </query>-->
-<!--            </loader>-->
+            <!--                <query>-->
+            <!--                    <![CDATA[select e from fis_Branch e]]>-->
+            <!--                </query>-->
+            <!--            </loader>-->
             <fetchPlan extends="_base"/>
         </collection>
         <collection id="apesDc"
                     class="gov.fjc.fis.entity.form.Ape">
-<!--            <fetchPlan extends="_base">-->
-<!--                <property name="activity" fetchPlan="_base"/>-->
-<!--                <property name="division">-->
-<!--                    <property name="appropriation">-->
-<!--                        <property name="budgetFiscalYear"/>-->
-<!--                    </property>-->
-<!--                </property>-->
-<!--            </fetchPlan>-->
+            <!--            <fetchPlan extends="_base">-->
+            <!--                <property name="activity" fetchPlan="_base"/>-->
+            <!--                <property name="division">-->
+            <!--                    <property name="appropriation">-->
+            <!--                        <property name="budgetFiscalYear"/>-->
+            <!--                    </property>-->
+            <!--                </property>-->
+            <!--            </fetchPlan>-->
             <loader id="apesDl" readOnly="true"/>
-<!--                <query>-->
-<!--                    <![CDATA[select e from fis_Ape e order by e.startDate desc]]>-->
-<!--                </query>-->
-<!--            </loader>-->
+            <!--                <query>-->
+            <!--                    <![CDATA[select e from fis_Ape e order by e.startDate desc]]>-->
+            <!--                </query>-->
+            <!--            </loader>-->
         </collection>
     </data>
     <facets>
@@ -68,7 +68,9 @@
             <button id="editBtn" action="apesDataGrid.edit"/>
             <button id="excelExportBtn" action="apesDataGrid.excelExport"/>
             <button id="removeBtn" action="apesDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="apesDl" autoLoad="true" itemsPerPageDefaultValue="250"/>
+            <simplePagination id="pagination" dataLoader="apesDl" autoLoad="true"
+                              itemsPerPageDefaultValue="250"
+                              itemsPerPageVisible="true" itemsPerPageItems="250,500,1000"/>
         </hbox>
         <dataGrid id="apesDataGrid"
                   width="100%"

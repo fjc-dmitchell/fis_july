@@ -12,6 +12,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
+
 @JmixEntity
 @Table(name = "FIS_PAY_GRADE", indexes = {
         @Index(name = "IDX_FIS_PAY_GRADE_UNQ", columnList = "SETID, SAL_ADMIN_PLAN, GRADE", unique = true)
@@ -62,6 +64,12 @@ public class PayGrade {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    @DependsOnProperties({"createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"})
+    @JmixProperty
+    public String getCreatedByString() {
+        return getCreatedModifiedString(createdBy, createdDate, lastModifiedBy, lastModifiedDate);
+    }
 
     @JmixProperty
     public String getLocalityString() {

@@ -37,13 +37,15 @@
             <button id="editBtn" action="distanceLearningsDataGrid.edit"/>
             <button id="excelExportBtn" action="distanceLearningsDataGrid.excelExport"/>
             <button id="removeBtn" action="distanceLearningsDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="distanceLearningsDl" autoLoad="true"/>
+            <simplePagination id="pagination" dataLoader="distanceLearningsDl" autoLoad="true"
+                              itemsPerPageDefaultValue="250"
+                              itemsPerPageVisible="true" itemsPerPageItems="250,500,1000"/>
         </hbox>
         <dataGrid id="distanceLearningsDataGrid"
                   width="100%"
                   minHeight="20em"
                   dataContainer="distanceLearningsDc"
-                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes" selectionMode="NONE">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>

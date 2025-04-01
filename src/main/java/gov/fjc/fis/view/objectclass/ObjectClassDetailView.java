@@ -21,6 +21,7 @@ import io.jmix.flowui.Fragments;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +51,9 @@ public class ObjectClassDetailView extends StandardDetailView<ObjectClass> {
 
     @ViewComponent
     private CollectionLoader<Category> categoriesDl;
+
     @ViewComponent
-    private TypedTextField<Object> appropriationField;
+    private EntityPicker<Appropriation> appropriationField;
     @ViewComponent
     private EntityComboBox<Category> categoryField;
     @ViewComponent
@@ -73,6 +75,7 @@ public class ObjectClassDetailView extends StandardDetailView<ObjectClass> {
             appropriation = appropriationService.getBfyEntryAppropriation(sessionData);
             categoriesDl.load();
             categoryField.focus();
+            appropriationField.setValue(appropriation);
         } else {
             appropriation = objectClass.getCategory().getAppropriation();
             if ((!appropriation.getStatus())) {
@@ -86,7 +89,7 @@ public class ObjectClassDetailView extends StandardDetailView<ObjectClass> {
             projectionsBox.add(fragment);
             tabBox.setVisible(true);
         }
-        appropriationField.setValue(appropriation.getBudgetFiscalYear());
+//        appropriationField.setValue(appropriation.getBudgetFiscalYear());
         createdByString.setText(objectClass.getCreatedByString());
     }
 
@@ -111,20 +114,29 @@ public class ObjectClassDetailView extends StandardDetailView<ObjectClass> {
     }
 
     private void checkObjectClass() {
-        if (categoryField.getValue() != null && budgetObjectClassField.getValue() != null) {
-            var moc = categoryField.getValue().getMasterObjectClass();
-            var boc = budgetObjectClassField.getValue();
-            if (boc.length() == 4) {
-                if (!boc.substring(0, 2).equals(moc)) {
-                    notifications.create("Budget Object Class must start with ".concat(moc))
-                            .withThemeVariant(NotificationVariant.LUMO_ERROR)
-                            .show();
+        var category = categoryField.getValue();
+
+        if (category != null) {
+            var moc = category.getMasterObjectClass();
+            String boc;
+            if (entityStates.isNew(getEditedEntity())) {
+                boc = budgetObjectClassField.getValue();
+            } else {
+                boc = getEditedEntity().getBudgetObjectClass();
+            }
+            if (moc != null) {
+                if (boc != null && boc.length() == 4) {
+                    if (!boc.substring(0, 2).equals(moc)) {
+                        notifications.create("Budget Object Class must start with ".concat(moc))
+                                .withThemeVariant(NotificationVariant.LUMO_ERROR)
+                                .show();
+                        budgetObjectClassField.setValue(moc);
+                        budgetObjectClassField.focus();
+                    }
+                } else {
                     budgetObjectClassField.setValue(moc);
                     budgetObjectClassField.focus();
                 }
-            } else {
-                budgetObjectClassField.setValue(moc);
-                budgetObjectClassField.focus();
             }
         }
     }

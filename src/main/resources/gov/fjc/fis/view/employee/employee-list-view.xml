@@ -35,13 +35,15 @@
             <button id="editBtn" action="employeesDataGrid.edit"/>
             <button id="excelExportBtn" action="employeesDataGrid.excelExport"/>
             <button id="removeBtn" action="employeesDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="employeesDl" autoLoad="true"/>
+            <simplePagination id="pagination" dataLoader="employeesDl" autoLoad="true"
+                              itemsPerPageDefaultValue="250"
+                              itemsPerPageVisible="true" itemsPerPageItems="250,500,1000"/>
         </hbox>
         <dataGrid id="employeesDataGrid"
                   width="100%"
                   minHeight="20em"
                   dataContainer="employeesDc"
-                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes" selectionMode="NONE">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>

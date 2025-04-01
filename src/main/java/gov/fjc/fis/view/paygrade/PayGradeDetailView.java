@@ -1,6 +1,7 @@
 package gov.fjc.fis.view.paygrade;
 
 import com.vaadin.flow.component.grid.HeaderRow;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -17,6 +18,8 @@ import io.jmix.flowui.view.*;
 public class PayGradeDetailView extends StandardDetailView<PayGrade> {
     @ViewComponent
     private DataGrid<Object> ratesDataGrid;
+    @ViewComponent
+    private Paragraph createdByString;
 
     @Subscribe
     protected void onInit(final InitEvent event) {
@@ -43,6 +46,11 @@ public class PayGradeDetailView extends StandardDetailView<PayGrade> {
 
         layout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         headerCell.setComponent(layout);
+    }
+
+    @Subscribe
+    protected void onBeforeShow(final BeforeShowEvent event) {
+        createdByString.setText(getEditedEntity().getCreatedByString());
     }
 
 }

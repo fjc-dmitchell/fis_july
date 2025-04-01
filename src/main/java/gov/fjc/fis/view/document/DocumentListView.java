@@ -42,6 +42,7 @@ public class DocumentListView extends StandardListView<Document> {
             if (component instanceof PropertyFilter<?>) {
                 ((PropertyFilter<?>) component).clear();
                 ((PropertyFilter<?>) component).getQueryCondition().setParameterValue(null);
+                ((PropertyFilter<?>) component).apply();
             }
         }
     }

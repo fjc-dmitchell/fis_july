@@ -48,7 +48,8 @@
             <button id="excelExportBtn" action="activityProjectionsDataGrid.excelExport"/>
 <!--            <button id="removeBtn" action="activityProjectionsDataGrid.remove"/>-->
             <gridColumnVisibility dataGrid="activityProjectionsDataGrid" icon="COG"/>
-            <simplePagination id="pagination" dataLoader="activityProjectionsDl" autoLoad="true" itemsPerPageDefaultValue="250"
+            <simplePagination id="pagination" dataLoader="activityProjectionsDl" autoLoad="true"
+                              itemsPerPageDefaultValue="250"
                               itemsPerPageVisible="true" itemsPerPageItems="250,500,1000"/>
         </hbox>
 <!--        width="1450px"-->

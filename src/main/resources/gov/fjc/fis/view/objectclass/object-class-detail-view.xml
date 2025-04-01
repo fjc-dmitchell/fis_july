@@ -28,11 +28,15 @@
             <vbox id="formWrapper" classNames="contrast-panel">
                 <formLayout id="form" dataContainer="objectClassDc">
                     <hbox colspan="2">
-                        <textField id="appropriationField" label="Budget Fiscal Year" width="10em" readOnly="true"/>
+                        <!--                        <textField id="appropriationField" label="Budget Fiscal Year" width="10em" readOnly="true"-->
+                        <!--                                   dataContainer="objectClassDc" property="category.appropriation"/>-->
+                        <entityPicker id="appropriationField" property="category.appropriation"
+                                      label="Budget Fiscal Year"
+                                      width="10em" readOnly="true"/>
                     </hbox>
                     <hbox colspan="2">
                         <entityComboBox id="categoryField" property="category" label="Category (MOC)" width="33em"
-                                        dataContainer="objectClassDc" itemsContainer="categoriesDc"/>
+                                        itemsContainer="categoriesDc"/>
                     </hbox>
                     <hbox>
                         <textField id="budgetObjectClassField" property="budgetObjectClass" width="10em" label="BOC"/>

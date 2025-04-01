@@ -42,7 +42,7 @@
         <dataGrid id="payAdjustmentsDataGrid"
                   width="100%"
                   minHeight="20em"
-                  dataContainer="payAdjustmentsDc" themeNames="column-borders compact row-stripes">
+                  dataContainer="payAdjustmentsDc" themeNames="column-borders compact row-stripes" selectionMode="NONE">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>
