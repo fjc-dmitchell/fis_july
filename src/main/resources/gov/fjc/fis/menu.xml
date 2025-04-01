@@ -19,9 +19,11 @@
         <item view="fis_Category.list" title="msg://gov.fjc.fis.view.category/categoryListView.title"/>
         <item view="fis_ObjectClass.list" title="msg://gov.fjc.fis.view.objectclass/objectClassListView.title"/>
         <item view="fis_Fund.list" title="msg://gov.fjc.fis.view.fund/fundListView.title"/>
+        <item view="fis_Vendor.list" title="msg://gov.fjc.fis.view.vendor/vendorListView.title"/>
         <item view="fis_ActivityProjection.list"
               title="msg://gov.fjc.fis.view.activityprojection/activityProjectionListView.title"/>
-        <item view="fis_Vendor.list" title="msg://gov.fjc.fis.view.vendor/vendorListView.title"/>
+        <item view="fis_ActivityReimbursement.list"
+              title="msg://gov.fjc.fis.view.activityreimbursement/activityReimbursementListView.title"/>
     </menu>
     <menu id="jifms" description="msg://gov.fjc.fis/menu_config.jifms.description"
           title="msg://gov.fjc.fis/menu_config.jifms.title">
@@ -43,7 +45,6 @@
     <menu id="foundation" description="msg://gov.fjc.fis/menu_config.foundation.description"
           title="msg://gov.fjc.fis/menu_config.foundation.title">
         <item view="fis_Donor.list" title="msg://gov.fjc.fis.view.donor/donorListView.title"/>
-        <separator/>
         <item view="fis_Division.foundation-list" title="msg://gov.fjc.fis.view.division/divisionListView.title"/>
         <item view="fis_Activity.foundation-list" title="msg://gov.fjc.fis.view.activity/activityListView.title"/>
         <item view="fis_Obligation.foundation-list" title="msg://gov.fjc.fis.view.obligation/obligationListView.title"/>
