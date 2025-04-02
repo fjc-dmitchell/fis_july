@@ -1,6 +1,7 @@
 package gov.fjc.fis.listener;
 
 import gov.fjc.fis.entity.*;
+import gov.fjc.fis.service.ActivityProjectionService;
 import io.jmix.core.Id;
 import io.jmix.core.event.EntityChangedEvent;
 import org.springframework.context.event.EventListener;
@@ -12,9 +13,12 @@ import io.jmix.core.DataManager;
 public class ActivityProjectionEventListener {
     @Autowired
     private DataManager dataManager;
+    @Autowired
+    private ActivityProjectionService activityProjectionService;
 
     @EventListener
     void onActivityProjectionChangeBeforeCommit(EntityChangedEvent<ActivityProjection> event) {
+        // first, deal with audit record
         ActivityProjectionAudit audit = dataManager.create(ActivityProjectionAudit.class);
         if (event.getType() == EntityChangedEvent.Type.DELETED) {
             Id<Activity> activityId = event.getChanges().getOldReferenceId("activity");
@@ -44,5 +48,22 @@ public class ActivityProjectionEventListener {
             }
         }
         dataManager.save(audit);
+
+        // now, let's update the reimbursement field on activity
+        Activity activity;
+        if (event.getType() != EntityChangedEvent.Type.DELETED) {
+            Id<ActivityProjection> projectionId = event.getEntityId();
+            ActivityProjection projection = dataManager.load(projectionId).one();
+            activity = projection.getActivity();
+        } else {
+            Id<Activity> activityId = event.getChanges().getOldValue("activity");
+            if (activityId == null) {
+                throw new IllegalStateException("Cannot get Activity from deleted projection");
+            }
+            activity = dataManager.load(activityId).one();
+        }
+
+        activity.setProjectedAmount(activityProjectionService.sumProjections(activity));
+        dataManager.save(activity);
     }
 }
