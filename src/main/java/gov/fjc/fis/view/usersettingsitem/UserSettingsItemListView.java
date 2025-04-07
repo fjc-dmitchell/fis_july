@@ -10,9 +10,6 @@ import io.jmix.flowui.view.*;
 import io.jmix.flowuidata.entity.UserSettingsItem;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Objects;
-
-
 @Route(value = "userSettingsItems", layout = MainView.class)
 @ViewController(id = "flowui_UserSettingsItem.list")
 @ViewDescriptor(path = "user-settings-item-list-view.xml")
