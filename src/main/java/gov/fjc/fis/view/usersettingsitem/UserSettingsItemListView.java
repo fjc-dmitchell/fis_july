@@ -26,7 +26,6 @@ public class UserSettingsItemListView extends StandardListView<UserSettingsItem>
 
     @Subscribe(id = "removeButton", subject = "clickListener")
     protected void onRemoveButtonClick(final ClickEvent<JmixButton> event) {
-        var viewId = Objects.requireNonNull(userSettingsItemsDataGrid.getSingleSelectedItem()).getKey();
-        userSettingsCache.delete(viewId);
+        userSettingsItemsDataGrid.getSelectedItems().forEach(e -> userSettingsCache.delete(e.getKey()));
     }
 }
