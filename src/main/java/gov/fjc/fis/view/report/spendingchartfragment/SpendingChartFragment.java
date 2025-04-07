@@ -55,13 +55,6 @@ public class SpendingChartFragment extends Fragment<VerticalLayout> {
         refreshSpendingChart();
     }
 
-//    public void reloadAppropriation() {
-//        categorySpendDl.load();
-//        categorySofDl.load();
-//        refreshAllocationsChart();
-//        refreshSpendingChart();
-//    }
-
     @Subscribe(target = Target.HOST_CONTROLLER)
     protected void onHostReady(final View.ReadyEvent event) {
         appropriationType.setValue(AppropriationType.COMBINED_YEAR_FUND);
@@ -102,21 +95,21 @@ public class SpendingChartFragment extends Fragment<VerticalLayout> {
                     for (var cat : categories) {
                         allocations.addItem(new MapDataItem(Map.of("category", cat.getTitleAndCode(), "value", cat.getTotalOneYearAllocations())));
                     }
-                    allocationsChart.getTitle().setText(appropriation.getBudgetFiscalYear().concat(" One Year Allocations"));
+                    Objects.requireNonNull(allocationsChart.getTitle()).setText(appropriation.getBudgetFiscalYear().concat(" One Year Allocations"));
                     break;
                 case TWO_YEAR_FUND:
                     categories = categorySofDc.getItems().stream().filter(categoryDto -> categoryDto.getTotalTwoYearAllocations().signum() != 0).toList();
                     for (var cat : categories) {
                         allocations.addItem(new MapDataItem(Map.of("category", cat.getTitleAndCode(), "value", cat.getTotalTwoYearAllocations())));
                     }
-                    allocationsChart.getTitle().setText(appropriation.getBudgetFiscalYear().concat(" Two Year Allocations"));
+                    Objects.requireNonNull(allocationsChart.getTitle()).setText(appropriation.getBudgetFiscalYear().concat(" Two Year Allocations"));
                     break;
                 default:
                     categories = categorySofDc.getItems().stream().filter(categoryDto -> categoryDto.getTotalAllocations().signum() != 0).toList();
                     for (var cat : categories) {
                         allocations.addItem(new MapDataItem(Map.of("category", cat.getTitleAndCode(), "value", cat.getTotalAllocations())));
                     }
-                    allocationsChart.getTitle().setText(appropriation.getBudgetFiscalYear().concat(" Combined Year Allocations"));
+                    Objects.requireNonNull(allocationsChart.getTitle()).setText(appropriation.getBudgetFiscalYear().concat(" Combined Year Allocations"));
                     break;
             }
             allocationsChart.setDataSet(new DataSet().withSource(new DataSet.Source<MapDataItem>().withDataProvider(allocations).withCategoryField("category").withValueField("value")));
@@ -129,25 +122,25 @@ public class SpendingChartFragment extends Fragment<VerticalLayout> {
             List<CategoryDto> categories;
             switch (appropriationType.getValue()) {
                 case ONE_YEAR_FUND:
-                    categories = categorySpendDc.getItems().stream().filter(categoryDto -> categoryDto.getTotalOneYearObligations().signum() != 0).toList();
+                    categories = categorySpendDc.getItems().stream().filter(categoryDto -> categoryDto.getTotalOneYearObligations().add(categoryDto.getTotalOneYearProjections()).signum() != 0).toList();
                     for (var cat : categories) {
-                        spending.addItem(new MapDataItem(Map.of("category", cat.getTitleAndCode(), "value", cat.getTotalOneYearObligations())));
+                        spending.addItem(new MapDataItem(Map.of("category", cat.getTitleAndCode(), "value", cat.getTotalOneYearObligations().add(cat.getTotalOneYearProjections()))));
                     }
-                    spendingChart.getTitle().setText(appropriation.getBudgetFiscalYear().concat(" One Year Spending"));
+                    Objects.requireNonNull(spendingChart.getTitle()).setText(appropriation.getBudgetFiscalYear().concat(" One Year Spending"));
                     break;
                 case TWO_YEAR_FUND:
-                    categories = categorySpendDc.getItems().stream().filter(categoryDto -> categoryDto.getTotalTwoYearObligations().signum() != 0).toList();
+                    categories = categorySpendDc.getItems().stream().filter(categoryDto -> categoryDto.getTotalTwoYearObligations().add(categoryDto.getTotalTwoYearProjections()).signum() != 0).toList();
                     for (var cat : categories) {
-                        spending.addItem(new MapDataItem(Map.of("category", cat.getTitleAndCode(), "value", cat.getTotalTwoYearObligations())));
+                        spending.addItem(new MapDataItem(Map.of("category", cat.getTitleAndCode(), "value", cat.getTotalTwoYearObligations().add(cat.getTotalTwoYearProjections()))));
                     }
                     spendingChart.getTitle().setText(appropriation.getBudgetFiscalYear().concat(" Two Year Spending"));
                     break;
                 default:
-                    categories = categorySpendDc.getItems().stream().filter(categoryDto -> categoryDto.getTotalObligations().signum() != 0).toList();
+                    categories = categorySpendDc.getItems().stream().filter(categoryDto -> categoryDto.getTotalObligations().add(categoryDto.getTotalProjections()).signum() != 0).toList();
                     for (var cat : categories) {
-                        spending.addItem(new MapDataItem(Map.of("category", cat.getTitleAndCode(), "value", cat.getTotalObligations())));
+                        spending.addItem(new MapDataItem(Map.of("category", cat.getTitleAndCode(), "value", cat.getTotalObligations().add(cat.getTotalProjections()))));
                     }
-                    spendingChart.getTitle().setText(appropriation.getBudgetFiscalYear().concat(" Combined Year Spending"));
+                    Objects.requireNonNull(spendingChart.getTitle()).setText(appropriation.getBudgetFiscalYear().concat(" Combined Year Spending"));
                     break;
             }
             spendingChart.setDataSet(new DataSet().withSource(new DataSet.Source<MapDataItem>().withDataProvider(spending).withCategoryField("category").withValueField("value")));
