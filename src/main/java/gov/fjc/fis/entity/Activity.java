@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
+import static gov.fjc.fis.FisUtilities.toUpperNullAllowed;
 
 @JmixEntity
 @Table(name = "FIS_ACTIVITY", indexes = {
@@ -27,7 +28,8 @@ import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
         @Index(name = "IDX_FIS_ACTIVITY_DIVISION_GROUP", columnList = "DIVISION_ID, GROUP_ID"),
         @Index(name = "IDX_FIS_ACTIVITY_BRANCH", columnList = "BRANCH_ID"),
         @Index(name = "IDX_FIS_ACTIVITY_GROUP", columnList = "GROUP_ID"),
-        @Index(name = "IDX_FIS_ACTIVITY_DIVISION_FUND_ENDDATE", columnList = "DIVISION_ID, FUND_ID, END_DATE")
+        @Index(name = "IDX_FIS_ACTIVITY_DIVISION_FUND_ENDDATE", columnList = "DIVISION_ID, FUND_ID, END_DATE"),
+        @Index(name = "IDX_FIS_ACTIVITY_FUND", columnList = "FUND_ID")
 }, uniqueConstraints = {
         @UniqueConstraint(name = "IDX_FIS_ACTIVITY_UNQ", columnNames = {"DIVISION_ID", "ACTIVITY_NUMBER"})
 })
@@ -64,6 +66,9 @@ public class Activity {
     @Column(name = "ACTIVITY_NUMBER", nullable = false, length = 4)
     @NotNull
     private String activityNumber;
+
+    @Column(name = "GENERIC_PROJECTION")
+    private Boolean genericProjection = false;
 
     @Column(name = "TITLE", nullable = false)
     @NotNull
@@ -110,7 +115,10 @@ public class Activity {
     private String note;
 
     @Column(name = "TRAINING_PROJECT")
-    private Boolean trainingProject;
+    private Boolean trainingProject = false;
+
+    @Column(name = "CANCELED")
+    private Boolean canceled = false;
 
     @NotNull
     @Column(name = "PROJECTED_AMOUNT", nullable = false, precision = 19, scale = 2)
@@ -119,6 +127,10 @@ public class Activity {
     @NotNull
     @Column(name = "REIMBURSED_AMOUNT", nullable = false, precision = 19, scale = 2)
     private BigDecimal reimbursedAmount = BigDecimal.ZERO;
+
+    @NotNull
+    @Column(name = "OBLIGATED_AMOUNT", nullable = false, precision = 19, scale = 2)
+    private BigDecimal obligatedAmount = BigDecimal.ZERO;
 
     @Composition
     @OneToMany(mappedBy = "activity")
@@ -145,7 +157,7 @@ public class Activity {
     private Boolean participantCountFinal;
 
     @Column(name = "ADDED_TO_PLAN")
-    private Boolean addedToPlan;
+    private Boolean addedToPlan = false;
 
     @Column(name = "INITIAL_PROJECTION")
     private BigDecimal initialProjection;
@@ -169,6 +181,30 @@ public class Activity {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    public BigDecimal getObligatedAmount() {
+        return obligatedAmount;
+    }
+
+    public void setObligatedAmount(BigDecimal obligatedAmount) {
+        this.obligatedAmount = obligatedAmount;
+    }
+
+    public Boolean getCanceled() {
+        return canceled;
+    }
+
+    public void setCanceled(Boolean canceled) {
+        this.canceled = canceled;
+    }
+
+    public Boolean getGenericProjection() {
+        return genericProjection;
+    }
+
+    public void setGenericProjection(Boolean genericProjection) {
+        this.genericProjection = genericProjection;
+    }
 
     public Boolean getParticipantCountFinal() {
         return participantCountFinal;
@@ -245,7 +281,7 @@ public class Activity {
     @DependsOnProperties({"activityNumber", "group"})
     @JmixProperty
     public Boolean getIsGeneric() {
-        return group != null && activityNumber.equals(group.getGroupCode().concat("00"));
+        return group != null && activityNumber != null && activityNumber.equals(group.getGroupCode().concat("00"));
     }
 
     public Boolean getAddedToPlan() {
@@ -357,7 +393,7 @@ public class Activity {
     }
 
     public void setState(String state) {
-        this.state = state;
+        this.state = toUpperNullAllowed(state);
     }
 
     public String getCity() {
