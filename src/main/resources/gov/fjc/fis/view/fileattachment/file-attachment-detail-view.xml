@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://fileAttachmentDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="fileAttachmentDc"
+                  class="gov.fjc.fis.entity.FileAttachment">
+            <fetchPlan extends="_base">
+                <property name="activity" fetchPlan="_base"/>
+                <property name="obligation" fetchPlan="_base"/>
+                <property name="invoice" fetchPlan="_base"/>
+                <property name="category" fetchPlan="_base"/>
+                <property name="fundControlNotice" fetchPlan="_base"/>
+                <property name="attachedTo"/>
+                <property name="fileName"/>
+                <property name="formattedSize"/>
+                <property name="title"/>
+            </fetchPlan>
+            <loader id="fileAttachmentDl"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="fileAttachmentDc">
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="1"/>
+                <responsiveStep minWidth="40em" columns="2"/>
+            </responsiveSteps>
+            <fileStorageUploadField id="fileReferenceField" clearButtonVisible="true" fileNameVisible="true"
+                                    property="fileReference"/>
+            <textField id="contentLengthField" property="contentLength"/>
+            <entityPicker id="activityField" property="activity">
+                <actions>
+                    <action id="entityLookupAction" type="entity_lookup"/>
+                    <action id="entityClearAction" type="entity_clear"/>
+                </actions>
+            </entityPicker>
+            <entityPicker id="obligationField" property="obligation">
+                <actions>
+                    <action id="entityLookupAction" type="entity_lookup"/>
+                    <action id="entityClearAction" type="entity_clear"/>
+                </actions>
+            </entityPicker>
+            <entityPicker id="invoiceField" property="invoice">
+                <actions>
+                    <action id="entityLookupAction" type="entity_lookup"/>
+                    <action id="entityClearAction" type="entity_clear"/>
+                </actions>
+            </entityPicker>
+            <entityPicker id="categoryField" property="category">
+                <actions>
+                    <action id="entityLookupAction" type="entity_lookup"/>
+                    <action id="entityClearAction" type="entity_clear"/>
+                </actions>
+            </entityPicker>
+            <entityPicker id="fundControlNoticeField" property="fundControlNotice">
+                <actions>
+                    <action id="entityLookupAction" type="entity_lookup"/>
+                    <action id="entityClearAction" type="entity_clear"/>
+                </actions>
+            </entityPicker>
+            <select id="attachedToField" property="attachedTo"/>
+            <textField id="fileNameField" property="fileName"/>
+            <textField id="formattedSizeField" property="formattedSize"/>
+            <textField id="titleField" property="title"/>
+        </formLayout>
+        <hbox id="detailActions">
+            <button id="saveAndCloseButton" action="saveAction"/>
+            <button id="closeButton" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>
