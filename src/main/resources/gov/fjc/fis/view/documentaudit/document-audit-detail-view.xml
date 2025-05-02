@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://documentAuditDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="documentAuditDc"
+                  class="gov.fjc.fis.entity.DocumentAudit">
+            <fetchPlan extends="_base"/>
+            <loader id="documentAuditDl"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="documentAuditDc">
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="1" labelsPosition="ASIDE"/>
+<!--                <responsiveStep minWidth="40em" columns="2" labelsPosition="ASIDE"/>-->
+            </responsiveSteps>
+            <formItem>
+                <textField id="processStatusField" property="processStatus"/>
+            </formItem>
+            <formItem>
+                <datePicker id="processDateField" property="processDate"/>
+            </formItem>
+            <formItem>
+                <textField id="documentFundField" property="documentFund"/>
+            </formItem>
+            <formItem>
+                <textField id="documentBbfyField" property="documentBbfy"/>
+            </formItem>
+            <formItem>
+                <textField id="documentEbfyField" property="documentEbfy"/>
+            </formItem>
+            <formItem>
+                <textField id="documentBudgetorgField" property="documentBudgetorg"/>
+            </formItem>
+            <formItem>
+                <textField id="documentCostorgField" property="documentCostorg"/>
+            </formItem>
+            <formItem>
+                <textField id="documentDoctypeField" property="documentDoctype"/>
+            </formItem>
+            <formItem>
+                <textField id="documentDocnumberField" property="documentDocnumber"/>
+            </formItem>
+            <formItem>
+                <datePicker id="documentDocdateField" property="documentDocdate"/>
+            </formItem>
+            <formItem>
+                <datePicker id="documentCreatedateField" property="documentCreatedate"/>
+            </formItem>
+            <formItem>
+                <textField id="documentTitleField" property="documentTitle"/>
+            </formItem>
+            <formItem>
+                <textField id="documentBocField" property="documentBoc"/>
+            </formItem>
+            <formItem>
+                <textField id="documentProjectField" property="documentProject"/>
+            </formItem>
+            <formItem>
+                <textField id="documentAmountField" property="documentAmount"/>
+            </formItem>
+            <formItem>
+                <textField id="documentLinenumberField" property="documentLinenumber"/>
+            </formItem>
+            <formItem>
+                <textField id="documentTaxidField" property="documentTaxid"/>
+            </formItem>
+            <formItem>
+                <textField id="documentTaxidTypeField" property="documentTaxidType"/>
+            </formItem>
+            <formItem>
+                <textField id="documentAddressCodeField" property="documentAddressCode"/>
+            </formItem>
+            <formItem>
+                <textField id="documentVendorCodeField" property="documentVendorCode"/>
+            </formItem>
+            <formItem>
+                <textField id="documentVendorNameField" property="documentVendorName"/>
+            </formItem>
+            <formItem>
+                <datePicker id="documentStartDateField" property="documentStartDate"/>
+            </formItem>
+            <formItem>
+                <datePicker id="documentEndDateField" property="documentEndDate"/>
+            </formItem>
+            <formItem>
+                <textField id="documentExpendedAmountField" property="documentExpendedAmount"/>
+            </formItem>
+            <formItem>
+                <textField id="documentClosedAmountField" property="documentClosedAmount"/>
+            </formItem>
+            <formItem>
+                <datePicker id="documentClosedDateField" property="documentClosedDate"/>
+            </formItem>
+            <formItem>
+                <textField id="documentModuserField" property="documentModuser"/>
+            </formItem>
+            <formItem>
+                <textField id="documentMocField" property="documentMoc"/>
+            </formItem>
+            <formItem>
+                <textField id="documentFjcField" property="documentFjc"/>
+            </formItem>
+            <formItem>
+                <textField id="obligationDocumentNumberField" property="obligationDocumentNumber"/>
+            </formItem>
+        </formLayout>
+        <formLayout id="obligationForm" dataContainer="documentAuditDc">
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="1" labelsPosition="ASIDE"/>
+                <!--                <responsiveStep minWidth="40em" columns="2" labelsPosition="ASIDE"/>-->
+            </responsiveSteps>
+            <formItem>
+                <textField id="obligationDocumentTypeField" property="obligationDocumentType"/>
+            </formItem>
+            <formItem>
+                <textField id="obligationAmountField" property="obligationAmount"/>
+            </formItem>
+            <formItem>
+                <datePicker id="obligationDocumentDateField" property="obligationDocumentDate"/>
+            </formItem>
+            <formItem>
+                <datePicker id="obligationProcessDateField" property="obligationProcessDate"/>
+            </formItem>
+            <formItem>
+                <textField id="obligationVendorField" property="obligationVendor"/>
+            </formItem>
+            <formItem>
+                <checkbox id="obligationStatusField" property="obligationStatus"/>
+            </formItem>
+            <formItem>
+                <textField id="obligationEinField" property="obligationEin"/>
+            </formItem>
+            <formItem>
+                <datePicker id="obligationStartDateField" property="obligationStartDate"/>
+            </formItem>
+            <formItem>
+                <datePicker id="obligationEndDateField" property="obligationEndDate"/>
+            </formItem>
+            <formItem>
+                <dateTimePicker id="obligationModifiedDateField" property="obligationModifiedDate"/>
+            </formItem>
+            <formItem>
+                <textField id="obligationActivityNumberField" property="obligationActivityNumber"/>
+            </formItem>
+            <formItem>
+                <textField id="obligationObjectClassField" property="obligationObjectClass"/>
+            </formItem>
+            <formItem>
+                <textField id="obligationDivisionCodeField" property="obligationDivisionCode"/>
+            </formItem>
+            <formItem>
+                <textField id="obligationCategoryField" property="obligationCategory"/>
+            </formItem>
+            <formItem>
+                <textField id="obligationAddressCodeField" property="obligationAddressCode"/>
+            </formItem>
+            <formItem>
+                <textField id="obligationVendorCodeField" property="obligationVendorCode"/>
+            </formItem>
+            <formItem>
+                <textField id="loggedChangesField" property="loggedChanges"/>
+            </formItem>
+        </formLayout>
+        <formLayout id="projectionform" dataContainer="documentAuditDc">
+            <formItem>
+                <textField id="currentActivityNumberField" property="currentActivityNumber"/>
+            </formItem>
+            <formItem>
+                <textField id="currentProjectionBocField" property="currentProjectionBoc"/>
+            </formItem>
+            <formItem>
+                <textField id="currentProjectionAmountBeforeField" property="currentProjectionAmountBefore"/>
+            </formItem>
+            <formItem>
+                <textField id="currentProjectionAmountAfterField" property="currentProjectionAmountAfter"/>
+            </formItem>
+            <formItem>
+                <textField id="previousActivityNumberField" property="previousActivityNumber"/>
+            </formItem>
+            <formItem>
+                <textField id="previousProjectionBocField" property="previousProjectionBoc"/>
+            </formItem>
+            <formItem>
+                <textField id="previousProjectionAmountBeforeField" property="previousProjectionAmountBefore"/>
+            </formItem>
+            <formItem>
+                <textField id="previousProjectionAmountAfterField" property="previousProjectionAmountAfter"/>
+            </formItem>
+        </formLayout>
+        <hbox id="detailActions">
+            <button id="saveAndCloseButton" action="saveAction"/>
+            <button id="closeButton" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>
