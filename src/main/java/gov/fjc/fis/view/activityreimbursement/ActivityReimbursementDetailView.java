@@ -76,7 +76,6 @@ public class ActivityReimbursementDetailView extends StandardDetailView<Activity
         return categoryService.getCategoriesForBfy(appropriation);
     }
 
-
     @Install(to = "objectClassesDl", target = Target.DATA_LOADER)
     protected List<ObjectClass> objectClassesDlLoadDelegate(final LoadContext<ObjectClass> loadContext) {
         return objectClassService.getObjectClassesByCategory(category, true);

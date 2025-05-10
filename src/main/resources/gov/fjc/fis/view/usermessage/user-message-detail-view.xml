@@ -19,7 +19,7 @@
     <layout>
         <formLayout id="form" dataContainer="userMessageDc">
             <textField id="titleField" property="title"/>
-            <richTextEditor id="messageField" property="message" height="15em"/>
+            <richTextEditor id="messageField" property="message" minHeight="15em"/>
 <!--            <textArea id="messageField" height="9.5em" property="message"/>-->
             <dateTimePicker id="postDateField" property="postDate"/>
             <checkbox id="publishedField" property="published"/>
