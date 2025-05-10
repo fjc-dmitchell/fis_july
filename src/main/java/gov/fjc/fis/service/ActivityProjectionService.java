@@ -81,12 +81,17 @@ public class ActivityProjectionService {
 
     public List<ActivityProjection> getActivitiesByProjectionMoc(Category category, List<Fund> funds) {
         return dataManager.load(ActivityProjection.class)
-                .query("SELECT e FROM fis_ActivityProjection e" +
-                        " WHERE e.objectClass.category = :category AND e.amount <> 0" +
-                        " AND e.activity.fund in :funds" +
-                        " ORDER BY e.activity.division.divisionCode, e.activity.activityNumber")
+                .query("SELECT p FROM fis_ActivityProjection p"
+                        + " INNER JOIN fis_Activity act ON p.activity=act"
+                        + " INNER JOIN fis_Fund fund ON act.fund=fund"
+                        + " INNER JOIN fis_Division dv ON act.division=dv"
+                        + " INNER JOIN fis_ObjectClass obj ON p.objectClass = obj"
+                        + " INNER JOIN fis_Category cat ON obj.category = cat"
+                        + " WHERE cat = :category AND p.amount <> 0 AND act.fund in :funds"
+                        + " ORDER BY dv.divisionCode, fund.fundCode, act.activityNumber, cat.masterObjectClass, obj.budgetObjectClass")
                 .parameter("category", category)
                 .parameter("funds", funds)
+                .fetchPlan("activityProjection-fetch-plan")
                 .list();
     }
 
@@ -123,11 +128,23 @@ public class ActivityProjectionService {
 
     public List<ActivityProjection> getActivitiesByProjectionBoc(ObjectClass objectClass) {
         return dataManager.load(ActivityProjection.class)
-                .query("select e from fis_ActivityProjection e" +
-                        " where e.objectClass = :objc" +
-                        " order by e.activity.division.divisionCode, e.activity.activityNumber")
-                .parameter("objc", objectClass)
+                .query("SELECT p FROM fis_ActivityProjection p"
+                        + " INNER JOIN fis_Activity act ON p.activity=act"
+                        + " INNER JOIN fis_Fund fund ON act.fund=fund"
+                        + " INNER JOIN fis_Division dv ON act.division=dv"
+                        + " INNER JOIN fis_ObjectClass obj ON p.objectClass = obj"
+                        + " INNER JOIN fis_Category cat ON obj.category = cat"
+                        + " WHERE obj = :objectClass AND p.amount <> 0"
+                        + " ORDER BY dv.divisionCode, fund.fundCode, act.activityNumber, cat.masterObjectClass, obj.budgetObjectClass")
+                .parameter("objectClass",objectClass)
+                .fetchPlan("activityProjection-fetch-plan")
                 .list();
+//        return dataManager.load(ActivityProjection.class)
+//                .query("select e from fis_ActivityProjection e" +
+//                        " where e.objectClass = :objc" +
+//                        " order by e.activity.division.divisionCode, e.activity.activityNumber")
+//                .parameter("objc", objectClass)
+//                .list();
     }
 
     @Autowired
@@ -369,6 +386,19 @@ public class ActivityProjectionService {
                         + " WHERE p.activity=:activity", BigDecimal.class)
                 .parameter("activity", activity)
                 .one();
+    }
+
+    public List<KeyValueEntity> sumActivityProjections(List<Division> divisions, Fund fund) {
+        return dataManager.loadValues(
+                        "SELECT act.fund, act.division, COALESCE(SUM(proj.amount),0)"
+                                + " FROM fis_Activity act"
+                                + " INNER JOIN fis_ActivityProjection proj ON act=proj.activity"
+                                + " WHERE act.division IN :divisions AND act.fund=:fund"
+                                + " GROUP BY act.fund, act.division")
+                .parameter("divisions", divisions)
+                .parameter("fund", fund)
+                .properties("fund", "division", "amount")
+                .list();
     }
 
     public List<ActivityProjectionDto> getProjectionDtosForMasterObjectClass(List<ActivityProjectionDto> projectionDtos, String masterObjectClass) {

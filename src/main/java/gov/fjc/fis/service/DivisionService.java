@@ -3,12 +3,10 @@ package gov.fjc.fis.service;
 import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.entity.Division;
 import gov.fjc.fis.entity.Fund;
-import gov.fjc.fis.entity.dto.ActivityDto;
-import gov.fjc.fis.entity.dto.CategoryDto;
 import gov.fjc.fis.entity.dto.DivisionDto;
 import io.jmix.core.DataManager;
-import io.jmix.core.querycondition.PropertyCondition;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -21,6 +19,7 @@ import java.util.stream.Collectors;
 public class DivisionService {
     @Autowired
     private DataManager dataManager;
+    @Lazy
     @Autowired
     private FundService fundService;
     @Autowired
@@ -248,6 +247,16 @@ public class DivisionService {
                 .query("SELECT e FROM fis_Division e" +
                         " WHERE e.appropriation = :appropriation" +
                         " AND e.divisionCode = '2'")
+                .parameter("appropriation", appropriation)
+                .optional()
+                .orElse(null);
+    }
+
+    public Division getAdministrationDivision(Appropriation appropriation) {
+        return dataManager.load(Division.class)
+                .query("SELECT e FROM fis_Division e" +
+                        " WHERE e.appropriation = :appropriation" +
+                        " AND e.budgetOrg = 'JXXXXXF'")
                 .parameter("appropriation", appropriation)
                 .optional()
                 .orElse(null);

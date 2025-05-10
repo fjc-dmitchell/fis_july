@@ -51,6 +51,15 @@ public class ActivityService {
         return genericActivity.orElse(activity);
     }
 
+    public Boolean activityNumberExists(Division division, String activityNumber) {
+        return dataManager.loadValue("SELECT CASE WHEN COUNT(e) > 0 THEN TRUE ELSE FALSE END"
+                        + " FROM fis_Activity e WHERE e.division = :division"
+                        + " AND e.activityNumber = :activityNumber", Boolean.class)
+                .parameter("division", division)
+                .parameter("activityNumber", activityNumber)
+                .one();
+    }
+
     public BigDecimal sumProjections(Activity activity) {
         BigDecimal projections = dataManager.load(BigDecimal.class)
                 .query("SELECT coalesce(sum(p.amount),0)"
@@ -104,16 +113,26 @@ public class ActivityService {
                                          Division division,
                                          Branch branch,
                                          Group group) {
-
         return dataManager.load(Activity.class)
+//                                .query("SELECT a FROM fis_Activity a"
+//                        + " INNER JOIN fis_Division dv ON dv = a.division"
+//                        + " WHERE (:anyFund = true OR a.fund = :fund)"
+//                        + " AND (:anyAppropriation = true OR dv.appropriation = :appropriation)"
+//                        + " AND (:anyDivision = true OR a.division = :division)"
+//                        + " AND (:anyBranch = true OR a.branch = :branch)"
+//                        + " AND (:anyGroup = true OR a.group = :group)"
+//                        + " ORDER BY dv.divisionCode, a.startDate, a.activityNumber")
                 .query("SELECT a FROM fis_Activity a"
                         + " INNER JOIN fis_Division dv ON dv = a.division"
-                        + " WHERE (:anyFund = true OR a.fund = :fund)"
+                        + " INNER JOIN fis_Fund fund ON fund = a.fund"
+                        + " LEFT JOIN fis_Branch bch ON bch = a.branch"
+                        + " LEFT JOIN fis_Group grp ON grp = a.group"
+                        + " WHERE (:anyFund = true OR fund = :fund)"
                         + " AND (:anyAppropriation = true OR dv.appropriation = :appropriation)"
-                        + " AND (:anyDivision = true OR a.division = :division)"
-                        + " AND (:anyBranch = true OR a.branch = :branch)"
-                        + " AND (:anyGroup = true OR a.group = :group)"
-                        + " ORDER BY dv.divisionCode, a.startDate")
+                        + " AND (:anyDivision = true OR dv = :division)"
+                        + " AND (:anyBranch = true OR bch = :branch)"
+                        + " AND (:anyGroup = true OR grp = :group)"
+                        + " ORDER BY dv.divisionCode, a.startDate, a.activityNumber")
                 .parameter("anyFund", fund == null)
                 .parameter("fund", fund)
                 .parameter("anyAppropriation", appropriation == null)
@@ -325,7 +344,7 @@ public class ActivityService {
         return dataManager.loadValues(
                         "SELECT act.id, fund.id, fund.fundCode, app.id, app.budgetFiscalYear, dv.id, dv.divisionCode,"
                                 + " act.activityNumber, act.title, act.startDate, act.endDate, act.city, act.state, bch.id,"
-                                + " bch.branchCode, bch.title, grp.id, grp.groupCode, grp.title,"
+                                + " bch.branchCode, bch.title, grp.id, grp.groupCode, grp.title, act.initialProjection,"
                                 + " CASE WHEN dv.appropriation = :priorYear AND act.fund = :twoYearFund THEN :priorTwoYearFund"
                                 + "      WHEN dv.appropriation = :currentYear AND act.fund = :twoYearFund THEN :currentTwoYearFund"
                                 + "      ELSE :currentOneYearFund"
@@ -357,7 +376,62 @@ public class ActivityService {
                 .parameter("currentTwoYearFund", CURRENT_TWO_YEAR_FUND.getId())
                 .properties("id", "fundId", "fundCode", "appropriationId", "budgetFiscalYear", "divisionId", "divisionCode",
                         "activityNumber", "title", "startDate", "endDate", "city", "state", "branchId", "branchCode",
-                        "branchTitle", "groupId", "groupCode", "groupTitle", "fundingType")
+                        "branchTitle", "groupId", "groupCode", "groupTitle", "initialProjection", "fundingType")
+                .list();
+    }
+
+    /**
+     * Query database for activity related data for an Appropriation and list of branch codes. Requested by Nancy on 2/20/2025 for program analaysis
+     *
+     * @param division    persisted Division entity, required if appropriation parameter is null
+     * @param branchCodes list of branch codes
+     * @return List of KeyValue Entities containing matching Activities
+     */
+    private List<KeyValueEntity> fetchBiFiscalActivitiesNew2(Division division, List<String> branchCodes, List<String> groupCodes) {
+        Appropriation currentYearAppropriation = division.getAppropriation();
+        String divisionCode = division == null ? "" : division.getDivisionCode();
+        Appropriation priorYearAppropriation = appropriationService.getPreviousFiscalYear(currentYearAppropriation);
+        Fund oneYearFund = fundService.getAppropriationOneYearFund();
+        Fund twoYearFund = fundService.getAppropriationTwoYearFund();
+        Date bfyStartDate = appropriationService.getFirstDayOfAppropriationBfy(currentYearAppropriation);
+        Date bfyEndDate = appropriationService.getLastDayOfAppropriationBfy(currentYearAppropriation);
+
+        return dataManager.loadValues(
+                        "SELECT act.id, fund.id, fund.fundCode, app.id, app.budgetFiscalYear, dv.id, dv.divisionCode,"
+                                + " act.activityNumber, act.title, act.startDate, act.endDate, act.city, act.state, bch.id,"
+                                + " bch.branchCode, bch.title, grp.id, grp.groupCode, grp.title, act.initialProjection,"
+                                + " CASE WHEN dv.appropriation = :priorYear AND act.fund = :twoYearFund THEN :priorTwoYearFund"
+                                + "      WHEN dv.appropriation = :currentYear AND act.fund = :twoYearFund THEN :currentTwoYearFund"
+                                + "      ELSE :currentOneYearFund"
+                                + " END"
+                                + " FROM fis_Activity act"
+                                + " LEFT JOIN fis_Branch bch ON bch=act.branch"
+                                + " LEFT JOIN fis_Group grp ON grp=act.group"
+                                + " INNER JOIN fis_Division dv ON dv=act.division"
+                                + " INNER JOIN fis_Appropriation app ON app=dv.appropriation"
+                                + " INNER JOIN fis_Fund fund ON fund=act.fund"
+                                + " WHERE (:anyDivision = true OR dv.divisionCode = :divisionCode)"
+                                + " AND (bch.branchCode in :branchCodes) AND (grp.groupCode in :groupCodes)"
+                                + " AND ((dv.appropriation = :currentYear AND act.fund = :oneYearFund)"
+                                + " OR (dv.appropriation = :priorYear AND act.fund = :twoYearFund AND act.endDate >= :bfyStartDate)"
+                                + " OR (dv.appropriation = :currentYear AND act.fund = :twoYearFund AND (act.endDate IS NULL OR act.endDate <= :bfyEndDate)))"
+                                + " ORDER BY bch.branchCode, app.budgetFiscalYear, fund.fundCode, dv.divisionCode, act.activityNumber")
+                .parameter("anyDivision", division == null)
+                .parameter("divisionCode", divisionCode)
+                .parameter("branchCodes", branchCodes)
+                .parameter("groupCodes", groupCodes)
+                .parameter("currentYear", currentYearAppropriation)
+                .parameter("priorYear", priorYearAppropriation)
+                .parameter("oneYearFund", oneYearFund)
+                .parameter("twoYearFund", twoYearFund)
+                .parameter("bfyStartDate", bfyStartDate)
+                .parameter("bfyEndDate", bfyEndDate)
+                .parameter("priorTwoYearFund", PRIOR_TWO_YEAR_FUND.getId())
+                .parameter("currentOneYearFund", CURRENT_ONE_YEAR_FUND.getId())
+                .parameter("currentTwoYearFund", CURRENT_TWO_YEAR_FUND.getId())
+                .properties("id", "fundId", "fundCode", "appropriationId", "budgetFiscalYear", "divisionId", "divisionCode",
+                        "activityNumber", "title", "startDate", "endDate", "city", "state", "branchId", "branchCode",
+                        "branchTitle", "groupId", "groupCode", "groupTitle", "initialProjection", "fundingType")
                 .list();
     }
 
@@ -387,6 +461,7 @@ public class ActivityService {
             dto.setGroupId(kvEntity.getValue("groupId"));
             dto.setGroupCode(kvEntity.getValue("groupCode"));
             dto.setGroupTitle(kvEntity.getValue("groupTitle"));
+            dto.setInitialProjection(kvEntity.getValue("initialProjection"));
             dto.setFundingType(ActivityFundingType.fromId(kvEntity.getValue("fundingType")));
             activityDtos.add(dto);
         }
@@ -405,6 +480,13 @@ public class ActivityService {
         return activityDtos;
     }
 
+    // 2025-02-20 program analysis for Nancy
+    public List<ActivityDto> getBiFiscalActivityDtos(Division division, List<String> branchCodes, List<String> groupCodes) {
+        List<KeyValueEntity> activities = fetchBiFiscalActivitiesNew2(division, branchCodes, groupCodes);
+        List<ActivityDto> activityDtos = convertBiFiscalEntitiesToActivityDtos(activities);
+        return activityDtos;
+    }
+
     /**
      * Return bifiscal ActivityDTO entities for specified division and branch
      *
@@ -418,6 +500,15 @@ public class ActivityService {
         return activityDtos;
     }
 
+    /**
+     * Bad practice! We're modifying the list of ActivityDto objects passed as parameter
+     *
+     * @param activityDtos
+     * @param obligations
+     * @param projections
+     * @param reimbursements
+     * @return
+     */
     public List<ActivityDto> updateActivityAmounts(List<ActivityDto> activityDtos,
                                                    List<ObligationDto> obligations,
                                                    List<ActivityProjectionDto> projections,

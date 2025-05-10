@@ -20,19 +20,27 @@ public class ObjectClassService {
     @Autowired
     private FundService fundService;
 
-    public List<ObjectClass> getProjectionObjectClasses(Activity activity) {
-        Appropriation appropriation = null;
-        if (activity != null) {
-            appropriation = activity.getDivision().getAppropriation();
+    public List<ObjectClass> getProjectionObjectClasses(Activity activity, Category category) {
+        Appropriation appropriation = activity == null ? null : activity.getDivision().getAppropriation();
+        List<ObjectClass> exclusions = new ArrayList<>();
+        if(activity!=null && activity.getProjections()!=null) {
+            exclusions = activity.getProjections().stream().map(ActivityProjection::getObjectClass).toList();
         }
+        boolean genericProjection = activity == null ? false : activity.getGenericProjection();
         return dataManager.load(ObjectClass.class)
-                .query("SELECT o FROM fis_ObjectClass o"
-                        + " INNER JOIN fis_Category cat ON cat=o.category"
+                .query("SELECT obj FROM fis_ObjectClass obj"
+                        + " INNER JOIN fis_Category cat ON cat=obj.category"
                         + " WHERE cat.appropriation = :appropriation"
-                        + " AND o NOT IN (SELECT e.objectClass FROM fis_ActivityProjection e WHERE e.activity = :activity)"
-                        + " ORDER BY o.budgetObjectClass")
+                        + " AND (:anyCategory=true OR cat=:category)"
+                        + " AND obj NOT IN :exclusions"
+                        + " AND ((:genericProjection=true AND obj.budgetObjectClass like '%00')"
+                        + " OR (:genericProjection=false AND obj.budgetObjectClass not like '%00'))"
+                        + " ORDER BY obj.budgetObjectClass")
                 .parameter("appropriation", appropriation)
-                .parameter("activity", activity)
+                .parameter("anyCategory", category == null)
+                .parameter("category", category)
+                .parameter("exclusions", exclusions)
+                .parameter("genericProjection", genericProjection)
                 .list();
     }
 
@@ -50,6 +58,17 @@ public class ObjectClassService {
                 .parameter("appropriation", appropriation)
                 .parameter("activity", activity)
                 .list();
+    }
+
+    public ObjectClass getObjectClassByCode(List<Appropriation> appropriations, String boc) {
+        return dataManager.load(ObjectClass.class)
+                .query("SELECT o FROM fis_ObjectClass o"
+                        + " WHERE o.budgetObjectClass = :boc"
+                        + " AND o.category.appropriation.budgetFiscalYear = (SELECT MAX(e.budgetFiscalYear)"
+                        + " FROM fis_Appropriation e WHERE e IN :appropriations)")
+                .parameter("boc", boc)
+                .parameter("appropriations", appropriations)
+                .optional().orElse(null);
     }
 
     public List<ObjectClass> getObjectClassesByCategory(Category category, boolean generic) {
@@ -104,6 +123,7 @@ public class ObjectClassService {
                 .list();
     }
 
+    // rewrite with JOIN or fetch plan
     public List<ObjectClass> getObjectClassSearchList(List<Appropriation> fiscalYears, String moc, boolean includeGenerics) {
         fiscalYears = fiscalYears.stream().sorted(Comparator.comparing(Appropriation::getBudgetFiscalYear).reversed()).toList();
         List<ObjectClass> bocList = new ArrayList<>();
