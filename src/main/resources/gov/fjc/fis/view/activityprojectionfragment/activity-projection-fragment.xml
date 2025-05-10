@@ -8,7 +8,7 @@
     <content>
         <vbox id="root">
             <hbox id="buttonsPanel" classNames="buttons-panel">
-                <button id="editBtn" action="activityProjectionsDataGrid.edit"/>
+<!--                <button id="editBtn" action="activityProjectionsDataGrid.edit"/>-->
                 <button id="excelExportBtn" action="activityProjectionsDataGrid.excelExport"/>
                 <gridColumnVisibility dataGrid="activityProjectionsDataGrid" icon="COG"/>
                 <simplePagination id="pagination" dataLoader="activityProjectionsDl" autoLoad="true"/>

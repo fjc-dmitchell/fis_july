@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://invoiceDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="invoiceDc"
+                  class="gov.fjc.fis.entity.Invoice">
+            <fetchPlan extends="_base">
+                <property name="obligation" fetchPlan="_base"/>
+                <property name="attachments" fetchPlan="_base"/>
+                <property name="createdByString"/>
+            </fetchPlan>
+            <loader id="invoiceDl"/>
+            <collection id="attachmentsDc" property="attachments"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="invoiceDc">
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="1"/>
+                <responsiveStep minWidth="40em" columns="2"/>
+            </responsiveSteps>
+            <entityPicker id="obligationField" property="obligation">
+                <actions>
+                    <action id="entityLookupAction" type="entity_lookup"/>
+                    <action id="entityClearAction" type="entity_clear"/>
+                </actions>
+            </entityPicker>
+            <textField id="invoiceNumberField" property="invoiceNumber"/>
+            <datePicker id="invoiceDateField" property="invoiceDate"/>
+            <datePicker id="paymentDateField" property="paymentDate"/>
+            <textField id="amountField" property="amount"/>
+            <textArea id="memoField" height="9.5em" property="memo"/>
+            <textField id="createdByStringField" property="createdByString"/>
+        </formLayout>
+        <fragment id="attachmentFragment" class="gov.fjc.fis.view.fileattachmentfragment.FileAttachmentFragment"/>
+        <hbox id="detailActions">
+            <button id="saveAndCloseButton" action="saveAction"/>
+            <button id="closeButton" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

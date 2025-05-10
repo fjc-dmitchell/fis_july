@@ -54,4 +54,19 @@
             <property name="fund" fetchPlan="_base"/>
         </property>
     </fetchPlan>
+    <fetchPlan entity="fis_Obligation" name="obligation-pivot-fetch-plan" extends="_base">
+        <property name="activity" fetchPlan="_base"/>
+        <property name="objectClass" fetchPlan="_base">
+            <property name="category" fetchPlan="_base"/>
+        </property>
+        <property name="aoSyncString"/>
+    </fetchPlan>
+    <fetchPlan entity="fis_ActivityProjection" name="activityProjection-fetch-plan" extends="_base">
+        <property name="activity" fetchPlan="_instance_name">
+            <property name="fund" fetchPlan="_base"/>
+        </property>
+        <property name="objectClass" fetchPlan="_instance_name">
+            <property name="category" fetchPlan="_base"/>
+        </property>
+    </fetchPlan>
 </fetchPlans>

@@ -36,6 +36,7 @@
                     <column property="titleAndCode" header="Activity" width="500px" resizable="true"/>
                     <column property="projectedAmount" visible="false" header="Projected" textAlign="END"/>
                     <column property="reimbursedAmount" visible="false" header="Reimbursed" textAlign="END"/>
+                    <column property="obligatedAmount" visible="false" header="Obligated" textAlign="END"/>
                     <column property="branch.branchCode" visible="false" header="Branch" textAlign="END"/>
                     <column property="group.groupCode" visible="false" header="Group" textAlign="END"/>
                     <column property="city" width="160px"/>

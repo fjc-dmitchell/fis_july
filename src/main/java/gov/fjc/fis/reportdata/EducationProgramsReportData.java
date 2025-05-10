@@ -3,13 +3,11 @@ package gov.fjc.fis.reportdata;
 import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.entity.Branch;
 import gov.fjc.fis.entity.Division;
-import gov.fjc.fis.entity.dto.ActivityDto;
-import gov.fjc.fis.entity.dto.ActivityProjectionDto;
-import gov.fjc.fis.entity.dto.ActivityReimbursementDto;
-import gov.fjc.fis.entity.dto.ObligationDto;
+import gov.fjc.fis.entity.dto.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static gov.fjc.fis.FisUtilities.*;
 
@@ -26,6 +24,12 @@ public class EducationProgramsReportData {
     private List<ActivityReimbursementDto> reimbursements;
     private List<ActivityProjectionDto> projections;
     private List<ObligationDto> obligations;
+
+//    private List<String> branchTitles;
+
+//    private Map<String, List<ActivityDto>> branchActivities;
+
+    private List<BranchDto> branches;
 
     public EducationProgramsReportData(Appropriation appropriation, Division division, Branch branch) {
         budgetFiscalYear = appropriation == null ? "" : appropriation.getBudgetFiscalYear();
@@ -98,6 +102,39 @@ public class EducationProgramsReportData {
 
     public String getReportDateTime() {
         return getDateTimeReportString(reportDateTime);
+    }
+
+//    public List<String> getBranchTitles() {
+//        return branchTitles;
+//    }
+//
+//    public void setBranchTitles(List<String> branchTitles) {
+//        this.branchTitles = branchTitles;
+//    }
+//
+//    // for analyzing programs
+//    public List<ActivityDto> getBranchActivities(String bchTitle) {
+//        return activities.stream()
+//                .filter(act -> act.getBranchTitleAndCode().equals(bchTitle))
+//                .toList();
+//    }
+
+
+//    public Map<String, List<ActivityDto>> getBranchActivities() {
+//        return branchActivities;
+//    }
+//
+//    public void setBranchActivities(Map<String, List<ActivityDto>> branchActivities) {
+//        this.branchActivities = branchActivities;
+//    }
+
+
+    public List<BranchDto> getBranches() {
+        return branches;
+    }
+
+    public void setBranches(List<BranchDto> branches) {
+        this.branches = branches;
     }
 
     public String getFileName() {
