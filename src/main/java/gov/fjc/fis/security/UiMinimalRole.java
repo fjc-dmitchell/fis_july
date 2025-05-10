@@ -1,6 +1,7 @@
 package gov.fjc.fis.security;
 
 import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.flowuidata.entity.UserSettingsItem;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.SecurityScope;
@@ -25,4 +26,8 @@ public interface UiMinimalRole {
     @EntityPolicy(entityClass = KeyValueEntity.class, actions = EntityPolicyAction.READ)
     @EntityAttributePolicy(entityClass = KeyValueEntity.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
     void keyValueEntity();
+
+    @EntityAttributePolicy(entityClass = UserSettingsItem.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
+    @EntityPolicy(entityClass = UserSettingsItem.class, actions = {EntityPolicyAction.DELETE, EntityPolicyAction.READ})
+    void userSettingsItem();
 }

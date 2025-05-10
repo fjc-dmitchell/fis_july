@@ -62,8 +62,8 @@ public interface FinanceUserResourcesRole extends UiMinimalRole, ReportResources
     @EntityPolicy(entityClass = AppropriationDto.class, actions = EntityPolicyAction.ALL)
     void appropriationDto();
 
-    @EntityAttributePolicy(entityClass = BonusProjection.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
-    @EntityPolicy(entityClass = BonusProjection.class, actions = EntityPolicyAction.ALL)
+    @EntityAttributePolicy(entityClass = BonusProjection.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
+    @EntityPolicy(entityClass = BonusProjection.class, actions = {EntityPolicyAction.READ, EntityPolicyAction.UPDATE, EntityPolicyAction.DELETE})
     void bonusProjection();
 
     @EntityAttributePolicy(entityClass = Branch.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
@@ -154,23 +154,55 @@ public interface FinanceUserResourcesRole extends UiMinimalRole, ReportResources
     @EntityPolicy(entityClass = PayPeriod.class, actions = EntityPolicyAction.READ)
     void payPeriod();
 
-    @EntityAttributePolicy(entityClass = Position.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
-    @EntityPolicy(entityClass = Position.class, actions = EntityPolicyAction.ALL)
+    @EntityAttributePolicy(entityClass = Position.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
+    @EntityPolicy(entityClass = Position.class, actions = {EntityPolicyAction.READ, EntityPolicyAction.UPDATE, EntityPolicyAction.DELETE})
     void position();
 
-    @EntityAttributePolicy(entityClass = PositionAction.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
-    @EntityPolicy(entityClass = PositionAction.class, actions = EntityPolicyAction.ALL)
+    @EntityAttributePolicy(entityClass = PositionAction.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
+    @EntityPolicy(entityClass = PositionAction.class, actions = {EntityPolicyAction.READ, EntityPolicyAction.UPDATE, EntityPolicyAction.DELETE})
     void positionAction();
 
     @EntityAttributePolicy(entityClass = PositionDto.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @EntityPolicy(entityClass = PositionDto.class, actions = EntityPolicyAction.ALL)
     void positionDto();
 
-    @MenuPolicy(menuIds = {"fis_DashboardView", "fis_Appropriation.list", "fis_Division.list", "fis_Activity.list", "fis_Obligation.list", "fis_Invoice.list", "fis_FundControlNotice.list", "fis_Jitf.list", "fis_Branch.list", "fis_Group.list", "fis_Category.list", "fis_ObjectClass.list", "fis_Fund.list", "fis_ActivityProjection.list", "fis_Document.list", "fis_Position.list", "fis_PositionAction.list", "fis_BonusProjection.list", "fis_Employee.list", "fis_PayPeriod.list", "fis_PayAdjustment.list", "fis_ActionCode.list", "fis_Donor.list", "fis_Division.foundation-list", "fis_Activity.foundation-list", "fis_Obligation.foundation-list", "fis_Invoice.foundation-list", "fis_FundControlNotice.foundation-list", "fis_ReportRouter#openStatusOfFundsReport", "fis_ReportRouter#openEducationProgramsReport", "fis_ReportRouter#openBudgetRequestReport", "fis_DistanceLearning.list", "fis_Ape.list"})
-    @ViewPolicy(viewIds = {"fis_DashboardView", "fis_Appropriation.list", "fis_Division.list", "fis_Activity.list", "fis_Obligation.list", "fis_Invoice.list", "fis_FundControlNotice.list", "fis_Jitf.list", "fis_Branch.list", "fis_Group.list", "fis_Category.list", "fis_ObjectClass.list", "fis_Fund.list", "fis_ActivityProjection.list", "fis_Document.list", "fis_Position.list", "fis_PositionAction.list", "fis_BonusProjection.list", "fis_Employee.list", "fis_PayPeriod.list", "fis_PayAdjustment.list", "fis_ActionCode.list", "fis_Donor.list", "fis_Division.foundation-list", "fis_Activity.foundation-list", "fis_Obligation.foundation-list", "fis_Invoice.foundation-list", "fis_FundControlNotice.foundation-list", "fis_ReportRouter#openStatusOfFundsReport", "fis_ReportRouter#openEducationProgramsReport", "fis_ReportRouter#openBudgetRequestReport", "fis_DistanceLearning.list", "fis_Ape.list", "fis_StatusOfFundsReportView", "fis_EducationProgramsReportView", "fis_BudgetRequestReportView", "fis_Ape.detail", "fis_Ape2.detail", "fis_Appropriation.detail", "fis_AppropriationAdjustment.detail"})
+    @MenuPolicy(menuIds = {"fis_DashboardView", "fis_Appropriation.list", "fis_Division.list", "fis_Activity.list", "fis_Obligation.list", "fis_Invoice.list", "fis_FundControlNotice.list", "fis_Jitf.list", "fis_Branch.list", "fis_Group.list", "fis_Category.list", "fis_ObjectClass.list", "fis_Fund.list", "fis_ActivityProjection.list", "fis_Document.list", "fis_Position.list", "fis_PositionAction.list", "fis_BonusProjection.list", "fis_Employee.list", "fis_PayPeriod.list", "fis_PayAdjustment.list", "fis_ActionCode.list", "fis_Donor.list", "fis_Division.foundation-list", "fis_Activity.foundation-list", "fis_Obligation.foundation-list", "fis_Invoice.foundation-list", "fis_FundControlNotice.foundation-list", "fis_ReportRouter#openStatusOfFundsReport", "fis_ReportRouter#openEducationProgramsReport", "fis_ReportRouter#openBudgetRequestReport", "fis_DistanceLearning.list", "fis_Ape.list", "fis_PayGrade.list", "fis_ActivityReimbursement.list", "fis_Vendor.list", "flowui_UserSettingsItem.list", "fis_SpendingChartDashboardView", "fis_StatusOfFundsDashboardView", "fis_ReconciliationDashboardView"})
+    @ViewPolicy(viewIds = {"fis_DashboardView", "fis_Appropriation.list", "fis_Division.list", "fis_Activity.list", "fis_Obligation.list", "fis_Invoice.list", "fis_FundControlNotice.list", "fis_Jitf.list", "fis_Branch.list", "fis_Group.list", "fis_Category.list", "fis_ObjectClass.list", "fis_Fund.list", "fis_ActivityProjection.list", "fis_Document.list", "fis_Position.list", "fis_PositionAction.list", "fis_BonusProjection.list", "fis_Employee.list", "fis_PayPeriod.list", "fis_PayAdjustment.list", "fis_ActionCode.list", "fis_Donor.list", "fis_Division.foundation-list", "fis_Activity.foundation-list", "fis_Obligation.foundation-list", "fis_Invoice.foundation-list", "fis_FundControlNotice.foundation-list", "fis_ReportRouter#openStatusOfFundsReport", "fis_ReportRouter#openEducationProgramsReport", "fis_ReportRouter#openBudgetRequestReport", "fis_DistanceLearning.list", "fis_Ape.list", "fis_StatusOfFundsReportView", "fis_EducationProgramsReportView", "fis_BudgetRequestReportView", "fis_Ape.detail", "fis_Ape2.detail", "fis_Appropriation.detail", "fis_AppropriationAdjustment.detail", "fis_PayGrade.list", "fis_PayGrade.detail", "fis_Branch.detail", "fis_Group.detail", "fis_Category.detail", "fis_ObjectClass.detail", "fis_ActivityProjection.detail", "fis_ActivityReimbursement.detail", "fis_Fund.detail", "fis_ActivityReimbursement.list", "fis_Vendor.list", "fis_Vendor.detail", "fis_PayGradeRate.detail", "fis_DivisionAllocation.detail", "fis_DivisionAllocationAudit.detail", "fis_Division.detail", "fis_ActivityProjectionAudit.detail", "fis_Donor.detail", "fis_Employee.detail", "fis_FundControlNotice.detail", "fis_PayAdjustment.detail", "fis_PayPeriod.detail", "fis_Position.detail", "flowui_UserSettingsItem.detail", "flowui_UserSettingsItem.list", "fis_Activity.detail", "fis_SpendingChartDashboardView", "fis_StatusOfFundsDashboardView", "fis_ReconciliationDashboardView"})
     void screens();
 
     @EntityAttributePolicy(entityClass = UserMessage.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
     @EntityPolicy(entityClass = UserMessage.class, actions = EntityPolicyAction.READ)
     void userMessage();
+
+    @EntityAttributePolicy(entityClass = PayGrade.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
+    @EntityPolicy(entityClass = PayGrade.class, actions = EntityPolicyAction.READ)
+    void payGrade();
+
+    @EntityAttributePolicy(entityClass = PayGradeRate.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
+    @EntityPolicy(entityClass = PayGradeRate.class, actions = EntityPolicyAction.READ)
+    void payGradeRate();
+
+    @EntityPolicy(entityClass = ActivityProjectionAudit.class, actions = {EntityPolicyAction.READ, EntityPolicyAction.CREATE})
+    @EntityAttributePolicy(entityClass = ActivityProjectionAudit.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
+    void activityProjectionAudit();
+
+    @EntityAttributePolicy(entityClass = DivisionAllocationAudit.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
+    @EntityPolicy(entityClass = DivisionAllocationAudit.class, actions = {EntityPolicyAction.READ, EntityPolicyAction.CREATE})
+    void divisionAllocationAudit();
+
+    @EntityAttributePolicy(entityClass = AmountsDto.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+    @EntityPolicy(entityClass = AmountsDto.class, actions = EntityPolicyAction.ALL)
+    void amountsDto();
+
+    @EntityAttributePolicy(entityClass = BranchDto.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+    @EntityPolicy(entityClass = BranchDto.class, actions = EntityPolicyAction.ALL)
+    void branchDto();
+
+    @EntityAttributePolicy(entityClass = Vendor.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+    @EntityPolicy(entityClass = Vendor.class, actions = EntityPolicyAction.ALL)
+    void vendor();
+
+    @EntityAttributePolicy(entityClass = ReconciliationDto.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+    @EntityPolicy(entityClass = ReconciliationDto.class, actions = EntityPolicyAction.ALL)
+    void reconciliationDto();
 }
