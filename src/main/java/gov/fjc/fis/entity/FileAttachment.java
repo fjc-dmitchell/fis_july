@@ -82,7 +82,16 @@ public class FileAttachment {
     @DependsOnProperties({"activity", "obligation", "invoice", "fundControlNotice"})
     @JmixProperty
     public FileAttachmentEntityType getAttachedTo() {
-        return null;
+        if (invoice != null) {
+            return FileAttachmentEntityType.INVOICE;
+        } else if (fundControlNotice != null) {
+            return FileAttachmentEntityType.FCN;
+        } else if (obligation != null) {
+            return FileAttachmentEntityType.OBLIGATION;
+        } else if (activity != null) {
+            return FileAttachmentEntityType.ACTIVITY;
+        }
+        return FileAttachmentEntityType.UNKNOWN;
     }
 
     @DependsOnProperties({"fileReference"})

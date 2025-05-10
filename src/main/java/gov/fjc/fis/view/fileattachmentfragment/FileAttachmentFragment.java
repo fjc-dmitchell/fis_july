@@ -50,8 +50,8 @@ public class FileAttachmentFragment extends Fragment<VerticalLayout> {
     private DataGrid<FileAttachment> attachmentsDataGrid;
     @ViewComponent
     private FileStorageUploadField fileAttachField;
-    @ViewComponent
-    private JmixButton downloadButton;
+//    @ViewComponent
+//    private JmixButton downloadButton;
     @ViewComponent
     private Paragraph unsavedMessage;
     @ViewComponent
@@ -108,12 +108,12 @@ public class FileAttachmentFragment extends Fragment<VerticalLayout> {
         });
     }
 
-    @Subscribe("attachmentsDataGrid")
-    protected void onAttachmentsDataGridSelection(final SelectionEvent<DataGrid<FileAttachment>, FileAttachment> event) {
-        var selectedItems = attachmentsDataGrid.getSelectedItems();
-        downloadButton.setEnabled(!selectedItems.isEmpty());
-        downloadButton.setText("Download (".concat(String.valueOf(selectedItems.size())).concat(")"));
-    }
+//    @Subscribe("attachmentsDataGrid")
+//    protected void onAttachmentsDataGridSelection(final SelectionEvent<DataGrid<FileAttachment>, FileAttachment> event) {
+//        var selectedItems = attachmentsDataGrid.getSelectedItems();
+//        downloadButton.setEnabled(!selectedItems.isEmpty());
+//        downloadButton.setText("Download (".concat(String.valueOf(selectedItems.size())).concat(")"));
+//    }
 
     @Subscribe("fileAttachField")
     protected void onFileAttachFieldFileUploadSucceeded(final FileUploadSucceededEvent<FileStorageUploadField> event) {
@@ -142,10 +142,10 @@ public class FileAttachmentFragment extends Fragment<VerticalLayout> {
         }
     }
 
-    @Subscribe(id = "downloadButton", subject = "clickListener")
-    protected void onDownloadButtonClick(final ClickEvent<JmixButton> event) {
-        attachmentsDataGrid.getSelectedItems().forEach(this::downloadFromFileStorage);
-    }
+//    @Subscribe(id = "downloadButton", subject = "clickListener")
+//    protected void onDownloadButtonClick(final ClickEvent<JmixButton> event) {
+//        attachmentsDataGrid.getSelectedItems().forEach(this::downloadFromFileStorage);
+//    }
 
     private void downloadFromFileStorage(FileAttachment attachment) {
         FileRef fileRef = attachment.getFileReference();

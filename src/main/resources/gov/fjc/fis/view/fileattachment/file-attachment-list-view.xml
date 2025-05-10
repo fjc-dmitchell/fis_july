@@ -40,6 +40,11 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
+        <fragment id="searchFragment" class="gov.fjc.fis.view.search.CustomSearchFragment">
+            <properties>
+                <property name="hostDataContainer" value="fileAttachmentsDc" type="CONTAINER_REF"/>
+            </properties>
+        </fragment>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createButton" action="fileAttachmentsDataGrid.createAction"/>
             <button id="editButton" action="fileAttachmentsDataGrid.editAction"/>
@@ -64,11 +69,12 @@
             <columns resizable="true">
                 <column property="attachedTo"/>
                 <column property="category"/>
-                <column property="activity.fund.fundCode" header="Fund"/>
+                <column property="activity.fund.fundCode" header="Fund" visible="false"/>
                 <column property="activity.division.appropriation.budgetFiscalYear" header="BFY"/>
                 <column property="activity.division.divisionCode" header="Division"/>
-                <column property="activity.activityNumber" header="Activity #"/>
-                <column property="activity.title" header="Activity"/>
+                <column property="activity.branch.branchCode" header="Branch" visible="false"/>
+                <column property="activity.activityNumber" header="Activity"/>
+                <column property="activity.title" header="Activity Title"/>
                 <column property="obligation.documentNumber" header="Doc ID"/>
                 <column property="obligation.vendor"/>
                 <column property="obligation.documentDate"/>
@@ -76,12 +82,12 @@
                 <column property="invoice.invoiceDate"/>
                 <column property="fileName"/>
                 <column property="contentLength" textAlign="END"/>
-                <column property="formattedSize" textAlign="END"/>
-                <column property="activity"/>
-                <column property="obligation"/>
-                <column property="invoice"/>
-                <column property="fundControlNotice"/>
-                <column property="title"/>
+                <column property="formattedSize" textAlign="END" visible="false"/>
+                <column property="activity" visible="false"/>
+                <column property="obligation" visible="false"/>
+                <column property="invoice" visible="false"/>
+                <column property="fundControlNotice" visible="false"/>
+                <column property="title" visible="false"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">
