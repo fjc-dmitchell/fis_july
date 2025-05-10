@@ -24,7 +24,8 @@ import static java.util.Objects.requireNonNullElse;
         @Index(name = "IDX_FIS_OBLIGATION_ACTIVITY", columnList = "ACTIVITY_ID"),
         @Index(name = "IDX_FIS_OBLIGATION_OBJECT_CLASS", columnList = "OBJECT_CLASS_ID"),
         @Index(name = "IDX_FIS_OBLIGATION_RESPONSIBLE_DIVISION", columnList = "RESPONSIBLE_DIVISION_ID"),
-        @Index(name = "IDX_FIS_OBLIGATION", columnList = "ACTIVITY_ID, STATUS")
+        @Index(name = "IDX_FIS_OBLIGATION", columnList = "ACTIVITY_ID, STATUS"),
+        @Index(name = "IDX_FIS_OBLIGATION_ACTIVITY_OBJCLASS", columnList = "ACTIVITY_ID, OBJECT_CLASS_ID")
 }, uniqueConstraints = {
         @UniqueConstraint(name = "IDX_FIS_OBLIGATION_UNQ", columnNames = {"ACTIVITY_ID", "OBJECT_CLASS_ID", "DOCID"})
 })
@@ -81,6 +82,9 @@ public class Obligation {
     @Column(name = "VENDOR")
     private String vendor;
 
+    @Column(name = "VENDOR_CODE", length = 10)
+    private String vendorCode;
+
     @Column(name = "STATUS", nullable = false)
     @NotNull
     private Boolean status = false;
@@ -133,6 +137,10 @@ public class Obligation {
     @OneToMany(mappedBy = "obligation")
     private List<FundControlNotice> fundControlNotices;
 
+    @Composition
+    @OneToMany(mappedBy = "obligation")
+    private List<FileAttachment> attachments;
+
     @Column(name = "VERSION", nullable = false, columnDefinition = "INT DEFAULT 1")
     @Version
     private Integer version;
@@ -152,6 +160,22 @@ public class Obligation {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    public String getVendorCode() {
+        return vendorCode;
+    }
+
+    public void setVendorCode(String vendorCode) {
+        this.vendorCode = vendorCode;
+    }
+
+    public List<FileAttachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<FileAttachment> attachments) {
+        this.attachments = attachments;
+    }
 
     @DependsOnProperties({"blanketPurchaseOrder"})
     @JmixProperty

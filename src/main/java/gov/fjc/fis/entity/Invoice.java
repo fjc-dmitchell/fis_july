@@ -3,10 +3,7 @@ package gov.fjc.fis.entity;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
-import io.jmix.core.metamodel.annotation.DependsOnProperties;
-import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.core.metamodel.annotation.JmixProperty;
+import io.jmix.core.metamodel.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.CreatedBy;
@@ -17,6 +14,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.List;
 
 import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
 import static java.util.Objects.requireNonNullElse;
@@ -57,6 +55,10 @@ public class Invoice {
     @Lob
     private String memo;
 
+    @Composition
+    @OneToMany(mappedBy = "invoice")
+    private List<FileAttachment> attachments;
+
     @Column(name = "VERSION", nullable = false, columnDefinition = "INT DEFAULT 1")
     @Version
     private Integer version;
@@ -76,6 +78,14 @@ public class Invoice {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    public List<FileAttachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<FileAttachment> attachments) {
+        this.attachments = attachments;
+    }
 
     @JmixProperty
     public String getCreatedByString() {

@@ -27,9 +27,9 @@ public class Vendor {
     @Column(name = "NAME", nullable = false)
     @NotNull
     private String name;
-    @Column(name = "EIN")
+    @Column(name = "EIN", length = 10)
     private String ein;
-    @Column(name = "VENDOR_CODE")
+    @Column(name = "VENDOR_CODE", length = 10)
     private String vendorCode;
     @Column(name = "ADDRESS_CODE")
     private String addressCode;

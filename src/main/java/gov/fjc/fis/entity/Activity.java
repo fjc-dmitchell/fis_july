@@ -150,6 +150,10 @@ public class Activity {
     @OneToMany(mappedBy = "activity")
     private List<Obligation> obligations;
 
+    @Composition
+    @OneToMany(mappedBy = "activity")
+    private List<FileAttachment> attachments;
+
     @Column(name = "REPORT_NOTE")
     private String reportNote;
 
@@ -181,6 +185,14 @@ public class Activity {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    public List<FileAttachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<FileAttachment> attachments) {
+        this.attachments = attachments;
+    }
 
     public BigDecimal getObligatedAmount() {
         return obligatedAmount;
@@ -223,7 +235,12 @@ public class Activity {
     @DependsOnProperties({"activityNumber"})
     @JmixProperty
     public String getGenericActivityNumber() {
-        return activityNumber.length() < 2 ? activityNumber : activityNumber.substring(0, 2).concat("%");
+        if (activityNumber == null || activityNumber.length() < 2) {
+            return "";
+        } else {
+            return activityNumber.substring(0, 2).concat("%");
+        }
+//        return activityNumber.length() < 2 ? activityNumber : activityNumber.substring(0, 2).concat("%");
     }
 
     public List<ActivityProjectionAudit> getAuditProjections() {
