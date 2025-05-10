@@ -47,7 +47,7 @@
                   width="100%"
                   minHeight="20em"
                   dataContainer="obligationsDc"
-                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes" selectionMode="NONE">
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>

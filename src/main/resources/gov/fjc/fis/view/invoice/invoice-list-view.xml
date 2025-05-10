@@ -38,7 +38,8 @@
         <dataGrid id="invoicesDataGrid"
                   minHeight="20em"
                   dataContainer="invoicesDc"
-                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes" selectionMode="NONE">
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes"
+                  multiSort="true">
             <!--                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes" width="1440px">-->
             <actions>
                 <action id="create" type="list_create"/>
@@ -52,6 +53,8 @@
                         width="70px"/>
                 <column property="obligation.activity.division.divisionCode" header="Division"
                         width="90px" textAlign="CENTER"/>
+                <column property="obligation.activity.activityNumber" header="Activity"
+                        width="110px" visible="false"/>
                 <column property="obligation.activity.title" header="Activity Title"
                         width="350px" visible="false"/>
                 <column property="obligation.activity.branch.title" header="Branch Title"

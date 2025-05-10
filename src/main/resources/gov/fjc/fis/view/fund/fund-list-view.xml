@@ -39,8 +39,8 @@
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns>
-                <column property="fundCode" autoWidth="true"/>
-                <column property="title" autoWidth="true"/>
+                <column property="fundCode" width="120px" flexGrow="0"/>
+                <column property="title" flexGrow="1"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">
