@@ -47,6 +47,13 @@ public class BranchService {
         return branchList.stream().sorted(Comparator.comparing(Branch::getBranchCode)).toList();
     }
 
+    public Boolean branchesExist(Division division) {
+        return dataManager.loadValue("SELECT CASE WHEN COUNT(e) > 0 THEN TRUE ELSE FALSE END"
+                        + " FROM fis_Branch e WHERE e.division = :division", Boolean.class)
+                .parameter("division", division)
+                .one();
+    }
+
     public Branch getBranchByCode(List<Appropriation> appropriations, String branchCode) {
         return dataManager.load(Branch.class)
                 .query("SELECT b FROM fis_Branch b"

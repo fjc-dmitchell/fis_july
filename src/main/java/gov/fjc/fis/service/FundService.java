@@ -15,8 +15,8 @@ public class FundService {
 
     @Autowired
     private DataManager dataManager;
-//    @Autowired
-//    private DivisionService divisionService;
+    @Autowired
+    private DivisionService divisionService;
 
     // this is the only place in FIS that references fund codes
     private final String oneYearFund = "092800";
@@ -93,16 +93,19 @@ public class FundService {
      * @param division a persisted Division entity
      * @return List of valid Funds for division
      */
-//    public List<Fund> getDivisionFundList(Division division) {
-//        List<Fund> funds = new ArrayList<>();
-//        funds.add(division.getFund());
-//        var EducationDivision = divisionService.getEducationDivision(division.getAppropriation());
-//        if (division.equals(EducationDivision)) {
-//            funds.add(getAppropriationTwoYearFund());
-//        }
-//        return funds;
-//    }
-//
+    public List<Fund> getDivisionFundList(Division division) {
+        List<Fund> funds = new ArrayList<>();
+        if (division != null) {
+            funds.add(division.getFund());
+            if (division.equals(divisionService.getEducationDivision(division.getAppropriation()))) {
+                funds.add(getAppropriationTwoYearFund());
+            }
+            if (division.equals(divisionService.getAdministrationDivision(division.getAppropriation()))) {
+                funds.add(getJitfFund());
+            }
+        }
+        return funds;
+    }
 
     /**
      * Used in reporting, turn single fund into collection of funds. Purpose is to allow

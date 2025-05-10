@@ -1,7 +1,7 @@
 package gov.fjc.fis.service;
 
+import gov.fjc.fis.entity.Activity;
 import gov.fjc.fis.entity.Appropriation;
-import gov.fjc.fis.entity.Branch;
 import gov.fjc.fis.entity.Division;
 import gov.fjc.fis.entity.Group;
 import io.jmix.core.DataManager;
@@ -28,6 +28,13 @@ public class GroupService {
                 .list();
     }
 
+    public Boolean groupsExist(Division division) {
+        return dataManager.loadValue("SELECT CASE WHEN COUNT(e) > 0 THEN TRUE ELSE FALSE END"
+                        + " FROM fis_Group e WHERE e.division = :division", Boolean.class)
+                .parameter("division", division)
+                .one();
+    }
+
     public List<Group> getGroupSearchList(List<Appropriation> fiscalYears, String divCode) {
         fiscalYears = fiscalYears.stream().sorted(Comparator.comparing(Appropriation::getBudgetFiscalYear).reversed()).toList();
         List<Group> groupList = new ArrayList<>();
@@ -48,6 +55,19 @@ public class GroupService {
         }
 
         return groupList.stream().sorted(Comparator.comparing(Group::getGroupCode)).toList();
+    }
+
+    public Group getGroupByActivity(Division division, String activityNumber) {
+        if (activityNumber.length() >= 2) {
+            activityNumber = activityNumber.substring(0, 2);
+        }
+        return dataManager.load(Group.class)
+                .query("SELECT g FROM fis_Group g"
+                        + " WHERE g.groupCode = :activityNumber"
+                        + " AND g.division = :division")
+                .parameter("activityNumber", activityNumber)
+                .parameter("division", division)
+                .optional().orElse(null);
     }
 
     public Group getGroupByCode(List<Appropriation> appropriations, String groupCode) {

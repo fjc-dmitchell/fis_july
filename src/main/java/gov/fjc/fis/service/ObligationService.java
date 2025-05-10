@@ -9,6 +9,7 @@ import io.jmix.core.entity.KeyValueEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -513,6 +514,14 @@ public class ObligationService {
                 .parameter("fund", fund)
                 .properties("fund", "division", "amount")
                 .list();
+    }
+
+    public BigDecimal sumObligations(Activity activity) {
+        return dataManager.loadValue("SELECT coalesce(sum(obl.amount),0)"
+                        + " FROM fis_Obligation obl"
+                        + " WHERE obl.activity=:activity", BigDecimal.class)
+                .parameter("activity", activity)
+                .one();
     }
 
     public List<Obligation> fetchBiFiscalActivityObligations(Appropriation currentYearAppropriation) {
