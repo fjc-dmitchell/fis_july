@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
-      title="msg://activityProjectionAuditDetailVie w.title"
+      title="msg://activityProjectionAuditDetailView.title"
       focusComponent="closeButton">
     <data>
         <instance id="activityProjectionAuditDc"
@@ -41,11 +41,11 @@
             </hbox>
             <hbox>
                 <textField id="oldAmountField" property="oldAmount"
-                           dataContainer="activityProjectionAuditDc" label="Old One Year Amount" width="10em"/>
+                           dataContainer="activityProjectionAuditDc" label="Old Amount" width="10em"/>
                 <textField id="newAmountField" property="newAmount"
-                           dataContainer="activityProjectionAuditDc" label="New One Year Amount" width="10em"/>
+                           dataContainer="activityProjectionAuditDc" label="New Amount" width="10em"/>
                 <textField id="changeAmountField" property="changeAmount"
-                           dataContainer="activityProjectionAuditDc" label="One Year Change" width="10em"/>
+                           dataContainer="activityProjectionAuditDc" label="Change" width="10em"/>
             </hbox>
         </vbox>
         <p id="createdByString"/>
