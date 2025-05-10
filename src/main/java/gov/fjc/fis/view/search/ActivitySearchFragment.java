@@ -30,6 +30,8 @@ public class ActivitySearchFragment extends EntitySearchFragment {
     @ViewComponent
     private PropertyFilter<Object> trainingSearch;
     @ViewComponent
+    private PropertyFilter<Object> canceledProgramSearch;
+    @ViewComponent
     private PropertyFilter<Object> titleSearch;
     @ViewComponent
     private PropertyFilter<Object> programStartSearch;
@@ -47,6 +49,8 @@ public class ActivitySearchFragment extends EntitySearchFragment {
     private PropertyFilter<Object> reimbursementsSearch;
     @ViewComponent
     private PropertyFilter<Object> projectionsSearch;
+    @ViewComponent
+    private PropertyFilter<Object> obligationsSearch;
 
     @Override
     public void setPropertyFilters(Map<String, Object> filters) {
@@ -78,8 +82,17 @@ public class ActivitySearchFragment extends EntitySearchFragment {
                 case "reimbursedAmount_op":
                     reimbursementsSearch.setOperation((PropertyFilter.Operation) value);
                     break;
+                case "obligatedAmount":
+                    obligationsSearch.setValue(value);
+                    break;
+                case "obligatedAmount_op":
+                    obligationsSearch.setOperation((PropertyFilter.Operation) value);
+                    break;
                 case "trainingProject":
                     trainingSearch.setValue(value);
+                    break;
+                case "canceled":
+                    canceledProgramSearch.setValue(value);
                     break;
                 case "addedToPlan":
                     planSearch.setValue(value);

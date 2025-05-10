@@ -10,6 +10,7 @@ import gov.fjc.fis.entity.*;
 import gov.fjc.fis.event.FiscalYearChangeEvent;
 import gov.fjc.fis.event.SearchGridSelectedItemsEvent;
 import gov.fjc.fis.service.*;
+import gov.fjc.fis.view.fileattachmentsearchfragment.FileAttachmentSearchFragment;
 import io.jmix.core.LoadContext;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.JpqlCondition;
@@ -19,6 +20,7 @@ import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Fragments;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textfield.TypedTextField;
@@ -61,6 +63,8 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     private CollectionLoader<Branch> branchesDl;
     @ViewComponent
     private CollectionLoader<Group> groupsDl;
+    @ViewComponent
+    private CollectionLoader<FileAttachmentCategory> fileAttachmentCategoriesDl;
 
     /**
      * services
@@ -132,6 +136,8 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     @ViewComponent
     private EntityComboBox<Group> groupSearchField;
     @ViewComponent
+    private JmixMultiSelectComboBoxPicker<FileAttachmentCategory> fileCategorySearchField;
+    @ViewComponent
     private HorizontalLayout divisionSearchButtons;
     @ViewComponent
     private HorizontalLayout divFundBox;
@@ -153,6 +159,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     private String obligationJoin;
     private String branchJoin;
     private String groupJoin;
+    private String fileCategoryJoin;
     //    private List<Condition> subFragmentConditions = new ArrayList<>();
     private Fragment<VerticalLayout> subFragment;
     private List<Appropriation> fiscalYears;
@@ -332,6 +339,18 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 divFundBox.setVisible(false);
 //                bocBox.setVisible(true);
                 break;
+            case "fis_FileAttachment":
+                hostEntityClass = FileAttachment.class;
+                fundJoin = "JOIN {E}.activity.fund f";
+                appropriationJoin = "JOIN {E}.activity.division dv JOIN dv.appropriation app";
+                divisionJoin = "JOIN {E}.activity.division dv";
+                branchJoin = "JOIN {E}.activity act JOIN act.branch bch";
+                groupJoin = "JOIN {E}.activity act JOIN act.group grp";
+                fileCategoryJoin = "JOIN {E}.category fcat";
+
+                configureSubFragment(FileAttachmentSearchFragment.class, "fileAttachmentsDc", "fileAttachmentsDl");
+
+                break;
             default:
                 throw new IllegalStateException(hostEntityName.concat(" has not been configured in CustomSearchFragment"));
         }
@@ -351,6 +370,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         subFragment = fragments.create(this, fragmentClass);
         ((EntitySearchFragment) subFragment).addCategoryObjectClass(categorySearchField, objectClassSearchField);
         ((EntitySearchFragment) subFragment).addBranchGroup(branchSearchField, groupSearchField);
+        ((EntitySearchFragment) subFragment).addFileCategory(fileCategorySearchField);
 //        subFragmentConditions = ((EntitySearchFragment) subFragment).getPropertyFilterConditions();
 
         // add sub fragment to this view and set visibility
@@ -548,7 +568,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         var component = FragmentUtils.getComponentId(event.getComponent());
         if (component.isPresent()) {
             subsetButtonId = component.get();
-            if(subsetButtonId.equals("showSubsetBtn")) {
+            if (subsetButtonId.equals("showSubsetBtn")) {
                 var selectedItems = dataGrid.getSelectedItems();
                 subsetIds = null;
                 switch (hostEntityName) {
@@ -611,6 +631,11 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         } else {
             hostLoader.removeParameter("groupCodeFilterField");
         }
+        if (!fileCategorySearchField.getValue().isEmpty()) {
+            hostLoader.setParameter("fileCategoryFilterField", fileCategorySearchField.getValue());
+        } else {
+            hostLoader.removeParameter("fileCategoryFilterField");
+        }
     }
 
     @Subscribe(id = "clearSearchBtn", subject = "clickListener")
@@ -660,6 +685,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         sessionSearchParams.put("custom_objectClass", objectClassSearchField.getValue());
         sessionSearchParams.put("custom_branch", branchSearchField.getValue());
         sessionSearchParams.put("custom_group", groupSearchField.getValue());
+//        sessionSearchParams.put("custom_fileCategory", fileCategorySearchField.getValue());
 
         sessionSearchParams.put("subset_idList", subsetIds);
         sessionSearchParams.put("related_group", relatedGroup);
@@ -694,6 +720,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         objectClassesDl.load();
         branchesDl.load();
         groupsDl.load();
+        fileAttachmentCategoriesDl.load();
     }
 
     private void restoreSearchParameters() {
@@ -735,6 +762,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                     objectClassSearchField.setValue((ObjectClass) sessionSearchParams.get("custom_objectClass"));
                     groupSearchField.setValue((Group) sessionSearchParams.get("custom_group"));
                     branchSearchField.setValue((Branch) sessionSearchParams.get("custom_branch"));
+//                    fileCategorySearchField.setValue((FileAttachmentCategory) sessionSearchParams.get("custom_fileCategory"));
                     setLoaderParameters();
 
                     if (subFragment != null) {
@@ -810,6 +838,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
             customConditions.add(JpqlCondition.create("obj.budgetObjectClass = :bocFilterField", objectClassJoin).skipNullOrEmpty());
             customConditions.add(JpqlCondition.create("bch.branchCode = :branchCodeFilterField", branchJoin).skipNullOrEmpty());
             customConditions.add(JpqlCondition.create("grp.groupCode = :groupCodeFilterField", groupJoin).skipNullOrEmpty());
+            customConditions.add(JpqlCondition.create("fcat in :fileCategoryFilterField", fileCategoryJoin).skipNullOrEmpty());
 //            customConditions.add(JpqlCondition.create("e.id in :idList", null).skipNullOrEmpty());
             if (hostEntityName.equals("fis_ActivityProjection")) {
                 customConditions.add(JpqlCondition.create("e.amount <> 0", null).skipNullOrEmpty());

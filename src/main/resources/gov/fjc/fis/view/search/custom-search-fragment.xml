@@ -19,6 +19,13 @@
         <collection id="groupsDc" class="gov.fjc.fis.entity.Group">
             <loader id="groupsDl" readOnly="true"/>
         </collection>
+        <collection id="fileAttachmentCategoriesDc" class="gov.fjc.fis.entity.FileAttachmentCategory">
+            <loader id="fileAttachmentCategoriesDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from fis_FileAttachmentCategory e]]>
+                </query>
+            </loader>
+        </collection>
     </data>
 
     <actions>
@@ -106,6 +113,15 @@
                             <vbox id="subFragmentSearchBox" spacing="false" themeNames="spacing-xs" padding="false"
                                   visible="false"/>
 
+                            <hbox id="fileCategoryBox" visible="false" width="100%">
+                                <multiSelectComboBoxPicker id="fileCategorySearchField"
+                                                           itemsContainer="fileAttachmentCategoriesDc"
+                                                           metaClass="fis_FileAttachmentCategory" width="60em">
+                                    <actions>
+                                        <action id="clearFileCategory" type="entity_clear" icon="vaadin:close-small"/>
+                                    </actions>
+                                </multiSelectComboBoxPicker>
+                            </hbox>
                             <hbox>
                                 <button id="customSearchBtn" text="Search"
                                         icon="vaadin:search"/>

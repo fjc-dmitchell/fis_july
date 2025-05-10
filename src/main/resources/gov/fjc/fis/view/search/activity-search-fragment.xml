@@ -14,8 +14,11 @@
                 <propertyFilter id="titleSearch" property="title" operation="CONTAINS" dataLoader="activitiesDl"
                                 label="Title" width="25em" parameterName="title" autoApply="false"/>
                 <propertyFilter id="trainingSearch" property="trainingProject" operation="EQUAL"
-                                dataLoader="activitiesDl" label="Training Record" width="15em"
+                                dataLoader="activitiesDl" label="Training Project" width="15em"
                                 parameterName="training" autoApply="false"/>
+                <propertyFilter id="canceledProgramSearch" property="canceled" operation="EQUAL"
+                                dataLoader="activitiesDl" label="Canceled Program" width="15em"
+                                parameterName="canceled" autoApply="false"/>
             </hbox>
             <hbox alignItems="CENTER">
                 <span text="Branch"/>
@@ -29,6 +32,9 @@
                                 autoApply="false"/>
                 <propertyFilter id="reimbursementsSearch" property="reimbursedAmount" operation="GREATER_OR_EQUAL"
                                 operationEditable="true" dataLoader="activitiesDl" label="Reimbursements"
+                                autoApply="false"/>
+                <propertyFilter id="obligationsSearch" property="obligatedAmount" operation="GREATER_OR_EQUAL"
+                                operationEditable="true" dataLoader="activitiesDl" label="Obligations"
                                 autoApply="false"/>
             </hbox>
             <hbox id="objectClassBox" alignItems="CENTER">

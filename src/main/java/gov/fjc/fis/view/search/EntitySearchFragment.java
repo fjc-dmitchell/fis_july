@@ -2,13 +2,11 @@ package gov.fjc.fis.view.search;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.QueryParameters;
-import gov.fjc.fis.entity.Branch;
-import gov.fjc.fis.entity.Category;
-import gov.fjc.fis.entity.Group;
-import gov.fjc.fis.entity.ObjectClass;
+import gov.fjc.fis.entity.*;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.combobox.EntityComboBox;
+import io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
@@ -95,6 +93,10 @@ public abstract class EntitySearchFragment extends Fragment<VerticalLayout> {
 
     public void addBranchGroup(EntityComboBox<Branch> branchSearchField,
                                EntityComboBox<Group> groupSearchField) {
+        // by default, do nothing. Subclasses can override this method.
+    }
+
+    public void addFileCategory(JmixMultiSelectComboBoxPicker<FileAttachmentCategory> fileCategorySearchField) {
         // by default, do nothing. Subclasses can override this method.
     }
 }
