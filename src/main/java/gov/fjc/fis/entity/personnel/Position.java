@@ -35,80 +35,105 @@ public class Position {
     @OneToMany(mappedBy = "position")
     private List<PositionAction> actions;
 
+    @Comment("Empl ID")
     @Column(name = "EMPLID", length = 11)
     private String emplid;
 
     @Column(name = "NAME")
     private String name;
 
+    @Comment("Job Code")
     @Column(name = "JOBCODE", length = 6)
     private String jobcode;
 
+    @Comment("Position Number")
     @Column(name = "POSITION_NBR", nullable = false, length = 8)
     @NotNull
     private String positionNbr;
 
+    @Comment("Job Title")
     @Column(name = "JOBTITLE", nullable = false, length = 30)
     @NotNull
     private String jobtitle;
 
+    @Comment("Employee Type")
     @Column(name = "EMPL_TYPE", nullable = false, length = 1)
     @NotNull
     private String emplType;
 
+    @Comment("Regular/Temporary")
     @Column(name = "REG_TEMP", nullable = false, length = 1)
     @NotNull
     private String regTemp;
 
+    @Comment("Full/Part Time")
     @Column(name = "FULL_PART_TIME", nullable = false, length = 1)
     @NotNull
     private String fullPartTime;
 
+    @Comment("Standard Hours")
     @DecimalMax(message = "Standard hours cannot be greater than 40", value = "40")
     @DecimalMin(message = "Standard hours cannot be less than 0", value = "0")
     @Column(name = "STD_HOURS", nullable = false, precision = 19, scale = 2)
     @NotNull
     private BigDecimal stdHours = BigDecimal.ZERO;
 
+    @Comment("Appointment Expiration Date")
     @Column(name = "GVT_APPT_EXPIR_DT")
     @Temporal(TemporalType.DATE)
     private Date gvtApptExpirDt;
 
+    @Temporal(TemporalType.DATE)
+    @Comment("Not-to-Exceed Date")
+    @Column(name = "GVT_PAR_NTE_DATE")
+    private Date gvtParNteDate;
+
+    @Comment("Budget Category Code")
     @Column(name = "JL_BUD_CATG_CD", length = 4)
     private String jlBudCatgCd;
 
+    @Comment("Cost Organization")
     @Column(name = "JL_COST_ORG_CD", nullable = false, length = 7)
     @NotNull
     private String jlCostOrgCd;
 
+    @Comment("Department")
     @Column(name = "DEPT_ID", length = 10)
     private String deptId;
 
+    @Comment("Pay Group")
     @Column(name = "PAYGROUP", length = 3)
     private String paygroup;
 
+    @Comment("Salary Grade")
     @Column(name = "GRADE", length = 3)
     private String grade;
 
+    @Comment("Step")
     @Column(name = "STEP", length = 2)
     private String step;
 
+    @Comment("Hourly Rate")
     @Column(name = "HOURLY_RT", nullable = false, precision = 19, scale = 2)
     @NotNull
     private BigDecimal hourlyRt = BigDecimal.ZERO;
 
+    @Comment("Biweekly Rate")
     @Column(name = "GVT_BIWEEKLY_RT", nullable = false, precision = 19, scale = 2)
     @NotNull
     private BigDecimal gvtBiweeklyRt = BigDecimal.ZERO;
 
+    @Comment("Annual Rate")
     @Column(name = "ANNUAL_RT", nullable = false, precision = 19, scale = 2)
     @NotNull
     private BigDecimal annualRt = BigDecimal.ZERO;
 
+    @Comment("Base Pay")
     @Column(name = "GVT_COMPRATE", nullable = false, precision = 19, scale = 2)
     @NotNull
     private BigDecimal gvtComprate = BigDecimal.ZERO;
 
+    @Comment("Locality Adjustment")
     @Column(name = "GVT_LOCALITY_ADJ", nullable = false, precision = 19, scale = 2)
     @NotNull
     private BigDecimal gvtLocalityAdj = BigDecimal.ZERO;
@@ -118,6 +143,7 @@ public class Position {
     @NotNull
     private BigDecimal totalPay;
 
+    @Comment("Work Schedule")
     @Column(name = "GVT_WORK_SCHED", nullable = false, length = 1)
     @NotNull
     private String gvtWorkSched;
@@ -149,6 +175,14 @@ public class Position {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    public void setGvtParNteDate(Date gvtParNteDate) {
+        this.gvtParNteDate = gvtParNteDate;
+    }
+
+    public Date getGvtParNteDate() {
+        return gvtParNteDate;
+    }
 
     @DependsOnProperties({"createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"})
     @JmixProperty

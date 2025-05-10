@@ -83,6 +83,14 @@ public class Employee {
     @NotNull
     private String paygroup;
 
+    // ToDo: 2025-05-07 - request field from gvt_job, also locality code
+    @Column(name = "GVT_PAY_PLAN", length = 2)
+    private String gvtPayPlan;
+
+    // ToDo: 2025-05-07 - request field from gvt_job
+    @Column(name = "SAL_ADMIN_PLAN", length = 4)
+    private String salAdminPlan;
+
     @Column(name = "GRADE", nullable = false, length = 3)
     @NotNull
     private String grade;
@@ -122,6 +130,22 @@ public class Employee {
     @CreatedDate
     @Column(name = "CREATED_DATE")
     private OffsetDateTime createdDate;
+
+    public String getSalAdminPlan() {
+        return salAdminPlan;
+    }
+
+    public void setSalAdminPlan(String salAdminPlan) {
+        this.salAdminPlan = salAdminPlan;
+    }
+
+    public String getGvtPayPlan() {
+        return gvtPayPlan;
+    }
+
+    public void setGvtPayPlan(String gvtPayPlan) {
+        this.gvtPayPlan = gvtPayPlan;
+    }
 
     @DependsOnProperties({"createdBy", "createdDate"})
     @JmixProperty

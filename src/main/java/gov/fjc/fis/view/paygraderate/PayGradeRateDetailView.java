@@ -1,7 +1,7 @@
 package gov.fjc.fis.view.paygraderate;
 
 import com.vaadin.flow.router.Route;
-import gov.fjc.fis.entity.PayGradeRate;
+import gov.fjc.fis.entity.personnel.PayGradeRate;
 import gov.fjc.fis.view.main.MainView;
 import io.jmix.flowui.view.EditedEntityContainer;
 import io.jmix.flowui.view.StandardDetailView;

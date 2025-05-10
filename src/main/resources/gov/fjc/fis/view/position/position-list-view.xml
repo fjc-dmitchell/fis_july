@@ -51,31 +51,27 @@
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
-                <column property="emplid"/>
-                <column property="name"/>
-                <column property="jobcode"/>
-                <column property="positionNbr"/>
-                <column property="jobtitle"/>
-                <column property="emplType"/>
-                <column property="regTemp"/>
-                <column property="fullPartTime"/>
-                <column property="stdHours"/>
-                <column property="gvtApptExpirDt"/>
-                <column property="jlBudCatgCd"/>
-                <column property="jlCostOrgCd"/>
-                <column property="deptId"/>
-                <column property="paygroup"/>
-                <column property="grade"/>
-                <column property="step"/>
-                <column property="hourlyRt"/>
-                <column property="gvtBiweeklyRt"/>
-                <column property="annualRt"/>
-                <column property="gvtComprate"/>
-                <column property="gvtLocalityAdj"/>
-                <column property="totalPay"/>
-                <column property="gvtWorkSched"/>
-                <column property="status"/>
-                <column property="memo"/>
+                <column property="positionNbr" header="Position" width="100px"/>
+                <column property="name" header="Employee Name" width="250px"/>
+                <column property="jobtitle" header="Title" width="250px"/>
+                <column property="status" width="90px" textAlign="CENTER"/>
+                <column property="jlCostOrgCd" header="Division" width="120px"/>
+                <column property="gvtComprate" textAlign="END" header="Basic" width="100px">
+                    <numberRenderer numberFormat="#,##0"/>
+                </column>
+                <column property="gvtLocalityAdj" textAlign="END" header="Locality" width="100px">
+                    <numberRenderer numberFormat="#,##0"/>
+                </column>
+                <column property="totalPay" textAlign="END" header="Total Pay" width="100px">
+                    <numberRenderer numberFormat="#,##0"/>
+                </column>
+                <column property="grade" width="90px" textAlign="CENTER"/>
+                <column property="stdHours" textAlign="END" header="Hours" width="100px"/>
+                <column property="gvtWorkSched" header="Schedule" width="100px" textAlign="CENTER"/>
+                <column property="regTemp" header="R/T" width="90px" textAlign="CENTER"/>
+                <column property="fullPartTime" header="F/P" width="90px" textAlign="CENTER"/>
+                <column property="emplType" header="Type" width="90px" textAlign="CENTER"/>
+                <column property="gvtParNteDate" header="NTE" flexGrow="1" width="90px"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

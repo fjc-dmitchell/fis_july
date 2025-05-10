@@ -1,7 +1,8 @@
-package gov.fjc.fis.entity;
+package gov.fjc.fis.entity.personnel;
 
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
+import io.jmix.core.metamodel.annotation.Comment;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
@@ -13,6 +14,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.OffsetDateTime;
 import java.util.Date;
@@ -34,13 +36,16 @@ public class PayGradeRate {
     @JoinColumn(name = "PAY_GRADE_ID", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private PayGrade payGrade;
+    @Comment("Effective Date")
     @Temporal(TemporalType.DATE)
     @Column(name = "EFFDATE", nullable = false)
     @NotNull
     private Date effdate;
+    @Comment("Minimum Pay Rate-Annual")
     @Column(name = "MIN_RT_ANNUAL", nullable = false, precision = 19, scale = 2)
     @NotNull
     private BigDecimal minRtAnnual = BigDecimal.ZERO;
+    @Comment("Maximum Pay Rate-Annual")
     @Column(name = "MAX_RT_ANNUAL", nullable = false, precision = 19, scale = 2)
     @NotNull
     private BigDecimal maxRtAnnual = BigDecimal.ZERO;
@@ -63,7 +68,7 @@ public class PayGradeRate {
     @DependsOnProperties({"minRtAnnual", "maxRtAnnual"})
     @JmixProperty
     public BigDecimal getQuartileAmount() {
-        return requireNonNullElse(maxRtAnnual, BigDecimal.ZERO).subtract(requireNonNullElse(minRtAnnual, BigDecimal.ZERO)).divide(new BigDecimal(4), 0, BigDecimal.ROUND_HALF_UP);
+        return requireNonNullElse(maxRtAnnual, BigDecimal.ZERO).subtract(requireNonNullElse(minRtAnnual, BigDecimal.ZERO)).divide(new BigDecimal(4), 0, RoundingMode.HALF_UP);
     }
 
     @DependsOnProperties({"minRtAnnual"})
@@ -139,11 +144,11 @@ public class PayGradeRate {
         this.minRtAnnual = minRtAnnual;
     }
 
-    public PayGrade getPayGrade() {
+    public gov.fjc.fis.entity.personnel.PayGrade getPayGrade() {
         return payGrade;
     }
 
-    public void setPayGrade(PayGrade payGrade) {
+    public void setPayGrade(gov.fjc.fis.entity.personnel.PayGrade payGrade) {
         this.payGrade = payGrade;
     }
 

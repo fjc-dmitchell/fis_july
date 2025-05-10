@@ -5,7 +5,7 @@
       focusComponent="payGradesDataGrid">
     <data>
         <collection id="payGradesDc"
-                    class="gov.fjc.fis.entity.PayGrade">
+                    class="gov.fjc.fis.entity.personnel.PayGrade">
             <fetchPlan extends="_base"/>
             <loader id="payGradesDl" readOnly="true">
                 <query>
@@ -42,12 +42,12 @@
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
-                <column property="setid"/>
-                <column property="salAdminPlan"/>
-                <column property="grade"/>
-                <column property="localityString" header="Locality"/>
-                <column property="descr"/>
-                <column property="descrshort"/>
+                <column property="setid" header="Set ID" textAlign="CENTER" flexGrow="0" width="90px"/>
+                <column property="grade" header="Grade" textAlign="CENTER" width="90px" flexGrow="0"/>
+                <column property="salAdminPlan" header="Plan" textAlign="CENTER" width="90px" flexGrow="0"/>
+                <column property="localityString" header="Locality" width="170px" flexGrow="0"/>
+                <column property="descr" header="Description" width="300px" flexGrow="0"/>
+                <column property="descrshort" flexGrow="1" header="Abbr."/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

@@ -4,7 +4,7 @@
       focusComponent="effdateField">
     <data>
         <instance id="payGradeRateDc"
-                  class="gov.fjc.fis.entity.PayGradeRate">
+                  class="gov.fjc.fis.entity.personnel.PayGradeRate">
             <fetchPlan extends="_base">
                 <property name="payGrade" fetchPlan="_base"/>
             </fetchPlan>

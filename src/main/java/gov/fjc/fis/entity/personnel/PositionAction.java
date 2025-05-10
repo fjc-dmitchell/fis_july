@@ -3,10 +3,7 @@ package gov.fjc.fis.entity.personnel;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
-import io.jmix.core.metamodel.annotation.DependsOnProperties;
-import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.core.metamodel.annotation.JmixProperty;
+import io.jmix.core.metamodel.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.CreatedBy;
@@ -46,10 +43,12 @@ public class PositionAction {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private PayPeriod payPeriod;
 
+    @Comment("Base Pay")
     @Column(name = "GVT_COMPRATE", nullable = false, precision = 19, scale = 2)
     @NotNull
     private BigDecimal gvtComprate = BigDecimal.ZERO;
 
+    @Comment("Locality Adjustment")
     @Column(name = "GVT_LOCALITY_ADJ", nullable = false, precision = 19, scale = 2)
     @NotNull
     private BigDecimal gvtLocalityAdj = BigDecimal.ZERO;

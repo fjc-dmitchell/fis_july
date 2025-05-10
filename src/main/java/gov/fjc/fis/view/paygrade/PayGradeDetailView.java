@@ -6,7 +6,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.Route;
-import gov.fjc.fis.entity.PayGrade;
+import gov.fjc.fis.entity.personnel.PayGrade;
 import gov.fjc.fis.view.main.MainView;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.view.*;

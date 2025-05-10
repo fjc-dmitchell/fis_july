@@ -1,4 +1,4 @@
-package gov.fjc.fis.entity;
+package gov.fjc.fis.entity.personnel;
 
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.annotation.*;
@@ -24,15 +24,19 @@ public class PayGrade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Comment("Set ID")
     @Column(name = "SETID", nullable = false, length = 5)
     @NotNull
     private String setid;
+    @Comment("Salary Administration Plan")
     @Column(name = "SAL_ADMIN_PLAN", nullable = false, length = 4)
     @NotNull
     private String salAdminPlan;
+    @Comment("Salary Grade")
     @Column(name = "GRADE", nullable = false, length = 3)
     @NotNull
     private String grade;
+    @Comment("Grade Name")
     @Column(name = "GRADE_TITLE_JPN")
     private String gradeTitleJpn;
     @Column(name = "LOCALITY_ENTITLED", nullable = false)
@@ -41,8 +45,10 @@ public class PayGrade {
     @Column(name = "LOCALITY_FORFEITURE", nullable = false)
     @NotNull
     private Boolean localityForfeiture = false;
+    @Comment("Description")
     @Column(name = "DESCR")
     private String descr;
+    @Comment("Short Description")
     @Column(name = "DESCRSHORT")
     private String descrshort;
     @OrderBy("effdate DESC")

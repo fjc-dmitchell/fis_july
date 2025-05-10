@@ -4,7 +4,7 @@
       focusComponent="form">
     <data>
         <instance id="payGradeDc"
-                  class="gov.fjc.fis.entity.PayGrade">
+                  class="gov.fjc.fis.entity.personnel.PayGrade">
             <fetchPlan extends="_base">
                 <property name="rates" fetchPlan="_base"/>
             </fetchPlan>
