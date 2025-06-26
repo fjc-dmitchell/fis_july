@@ -6,11 +6,9 @@ import gov.fjc.fis.entity.Category;
 import gov.fjc.fis.entity.Division;
 import gov.fjc.fis.entity.dto.CategoryDto;
 import io.jmix.core.DataManager;
-import io.jmix.core.entity.KeyValueEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,6 +18,12 @@ public class CategoryService {
     private DataManager dataManager;
 
     final private List<String> compensationAndBenefits = Arrays.asList("11", "12", "13");
+
+    final private String travel = "21";
+
+    public String getTravel() {
+        return travel;
+    }
 
     public List<String> getCompensationAndBenefits() {
         return compensationAndBenefits;

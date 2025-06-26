@@ -25,6 +25,8 @@ public class DivisionService {
     @Autowired
     private AppropriationService appropriationService;
 
+    final private String educationDivisionCode = "2";
+
     // temporary service while creating views for Jmix 2.2
     public List<Division> getDivisions() {
         return dataManager.load(Division.class)
@@ -66,19 +68,19 @@ public class DivisionService {
      * @param foundation    boolean to indicate whether to use FJC Foundation fund
      * @return List of Divisions
      */
-//    public List<Division> getObligationDivisionsForAppropriationFoundation(Appropriation appropriation, boolean foundation) {
-//        return dataManager.load(Division.class)
-//                .query("SELECT distinct d FROM fis_Division d"
-//                        + " INNER JOIN fis_Obligation obl ON obl.activity.division.id = d.id"
-//                        + " WHERE d.appropriation = :appropriation"
-//                        + " AND ((:foundation = true AND d.fund = :foundationFund)"
-//                        + " OR (:foundation = false AND d.fund <> :foundationFund))"
-//                        + " ORDER BY d.divisionCode")
-//                .parameter("appropriation", appropriation)
-//                .parameter("foundation", foundation)
-//                .parameter("foundationFund", fundService.getFoundationFund())
-//                .list();
-//    }
+    public List<Division> getObligationDivisionsForAppropriationFoundation(Appropriation appropriation, boolean foundation) {
+        return dataManager.load(Division.class)
+                .query("SELECT distinct d FROM fis_Division d"
+                        + " INNER JOIN fis_Obligation obl ON obl.activity.division.id = d.id"
+                        + " WHERE d.appropriation = :appropriation"
+                        + " AND ((:foundation = true AND d.fund = :foundationFund)"
+                        + " OR (:foundation = false AND d.fund <> :foundationFund))"
+                        + " ORDER BY d.divisionCode")
+                .parameter("appropriation", appropriation)
+                .parameter("foundation", foundation)
+                .parameter("foundationFund", fundService.getFoundationFund())
+                .list();
+    }
 
 //    public List<Division> getObligationDivisionsForAppropriation(Appropriation appropriation) {
 //        return getObligationDivisionsForAppropriationFoundation(appropriation, false);
@@ -250,6 +252,14 @@ public class DivisionService {
                 .parameter("appropriation", appropriation)
                 .optional()
                 .orElse(null);
+    }
+
+    /**
+     * this is a bad idea but sometimes necessary. used for Nancy's ED program analysis
+     * @return
+     */
+    public String getEducationDivisionCode() {
+        return educationDivisionCode;
     }
 
     public Division getAdministrationDivision(Appropriation appropriation) {
