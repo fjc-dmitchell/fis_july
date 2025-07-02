@@ -22,7 +22,7 @@ import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
 
-@Route(value = "status-of-funds-dashboard-view", layout = MainView.class)
+@Route(value = "status-of-funds-dashboard", layout = MainView.class)
 @ViewController(id = "fis_StatusOfFundsDashboardView")
 @ViewDescriptor(path = "status-of-funds-dashboard-view.xml")
 public class StatusOfFundsDashboardView extends StandardView {

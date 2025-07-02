@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://jitfDashboardView.title">
+    <data>
+        <collection id="jitfDtoesDc" class="gov.fjc.fis.entity.dto.JitfDto">
+            <loader id="jitfDtoesDl" readOnly="true"/>
+        </collection>
+    </data>
+    <layout>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button id="excelExportBtn" action="jitfDtoesDataGrid.excelExport"/>
+        </hbox>
+        <dataGrid id="jitfDtoesDataGrid" dataContainer="jitfDtoesDc" minWidth="100px" width="700px"
+                  allRowsVisible="true">
+            <actions>
+                <action id="excelExport" type="grdexp_excelExport"/>
+            </actions>
+            <columns>
+                <column property="budgetFiscalYear" width="100px" header="BFY"/>
+                <column property="carriedForward" textAlign="END" width="150px"/>
+                <column property="totalDeposits" textAlign="END" width="150px"/>
+                <column property="totalExpenses" textAlign="END" width="150px"/>
+                <column property="carryForward" textAlign="END" width="150px"/>
+            </columns>
+        </dataGrid>
+    </layout>
+</view>

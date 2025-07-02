@@ -22,7 +22,7 @@ import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
 
-@Route(value = "spending-chart-dashboard-view", layout = MainView.class)
+@Route(value = "spending-chart-dashboard", layout = MainView.class)
 @ViewController(id = "fis_SpendingChartDashboardView")
 @ViewDescriptor(path = "spending-chart-dashboard-view.xml")
 public class SpendingChartDashboardView extends StandardView {

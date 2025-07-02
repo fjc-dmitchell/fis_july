@@ -22,7 +22,7 @@ import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
 
-@Route(value = "reconciliation-dashboard-view", layout = MainView.class)
+@Route(value = "reconciliation-dashboard", layout = MainView.class)
 @ViewController(id = "fis_ReconciliationDashboardView")
 @ViewDescriptor(path = "reconciliation-dashboard-view.xml")
 public class ReconciliationDashboardView extends StandardView {
