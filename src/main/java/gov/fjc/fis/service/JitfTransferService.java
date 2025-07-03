@@ -1,7 +1,7 @@
 package gov.fjc.fis.service;
 
 import gov.fjc.fis.entity.Appropriation;
-import gov.fjc.fis.entity.dto.JitfDto;
+import gov.fjc.fis.entity.dto.JitfTransferDto;
 import io.jmix.core.DataManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,8 +10,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component("fis_JitfService")
-public class JitfService {
+@Component("fis_JitfTransferService")
+public class JitfTransferService {
     @Autowired
     private DataManager dataManager;
     @Autowired
@@ -20,7 +20,7 @@ public class JitfService {
     public List<Appropriation> getAppropriations() {
         var minYear = dataManager.loadValue(
                         "SELECT MIN(a.budgetFiscalYear) FROM fis_Appropriation a"
-                                + " WHERE a IN (SELECT j.appropriation FROM fis_Jitf j)", String.class)
+                                + " WHERE a IN (SELECT j.appropriation FROM fis_JitfTransfer j)", String.class)
                 .optional().orElse(null);
 
         return dataManager.load(Appropriation.class)
@@ -33,7 +33,7 @@ public class JitfService {
 
     public BigDecimal getJitfAmount(Appropriation appropriation) {
         return dataManager.loadValue(
-                        "SELECT coalesce(sum(j.amount),0) from fis_Jitf j WHERE j.appropriation = :appropriation",
+                        "SELECT coalesce(sum(j.amount),0) from fis_JitfTransfer j WHERE j.appropriation = :appropriation",
                         BigDecimal.class)
                 .parameter("appropriation", appropriation)
                 .one();
@@ -52,16 +52,16 @@ public class JitfService {
                 .one();
     }
 
-    public List<JitfDto> generateReport() {
+    public List<JitfTransferDto> generateReport() {
         var appropriations = getAppropriations();
 
-        List<JitfDto> jitfDtos = new ArrayList<>();
-        JitfDto dto;
+        List<JitfTransferDto> jitfDtos = new ArrayList<>();
+        JitfTransferDto dto;
 
         BigDecimal balance = BigDecimal.ZERO;
 
         for (Appropriation appropriation : appropriations) {
-            dto = dataManager.create(JitfDto.class);
+            dto = dataManager.create(JitfTransferDto.class);
             dto.setBudgetFiscalYear(appropriation.getBudgetFiscalYear());
             dto.setCarriedForward(balance);
 
