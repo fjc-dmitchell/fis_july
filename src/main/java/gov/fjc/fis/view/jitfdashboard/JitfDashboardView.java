@@ -2,8 +2,8 @@ package gov.fjc.fis.view.jitfdashboard;
 
 
 import com.vaadin.flow.router.Route;
-import gov.fjc.fis.entity.dto.JitfDto;
-import gov.fjc.fis.service.JitfService;
+import gov.fjc.fis.entity.dto.JitfTransferDto;
+import gov.fjc.fis.service.JitfTransferService;
 import io.jmix.core.LoadContext;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
@@ -16,17 +16,17 @@ import java.util.List;
 @ViewDescriptor(path = "jitf-dashboard-view.xml")
 public class JitfDashboardView extends StandardView {
     @Autowired
-    private JitfService jitfService;
+    private JitfTransferService jitfTransferService;
     @ViewComponent
-    private CollectionLoader<JitfDto> jitfDtoesDl;
+    private CollectionLoader<JitfTransferDto> jitfTransferDtoesDl;
 
     @Subscribe
     protected void onBeforeShow(final BeforeShowEvent event) {
-        jitfDtoesDl.load();
+        jitfTransferDtoesDl.load();
     }
 
-    @Install(to = "jitfDtoesDl", target = Target.DATA_LOADER)
-    protected List<JitfDto> jitfDtoesDlLoadDelegate(final LoadContext<JitfDto> loadContext) {
-        return jitfService.generateReport();
+    @Install(to = "jitfTransferDtoesDl", target = Target.DATA_LOADER)
+    protected List<JitfTransferDto> jitfTransferDtoesDlLoadDelegate(final LoadContext<JitfTransferDto> loadContext) {
+        return jitfTransferService.generateReport();
     }
 }
