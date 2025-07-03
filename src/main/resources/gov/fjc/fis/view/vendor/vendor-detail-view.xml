@@ -16,49 +16,39 @@
         <action id="saveAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
-    <layout>
-        <formLayout id="form" dataContainer="vendorDc">
-            <responsiveSteps>
-                <responsiveStep minWidth="0" columns="1" labelsPosition="ASIDE"/>
-                <responsiveStep minWidth="40em" columns="2" labelsPosition="ASIDE"/>
-            </responsiveSteps>
-            <formItem>
-                <textField id="nameField" property="name"/>
-            </formItem>
-            <formItem>
-                <textField id="einField" property="ein"/>
-            </formItem>
-            <formItem>
-                <textField id="vendorCodeField" property="vendorCode"/>
-            </formItem>
-            <formItem>
-                <textField id="addressCodeField" property="addressCode"/>
-            </formItem>
-            <formItem>
-                <textField id="address1Field" property="address1"/>
-            </formItem>
-            <formItem>
-                <textField id="address2Field" property="address2"/>
-            </formItem>
-            <formItem>
-                <textField id="cityField" property="city"/>
-            </formItem>
-            <formItem>
-                <textField id="stateField" property="state"/>
-            </formItem>
-            <formItem>
-                <textField id="zipCodeField" property="zipCode"/>
-            </formItem>
-            <formItem>
-                <textField id="dunsField" property="duns"/>
-            </formItem>
-            <formItem>
-                <textField id="cageField" property="cage"/>
-            </formItem>
-        </formLayout>
-        <checkbox id="activeField" property="active" label="Active" dataContainer="vendorDc"/>
-        <p id="createdByString"/>
-        <hbox id="detailActions">
+    <layout alignItems="STRETCH"
+            padding="false" spacing="false"
+            expand="contentBox">
+        <vbox id="contentBox" classNames="overflow-auto">
+            <div classNames="grid-panel">
+                <vbox classNames="contrast-panel">
+                    <formLayout id="form" dataContainer="vendorDc">
+                        <textField id="nameField" property="name"/>
+                        <textField id="einField" property="ein"/>
+                        <textField id="vendorCodeField" property="vendorCode"/>
+                        <textField id="dunsField" property="duns"/>
+                        <textField id="cageField" property="cage"/>
+                        <formItem label="Status">
+                            <checkbox id="activeField" property="active" label="Active"/>
+                        </formItem>
+                    </formLayout>
+                </vbox>
+                <vbox classNames="contrast-panel">
+                    <formLayout id="addressForm" dataContainer="vendorDc">
+                        <textField id="addressCodeField" property="addressCode"/>
+                        <textField id="address1Field" property="address1"/>
+                        <textField id="address2Field" property="address2"/>
+                        <textField id="cityField" property="city"/>
+                        <textField id="stateField" property="state"/>
+                        <textField id="zipCodeField" property="zipCode"/>
+                    </formLayout>
+                </vbox>
+            </div>
+        </vbox>
+        <vbox>
+            <p id="createdByString"/>
+        </vbox>
+        <hbox id="detailActions" classNames="px-m py-s bg-contrast-5">
             <button id="saveAndCloseButton" action="saveAction"/>
             <button id="closeButton" action="closeAction"/>
         </hbox>

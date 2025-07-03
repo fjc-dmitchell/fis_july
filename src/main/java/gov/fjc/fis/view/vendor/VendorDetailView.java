@@ -20,9 +20,11 @@ public class VendorDetailView extends StandardDetailView<Vendor> {
 
     @Subscribe
     protected void onBeforeShow(final BeforeShowEvent event) {
-       Vendor vendor = getEditedEntity();
-       if(!entityStates.isNew(vendor)) {
-           createdByString.setText(vendor.getCreatedByString());
-       }
+        Vendor vendor = getEditedEntity();
+        if (entityStates.isNew(vendor)) {
+            vendor.setActive(true);
+        } else {
+            createdByString.setText(vendor.getCreatedByString());
+        }
     }
 }
