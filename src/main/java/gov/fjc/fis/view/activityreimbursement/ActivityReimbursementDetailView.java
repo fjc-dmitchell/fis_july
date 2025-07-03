@@ -56,7 +56,7 @@ public class ActivityReimbursementDetailView extends StandardDetailView<Activity
         ActivityReimbursement reimbursement = getEditedEntity();
         appropriation = reimbursement.getActivity().getDivision().getAppropriation();
 
-        if(!entityStates.isNew(reimbursement)) {
+        if (!entityStates.isNew(reimbursement)) {
             createdByString.setText(reimbursement.getCreatedByString());
             amountField.focus();
             amountField.setAutoselect(true);
