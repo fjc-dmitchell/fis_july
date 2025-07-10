@@ -27,7 +27,7 @@ import static java.util.Objects.requireNonNullElse;
         @Index(name = "IDX_FIS_OBLIGATION", columnList = "ACTIVITY_ID, STATUS"),
         @Index(name = "IDX_FIS_OBLIGATION_ACTIVITY_OBJCLASS", columnList = "ACTIVITY_ID, OBJECT_CLASS_ID")
 }, uniqueConstraints = {
-        @UniqueConstraint(name = "IDX_FIS_OBLIGATION_UNQ", columnNames = {"ACTIVITY_ID", "OBJECT_CLASS_ID", "DOCID"})
+        @UniqueConstraint(name = "IDX_FIS_OBLIGATION_UNQ", columnNames = {"DOCID", "OBJECT_CLASS_ID"})
 })
 @Entity(name = "fis_Obligation")
 public class Obligation {
@@ -50,7 +50,8 @@ public class Obligation {
     @NotNull
     private String documentNumber;
 
-    @Column(name = "DOCUMENT_TYPE", length = 5)
+    @NotNull
+    @Column(name = "DOCUMENT_TYPE", nullable = false, length = 5)
     private String documentType;
 
     @Column(name = "LINE_NUMBER", nullable = false)
@@ -71,8 +72,7 @@ public class Obligation {
     @NotNull(message = "Obligation process date is required")
     private Date processDate;
 
-    @Column(name = "AO_SEND", nullable = false)
-    @NotNull
+    @Column(name = "AO_SEND")
     private Boolean aoSend = false;
 
     @Column(name = "AO_SYNC_DATE")
@@ -85,8 +85,7 @@ public class Obligation {
     @Column(name = "VENDOR_CODE", length = 10)
     private String vendorCode;
 
-    @Column(name = "STATUS", nullable = false)
-    @NotNull
+    @Column(name = "STATUS")
     private Boolean status = false;
 
     @Column(name = "EIN", length = 10)
@@ -108,16 +107,13 @@ public class Obligation {
     @ManyToOne(fetch = FetchType.LAZY)
     private Division responsibleDivision;
 
-    @Column(name = "RECONCILED", nullable = false)
-    @NotNull
+    @Column(name = "RECONCILED")
     private Boolean reconciled = false;
 
-    @Column(name = "BPO", nullable = false)
-    @NotNull
+    @Column(name = "BPO")
     private Boolean blanketPurchaseOrder = false;
 
-    @Column(name = "UPDATED", nullable = false)
-    @NotNull
+    @Column(name = "UPDATED")
     private Boolean updated = false;
 
     @Column(name = "BUDGET_ORG", length = 7)
@@ -160,6 +156,14 @@ public class Obligation {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    public void setDocumentType(DocumentType documentType) {
+        this.documentType = documentType == null ? null : documentType.getId();
+    }
+
+    public DocumentType getDocumentType() {
+        return documentType == null ? null : DocumentType.fromId(documentType);
+    }
 
     public String getVendorCode() {
         return vendorCode;
@@ -367,14 +371,6 @@ public class Obligation {
 
     public void setLineNumber(Integer lineNumber) {
         this.lineNumber = lineNumber;
-    }
-
-    public String getDocumentType() {
-        return documentType;
-    }
-
-    public void setDocumentType(String documentType) {
-        this.documentType = toUpperNullAllowed(documentType);
     }
 
     public ObjectClass getObjectClass() {
