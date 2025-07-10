@@ -44,15 +44,15 @@ public class ActivityReimbursement {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private ObjectClass objectClass;
 
-    @Column(name = "DOCUMENT_NUMBER")
-    private String documentNumber;
-
     @Column(name = "SOURCE")
     private String source;
 
     @Column(name = "AMOUNT", nullable = false, precision = 19, scale = 2)
     @NotNull
     private BigDecimal amount = BigDecimal.ZERO;
+
+    @Column(name = "NOTE")
+    private String note;
 
     @Column(name = "VERSION", nullable = false, columnDefinition = "INT DEFAULT 1")
     @Version
@@ -74,6 +74,14 @@ public class ActivityReimbursement {
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
 
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     @DependsOnProperties({"createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"})
     @JmixProperty
     public String getCreatedByString() {
@@ -94,14 +102,6 @@ public class ActivityReimbursement {
 
     public void setSource(String source) {
         this.source = source;
-    }
-
-    public String getDocumentNumber() {
-        return documentNumber;
-    }
-
-    public void setDocumentNumber(String documentNumber) {
-        this.documentNumber = documentNumber;
     }
 
     public ObjectClass getObjectClass() {
