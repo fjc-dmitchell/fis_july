@@ -35,10 +35,8 @@
         <vbox id="contentBox" classNames="overflow-auto">
             <div classNames="grid-panel">
                 <vbox classNames="contrast-panel">
-                    <details opened="true" summaryText="Obligation" minWidth="100%">
+                    <details opened="true" summaryText="Invoice" minWidth="100%">
                         <formLayout id="obligationLookupForm" dataContainer="invoiceDc">
-                            <textField id="budgetFiscalYearField" label="Budget Fiscal Year"
-                                       datatype="string" readOnly="true" colspan="2"/>
                             <entityComboBox id="docIdSuggestionField" dataContainer="invoiceDc"
                                             property="obligation"
                                             placeholder="Enter Document ID (DIN)" label="Obligation"
@@ -49,7 +47,23 @@
                                 </actions>
                             </entityComboBox>
                         </formLayout>
+
+                        <formLayout id="invoiceInfoForm" dataContainer="invoiceDc">
+                            <textField id="invoiceNumberField" property="invoiceNumber" label="Invoice Number"
+                                       colspan="2"/>
+                            <datePicker id="invoiceDateField" property="invoiceDate" label="Invoice Date"/>
+                            <datePicker id="paymentDateField" property="paymentDate" label="Paid Date"/>
+                            <textField id="amountField" property="amount" label="Amount"/>
+                            <textArea id="memoField" property="memo" colspan="2"/>
+                        </formLayout>
+                    </details>
+                </vbox>
+                <vbox classNames="contrast-panel">
+                    <details opened="true" summaryText="Obligation" minWidth="100%">
+                        <textField id="budgetFiscalYearField" label="Budget Fiscal Year"
+                                   datatype="string" readOnly="true" colspan="2"/>
                         <formLayout id="obligationInfoForm" dataContainer="invoiceDc" visible="false">
+
                             <textField property="obligation.documentNumber" label="Document Number"
                                        readOnly="true"/>
                             <textField property="obligation.vendor" label="Vendor" readOnly="true"/>
@@ -59,18 +73,6 @@
                                        label="Division"/>
                             <textField property="obligation.activity.titleAndCode" label="Activity"
                                        colspan="2"/>
-                        </formLayout>
-                    </details>
-                </vbox>
-                <vbox classNames="contrast-panel">
-                    <details opened="true" summaryText="Invoice">
-                        <formLayout id="invoiceInfoForm" dataContainer="invoiceDc">
-                            <textField id="invoiceNumberField" property="invoiceNumber" label="Invoice Number"
-                                       colspan="2"/>
-                            <datePicker id="invoiceDateField" property="invoiceDate" label="Invoice Date"/>
-                            <datePicker id="paymentDateField" property="paymentDate" label="Paid Date"/>
-                            <textField id="amountField" property="amount" label="Amount"/>
-                            <textArea id="memoField" property="memo" colspan="2"/>
                         </formLayout>
                     </details>
                 </vbox>

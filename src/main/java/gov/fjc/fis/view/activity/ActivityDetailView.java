@@ -15,6 +15,7 @@ import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.details.JmixDetails;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.model.CollectionContainer;
@@ -97,13 +98,11 @@ public class ActivityDetailView extends StandardDetailView<Activity> {
     @ViewComponent
     private TypedTextField<String> budgetFiscalYearField;
     @ViewComponent
+    private JmixTextArea memoField;
+    @ViewComponent
     private Paragraph createdByString;
     @ViewComponent
     private FileAttachmentFragment attachmentFragment;
-
-    private Appropriation entryBfy;
-    private Division division;
-    private Boolean foundation = false;
     @ViewComponent
     private JmixCheckbox genericProjectionField;
     @ViewComponent
@@ -111,8 +110,22 @@ public class ActivityDetailView extends StandardDetailView<Activity> {
     @ViewComponent
     private TypedTextField<String> activityNumberField;
 
-    public void setFoundation(Boolean foundation) {
-        this.foundation = foundation;
+    private Appropriation entryBfy;
+    private Division division;
+    private Boolean fjcFoundation = false;
+
+    public void setFjcFoundation(Boolean fjcFoundation) {
+        this.fjcFoundation = fjcFoundation;
+        if (fjcFoundation) {
+            var activity = getEditedEntity();
+//            fundsDl.load();
+            divisionsDl.load();
+//            if (entityStates.isNew(activity)) {
+//                fundField.setValue(fundService.getFoundationFund());
+//                fundField.setReadOnly(true);
+//            }
+//            fundField.setReadOnly(true);
+        }
     }
 
     @Subscribe
@@ -151,10 +164,9 @@ public class ActivityDetailView extends StandardDetailView<Activity> {
         }
     }
 
-
     @Install(to = "divisionsDl", target = Target.DATA_LOADER)
     protected List<Division> divisionsDlLoadDelegate(final LoadContext<Division> loadContext) {
-        return divisionService.getDivisions(entryBfy, foundation);
+        return divisionService.getDivisions(entryBfy, fjcFoundation);
     }
 
     @Install(to = "fundsDl", target = Target.DATA_LOADER)
@@ -248,5 +260,10 @@ public class ActivityDetailView extends StandardDetailView<Activity> {
     @Subscribe(id = "obligationsDc", target = Target.DATA_CONTAINER)
     protected void onObligationsDcCollectionChange(final CollectionContainer.CollectionChangeEvent<Obligation> event) {
         obligationsDataGrid.setAggregatable(obligationsDc.getItems().size() > 1);
+    }
+
+    @Subscribe("memoField")
+    protected void onMemoFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixTextArea, ?> event) {
+        memoField.setValue(((String) event.getValue()).trim());
     }
 }

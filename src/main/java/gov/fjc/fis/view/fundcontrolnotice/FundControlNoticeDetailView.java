@@ -5,6 +5,7 @@ import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.router.Route;
 import gov.fjc.fis.entity.Appropriation;
+import gov.fjc.fis.entity.DocumentType;
 import gov.fjc.fis.entity.FundControlNotice;
 import gov.fjc.fis.entity.Obligation;
 import gov.fjc.fis.service.AppropriationService;
@@ -55,21 +56,21 @@ public class FundControlNoticeDetailView extends StandardDetailView<FundControlN
     @ViewComponent
     private TypedDatePicker<Date> fcnDateField;
     @ViewComponent
+    private TypedDatePicker<Date> travelStartDateField;
+    @ViewComponent
+    private TypedDatePicker<Date> travelEndDateField;
+    @ViewComponent
     private FileAttachmentFragment attachmentFragment;
     @ViewComponent
     private Paragraph aoSyncStringField;
     @ViewComponent
     private Paragraph createdByString;
 
-    Boolean foundation = false;
+    Boolean fjcFoundation = false;
     Appropriation entryBfy;
 
-    public Boolean getFoundation() {
-        return foundation;
-    }
-
-    public void setFoundation(Boolean foundation) {
-        this.foundation = foundation;
+    public void setFjcFoundation(Boolean fjcFoundation) {
+        this.fjcFoundation = fjcFoundation;
     }
 
     // Todo: hide date fields if obligation is not a Travel Authorization
@@ -114,7 +115,7 @@ public class FundControlNoticeDetailView extends StandardDetailView<FundControlN
     protected Stream<Obligation> docIdSuggestionFieldItemsFetchCallback(final Query<Obligation, String> query) {
         String enteredValue = query.getFilter()
                 .orElse("");
-        return obligationService.getObligationSuggestion(entryBfy.getBudgetFiscalYear(), enteredValue, foundation)
+        return obligationService.getObligationSuggestion(entryBfy.getBudgetFiscalYear(), enteredValue, fjcFoundation)
                 .stream().skip(query.getOffset()).limit(query.getLimit());
     }
 
@@ -126,6 +127,7 @@ public class FundControlNoticeDetailView extends StandardDetailView<FundControlN
         } else {
             docIdSuggestionField.focus();
         }
+        setTravelDataVisibility();
     }
 
     @Subscribe("docIdSuggestionField.customLookup")
@@ -138,8 +140,18 @@ public class FundControlNoticeDetailView extends StandardDetailView<FundControlN
                 })
                 .build();
         window.getView().setAppropriation(entryBfy);
-        window.getView().setFoundation(foundation);
+        window.getView().setFjcFoundation(fjcFoundation);
         window.setWidth("1300px");
         window.open();
+    }
+
+    private void setTravelDataVisibility() {
+        var fcn = getEditedEntity();
+        var obligation = fcn.getObligation();
+        if (obligation != null) {
+            var docType = obligation.getDocumentType();
+            travelStartDateField.setVisible(docType.equals(DocumentType.TRAVEL_AUTHORIZATION));
+            travelEndDateField.setVisible(docType.equals(DocumentType.TRAVEL_AUTHORIZATION));
+        }
     }
 }

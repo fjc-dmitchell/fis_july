@@ -68,6 +68,15 @@ public class DivisionDetailView extends StandardDetailView<Division> {
 
     public void setFjcFoundation(boolean fjcFoundation) {
         this.fjcFoundation = fjcFoundation;
+        if (fjcFoundation) {
+            var division = getEditedEntity();
+            fundsDl.load();
+            if (entityStates.isNew(division)) {
+                fundsComboBox.setValue(fundService.getFoundationFund());
+                fundsComboBox.setReadOnly(true);
+            }
+            fundsComboBox.setReadOnly(true);
+        }
     }
 
     @Subscribe
@@ -93,6 +102,9 @@ public class DivisionDetailView extends StandardDetailView<Division> {
                 divisionCodeField.setReadOnly(true);
                 titleField.focus();
                 titleField.setAutoselect(true);
+            }
+            if (division.getFund().equals(fundService.getFoundationFund())) {
+                fundsComboBox.setReadOnly(true);
             }
             createdByString.setText(division.getCreatedByString());
         }

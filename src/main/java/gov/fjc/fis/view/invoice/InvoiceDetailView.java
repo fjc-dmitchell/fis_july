@@ -18,6 +18,7 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.formlayout.JmixFormLayout;
+import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.view.*;
@@ -57,14 +58,20 @@ public class InvoiceDetailView extends StandardDetailView<Invoice> {
     @ViewComponent
     private TypedDatePicker<Date> paymentDateField;
     @ViewComponent
+    private JmixTextArea memoField;
+    @ViewComponent
     private FileAttachmentFragment attachmentFragment;
     @ViewComponent
     private Paragraph createdByString;
 
-    Boolean foundation = false;
+    Boolean fjcFoundation = false;
     Appropriation entryBfy;
     @ViewComponent
     private TypedTextField<String> invoiceNumberField;
+
+    public void setFjcFoundation(boolean fjcFoundation) {
+        this.fjcFoundation = fjcFoundation;
+    }
 
     @Subscribe
     protected void onBeforeShow(final BeforeShowEvent event) {
@@ -103,9 +110,8 @@ public class InvoiceDetailView extends StandardDetailView<Invoice> {
 
     @Install(to = "docIdSuggestionField", subject = "itemsFetchCallback")
     protected Stream<Obligation> docIdSuggestionFieldItemsFetchCallback(final Query<Obligation, String> query) {
-        String enteredValue = query.getFilter()
-                .orElse("");
-        return obligationService.getObligationSuggestion(entryBfy.getBudgetFiscalYear(), enteredValue, foundation)
+        String enteredValue = query.getFilter().orElse("");
+        return obligationService.getObligationSuggestion(entryBfy.getBudgetFiscalYear(), enteredValue, fjcFoundation)
                 .stream().skip(query.getOffset()).limit(query.getLimit());
     }
 
@@ -129,8 +135,13 @@ public class InvoiceDetailView extends StandardDetailView<Invoice> {
                 })
                 .build();
         window.getView().setAppropriation(entryBfy);
-        window.getView().setFoundation(foundation);
+        window.getView().setFjcFoundation(fjcFoundation);
         window.setWidth("1300px");
         window.open();
+    }
+
+    @Subscribe("memoField")
+    protected void onMemoFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixTextArea, ?> event) {
+        memoField.setValue(((String) event.getValue()).trim());
     }
 }

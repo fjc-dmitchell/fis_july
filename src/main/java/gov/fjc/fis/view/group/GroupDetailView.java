@@ -58,8 +58,8 @@ public class GroupDetailView extends StandardDetailView<Group> {
     Appropriation appropriation;
     boolean fjcFoundation;
 
-    public void setFoundation(boolean foundation) {
-        this.fjcFoundation = foundation;
+    public void setFjcFoundation(boolean fjcFoundation) {
+        this.fjcFoundation = fjcFoundation;
     }
 
     @Subscribe

@@ -58,8 +58,8 @@ public class BranchDetailView extends StandardDetailView<Branch> {
     Appropriation appropriation;
     boolean fjcFoundation;
 
-    public void setFoundation(boolean foundation) {
-        this.fjcFoundation = foundation;
+    public void setFjcFoundation(boolean fjcFoundation) {
+        this.fjcFoundation = fjcFoundation;
     }
 
     @Subscribe

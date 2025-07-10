@@ -10,7 +10,9 @@ import com.vaadin.flow.router.Route;
 import gov.fjc.fis.view.search.CustomSearchFragment;
 import io.jmix.core.session.SessionData;
 import io.jmix.flowui.UiEventPublisher;
+import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,6 +26,8 @@ public class ActivityListView extends StandardListView<Activity> {
     private UiEventPublisher uiEventPublisher;
     @Autowired
     private SessionData sessionData;
+    @Autowired
+    private ViewNavigators viewNavigators;
     @ViewComponent
     private CustomSearchFragment searchFragment;
     @ViewComponent
@@ -45,5 +49,17 @@ public class ActivityListView extends StandardListView<Activity> {
     protected void onActivitiesDataGridSelection(final SelectionEvent<DataGrid<Activity>, Activity> event) {
         sessionData.setAttribute("searchDataGridSize", event.getAllSelectedItems().size());
         uiEventPublisher.publishEvent(new SearchGridSelectedItemsEvent(this, "searchGridChanged"));
+    }
+
+    @Subscribe("activitiesDataGrid.create")
+    protected void onActivitiesDataGridCreate(final ActionPerformedEvent event) {
+        viewNavigators.detailView(this, Activity.class)
+                .withViewClass(ActivityDetailView.class)
+                .withAfterNavigationHandler(afterNavigationEvent -> {
+                    ActivityDetailView view = afterNavigationEvent.getView();
+                    view.setFjcFoundation(fjcFoundation);
+                })
+                .newEntity()
+                .navigate();
     }
 }
