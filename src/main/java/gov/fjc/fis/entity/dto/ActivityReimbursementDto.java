@@ -40,7 +40,7 @@ public class ActivityReimbursementDto {
 
     private String budgetObjectClass;
 
-    private String documentNumber;
+    private String note;
 
     private String source;
 
@@ -140,12 +140,12 @@ public class ActivityReimbursementDto {
         this.source = source;
     }
 
-    public String getDocumentNumber() {
-        return documentNumber;
+    public String getNote() {
+        return note;
     }
 
-    public void setDocumentNumber(String documentNumber) {
-        this.documentNumber = documentNumber;
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public String getBudgetObjectClass() {
