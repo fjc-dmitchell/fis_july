@@ -46,7 +46,7 @@
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
-                <column property="appropriation.budgetFiscalYear" width="70px" header="BFY"/>
+<!--                <column property="objectClass.category.appropriation.budgetFiscalYear" width="70px" header="BFY"/>-->
                 <column property="objectClass.budgetObjectClass" width="90px" header="BOC"/>
                 <column property="transferDate" width="140px" header="Transfer Date" textAlign="END"/>
                 <column property="amount" width="140px" textAlign="END">

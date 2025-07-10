@@ -1,6 +1,7 @@
 package gov.fjc.fis.service;
 
 import gov.fjc.fis.entity.Appropriation;
+import gov.fjc.fis.entity.JitfTransfer;
 import gov.fjc.fis.entity.dto.JitfTransferDto;
 import io.jmix.core.DataManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +19,17 @@ public class JitfTransferService {
     private FundService fundService;
 
     public List<Appropriation> getAppropriations() {
+        // EclipseLink has "IN" issues! Do this in 3 steps...
+        var JitfAppropriations = dataManager.load(Appropriation.class)
+                .query("SELECT cat.appropriation FROM fis_JitfTransfer j"
+                        + " INNER JOIN fis_ObjectClass obj ON j.objectClass=obj"
+                        + " INNER JOIN fis_Category cat ON cat=obj.category")
+                .list();
+
         var minYear = dataManager.loadValue(
                         "SELECT MIN(a.budgetFiscalYear) FROM fis_Appropriation a"
-                                + " WHERE a IN (SELECT j.appropriation FROM fis_JitfTransfer j)", String.class)
+                                + " WHERE a IN :appropriations", String.class)
+                .parameter("appropriations", JitfAppropriations)
                 .optional().orElse(null);
 
         return dataManager.load(Appropriation.class)
@@ -33,7 +42,10 @@ public class JitfTransferService {
 
     public BigDecimal getJitfAmount(Appropriation appropriation) {
         return dataManager.loadValue(
-                        "SELECT coalesce(sum(j.amount),0) from fis_JitfTransfer j WHERE j.appropriation = :appropriation",
+                        "SELECT coalesce(sum(j.amount),0) from fis_JitfTransfer j"
+                                + " INNER JOIN fis_ObjectClass obj ON obj=j.objectClass"
+                                + " INNER JOIN fis_Category cat ON cat=obj.category"
+                                + " WHERE cat.appropriation = :appropriation",
                         BigDecimal.class)
                 .parameter("appropriation", appropriation)
                 .one();

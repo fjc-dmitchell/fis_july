@@ -23,10 +23,9 @@ import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
 
 @JmixEntity
 @Table(name = "FIS_JITF_TRANSFER", indexes = {
-        @Index(name = "IDX_FIS_JITF_TRANSFER_APPROPRIATION", columnList = "APPROPRIATION_ID"),
         @Index(name = "IDX_FIS_JITF_TRANSFER_OBJECT_CLASS", columnList = "OBJECT_CLASS_ID")
 }, uniqueConstraints = {
-        @UniqueConstraint(name = "IDX_FIS_JITF_TRANSFER_UNQ", columnNames = {"APPROPRIATION_ID", "OBJECT_CLASS_ID"})
+        @UniqueConstraint(name = "IDX_FIS_JITF_TRANSFER_UNQ", columnNames = {"OBJECT_CLASS_ID"})
 })
 @Entity(name = "fis_JitfTransfer")
 public class JitfTransfer {
@@ -34,12 +33,6 @@ public class JitfTransfer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @OnDeleteInverse(DeletePolicy.DENY)
-    @JoinColumn(name = "APPROPRIATION_ID", nullable = false)
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private Appropriation appropriation;
 
     @OnDeleteInverse(DeletePolicy.DENY)
     @JoinColumn(name = "OBJECT_CLASS_ID", nullable = false)
@@ -118,14 +111,6 @@ public class JitfTransfer {
         this.objectClass = objectClass;
     }
 
-    public Appropriation getAppropriation() {
-        return appropriation;
-    }
-
-    public void setAppropriation(Appropriation appropriation) {
-        this.appropriation = appropriation;
-    }
-
     public OffsetDateTime getCreatedDate() {
         return createdDate;
     }
@@ -175,10 +160,10 @@ public class JitfTransfer {
     }
 
     @InstanceName
-    @DependsOnProperties({"appropriation", "objectClass", "amount"})
+    @DependsOnProperties({"objectClass", "amount"})
     public String getInstanceName(MetadataTools metadataTools, DatatypeFormatter datatypeFormatter) {
         return String.format("%s %s %s",
-                metadataTools.format(appropriation),
+                metadataTools.format(objectClass.getCategory().getAppropriation().getBudgetFiscalYear()),
                 metadataTools.format(objectClass),
                 datatypeFormatter.formatBigDecimal(amount));
     }

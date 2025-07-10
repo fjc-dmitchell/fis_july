@@ -47,6 +47,8 @@ public class JitfTransferDetailView extends StandardDetailView<JitfTransfer> {
     @ViewComponent
     private CollectionLoader<ObjectClass> objectClassesDl;
     @ViewComponent
+    private TypedTextField<String> budgetFiscalYearField;
+    @ViewComponent
     private EntityComboBox<Category> categoryField;
     @ViewComponent
     private EntityComboBox<ObjectClass> budgetObjectClassField;
@@ -54,19 +56,19 @@ public class JitfTransferDetailView extends StandardDetailView<JitfTransfer> {
     private JmixTextArea memoField;
     @ViewComponent
     private Paragraph createdByString;
-    private Appropriation appropriation;
     @ViewComponent
     private TypedDatePicker<Date> transferDateField;
+
+    private Appropriation appropriation;
 
     @Subscribe
     protected void onBeforeShow(final BeforeShowEvent event) {
         var jitf = getEditedEntity();
         if (entityStates.isNew(jitf)) {
             appropriation = appropriationService.getBfyEntryAppropriation(sessionData);
-            jitf.setAppropriation(appropriation);
             transferDateField.setValue(LocalDate.now());
         } else {
-            appropriation = jitf.getAppropriation();
+            appropriation = jitf.getObjectClass().getCategory().getAppropriation();
             categoryField.setValue(jitf.getObjectClass().getCategory());
             budgetObjectClassField.setValue(jitf.getObjectClass());
             createdByString.setText(jitf.getCreatedByString());
@@ -76,6 +78,7 @@ public class JitfTransferDetailView extends StandardDetailView<JitfTransfer> {
                 memoField.focus();
             }
         }
+        budgetFiscalYearField.setValue(appropriation.getBudgetFiscalYear());
         categoriesDl.load();
         objectClassesDl.load();
     }

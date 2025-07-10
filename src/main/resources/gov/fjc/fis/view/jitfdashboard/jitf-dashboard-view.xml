@@ -23,5 +23,6 @@
                 <column property="carryForward" textAlign="END" width="150px"/>
             </columns>
         </dataGrid>
+        <p text="Note: carrying amounts are currently calculated, not stored in FIS." classNames="fjc-warning"/>
     </layout>
 </view>

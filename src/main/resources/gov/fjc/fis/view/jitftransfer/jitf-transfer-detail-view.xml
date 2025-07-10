@@ -30,8 +30,8 @@
         <vbox id="contentBox" classNames="overflow-auto" maxWidth="1000px">
             <div classNames="grid-panel">
                 <vbox classNames="contrast-panel">
-                    <entityPicker id="appropriationField" property="appropriation" label="Budget Fiscal Year"
-                                  dataContainer="jitfTransferDc" readOnly="true"/>
+                    <textField id="budgetFiscalYearField"
+                               label="Budget Fiscal Year" datatype="string" readOnly="true"/>
                     <formLayout id="form" dataContainer="jitfTransferDc">
                         <entityComboBox id="categoryField" itemsContainer="categoriesDc"
                                         metaClass="fis_Category" label="Category (MOC)"/>
