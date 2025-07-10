@@ -46,7 +46,7 @@
                   minWidth="1290px"
                   minHeight="20em"
                   dataContainer="fundControlNoticesDc"
-                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes" selectionMode="NONE">
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes" selectionMode="SINGLE">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>

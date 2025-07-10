@@ -4,6 +4,7 @@ import com.vaadin.flow.data.selection.SelectionEvent;
 import gov.fjc.fis.entity.Activity;
 
 import gov.fjc.fis.event.SearchGridSelectedItemsEvent;
+import gov.fjc.fis.service.AppropriationService;
 import gov.fjc.fis.view.main.MainView;
 
 import com.vaadin.flow.router.Route;
@@ -13,6 +14,7 @@ import io.jmix.flowui.UiEventPublisher;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -28,10 +30,15 @@ public class ActivityListView extends StandardListView<Activity> {
     private SessionData sessionData;
     @Autowired
     private ViewNavigators viewNavigators;
+    @Autowired
+    private AppropriationService appropriationService;
+
     @ViewComponent
     private CustomSearchFragment searchFragment;
     @ViewComponent
     private DataGrid<Activity> activitiesDataGrid;
+    @ViewComponent
+    private JmixButton removeBtn;
 
     private boolean fjcFoundation = false;
 
@@ -49,6 +56,14 @@ public class ActivityListView extends StandardListView<Activity> {
     protected void onActivitiesDataGridSelection(final SelectionEvent<DataGrid<Activity>, Activity> event) {
         sessionData.setAttribute("searchDataGridSize", event.getAllSelectedItems().size());
         uiEventPublisher.publishEvent(new SearchGridSelectedItemsEvent(this, "searchGridChanged"));
+
+        var selectedItems = event.getAllSelectedItems();
+        if (selectedItems.size() == 1) {
+            var selectedItem = selectedItems.stream().findFirst();
+            removeBtn.setEnabled(appropriationService.isAppropriationOpen(selectedItem.get()));
+        } else {
+            removeBtn.setEnabled(false);
+        }
     }
 
     @Subscribe("activitiesDataGrid.create")

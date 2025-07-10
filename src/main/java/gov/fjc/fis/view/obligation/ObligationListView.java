@@ -4,13 +4,17 @@ import com.vaadin.flow.data.selection.SelectionEvent;
 import gov.fjc.fis.entity.Obligation;
 
 import gov.fjc.fis.event.SearchGridSelectedItemsEvent;
+import gov.fjc.fis.service.AppropriationService;
 import gov.fjc.fis.view.main.MainView;
 
 import com.vaadin.flow.router.Route;
 import gov.fjc.fis.view.search.CustomSearchFragment;
 import io.jmix.core.session.SessionData;
 import io.jmix.flowui.UiEventPublisher;
+import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,10 +28,16 @@ public class ObligationListView extends StandardListView<Obligation> {
     private UiEventPublisher uiEventPublisher;
     @Autowired
     private SessionData sessionData;
+    @Autowired
+    private ViewNavigators viewNavigators;
+    @Autowired
+    private AppropriationService appropriationService;
     @ViewComponent
     private CustomSearchFragment searchFragment;
     @ViewComponent
     private DataGrid<Obligation> obligationsDataGrid;
+    @ViewComponent
+    private JmixButton removeBtn;
 
     private boolean fjcFoundation = false;
 
@@ -45,5 +55,27 @@ public class ObligationListView extends StandardListView<Obligation> {
     protected void onObligationsDataGridSelection(final SelectionEvent<DataGrid<Obligation>, Obligation> event) {
         sessionData.setAttribute("searchDataGridSize", event.getAllSelectedItems().size());
         uiEventPublisher.publishEvent(new SearchGridSelectedItemsEvent(this, "searchGridChanged"));
+
+        var selectedItems = event.getAllSelectedItems();
+        if (selectedItems.size() == 1) {
+            var selectedItem = selectedItems.stream().findFirst();
+            removeBtn.setEnabled(appropriationService.isAppropriationOpen(selectedItem.get()));
+        } else {
+            removeBtn.setEnabled(false);
+        }
     }
+
+    @Subscribe("obligationsDataGrid.create")
+    protected void onObligationsDataGridCreate(final ActionPerformedEvent event) {
+        viewNavigators.detailView(this, Obligation.class)
+                .withViewClass(ObligationDetailView.class)
+                .withAfterNavigationHandler(afterNavigationEvent -> {
+                    ObligationDetailView view = afterNavigationEvent.getView();
+                    view.setFjcFoundation(fjcFoundation);
+                })
+                .newEntity()
+                .navigate();
+    }
+
+
 }

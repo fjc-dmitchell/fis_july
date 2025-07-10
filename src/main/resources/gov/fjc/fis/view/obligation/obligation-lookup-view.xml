@@ -66,20 +66,20 @@
     </actions>
     <layout expand="contentBox">
         <vbox id="contentBox" css="overflow: auto" padding="false">
-            <vbox classNames="contrast-panel ">
+            <vbox classNames="filled">
                 <hbox colspan="3">
                     <textField id="budgetFiscalYearField" width="9em"
                                label="Budget Fiscal Year" datatype="string" readOnly="true"/>
                     <entityComboBox id="divisionSearchField" itemsContainer="divisionsDc"
                                     label="Division" width="25em" metaClass="fis_Division"/>
                     <entityComboBox id="activitySearchField" itemsContainer="activitiesDc"
-                                    label="Activity" width="25em" metaClass="fis_Activity"/>
+                                    label="Activity" width="32em" metaClass="fis_Activity"/>
                 </hbox>
                 <hbox colspan="2">
                     <entityComboBox id="categorySearchField" itemsContainer="categoriesDc"
                                     label="Category (MOC)" width="25em" metaClass="fis_Category"/>
                     <entityComboBox id="objectClassSearchField" itemsContainer="objectClassesDc"
-                                    property="division" label="Object Class (BOC)" width="25em"
+                                    property="division" label="Object Class (BOC)" width="32em"
                                     metaClass="fis_ObjectClass"/>
                 </hbox>
                 <hbox>
@@ -101,7 +101,7 @@
                     <actions>
                     </actions>
                     <columns resizable="true">
-                        <column property="documentNumber" header="DIN" flexGrow="0" width="90px"/>
+                        <column property="documentNumber" header="DIN" flexGrow="0" width="130px"/>
                         <column property="objectClass.budgetObjectClass" header="BOC" flexGrow="0" width="90px"/>
                         <column property="vendor" flexGrow="0" width="430px" autoWidth="true"/>
                         <column property="amount" textAlign="END" flexGrow="0" width="130px"/>

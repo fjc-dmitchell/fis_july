@@ -1,11 +1,15 @@
 package gov.fjc.fis.view.invoice;
 
+import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.Route;
 import gov.fjc.fis.entity.Invoice;
+import gov.fjc.fis.service.AppropriationService;
 import gov.fjc.fis.view.main.MainView;
 import gov.fjc.fis.view.search.CustomSearchFragment;
 import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,8 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class InvoiceListView extends StandardListView<Invoice> {
     @Autowired
     private ViewNavigators viewNavigators;
+    @Autowired
+    private AppropriationService appropriationService;
     @ViewComponent
     private CustomSearchFragment searchFragment;
+    @ViewComponent
+    private JmixButton removeBtn;
 
     private boolean fjcFoundation = false;
 
@@ -41,5 +49,16 @@ public class InvoiceListView extends StandardListView<Invoice> {
                 })
                 .newEntity()
                 .navigate();
+    }
+
+    @Subscribe("invoicesDataGrid")
+    protected void onInvoicesDataGridSelection(final SelectionEvent<DataGrid<Invoice>, Invoice> event) {
+        var selectedItems = event.getAllSelectedItems();
+        if (selectedItems.size() == 1) {
+            var selectedItem = selectedItems.stream().findFirst();
+            removeBtn.setEnabled(appropriationService.isAppropriationOpen(selectedItem.get()));
+        } else {
+            removeBtn.setEnabled(false);
+        }
     }
 }
