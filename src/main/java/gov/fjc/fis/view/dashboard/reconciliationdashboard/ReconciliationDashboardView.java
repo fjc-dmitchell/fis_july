@@ -8,9 +8,6 @@ import gov.fjc.fis.event.FiscalYearChangeEvent;
 import gov.fjc.fis.service.AppropriationService;
 import gov.fjc.fis.view.main.MainView;
 import gov.fjc.fis.view.reconciliationfragment.ReconciliationFragment;
-import gov.fjc.fis.view.report.divisionbalancefragment.DivisionBalanceFragment;
-import gov.fjc.fis.view.report.spendingchartfragment.SpendingChartFragment;
-import gov.fjc.fis.view.report.statusoffundsfragment.StatusOfFundsFragment;
 import io.jmix.core.LoadContext;
 import io.jmix.core.session.SessionData;
 import io.jmix.flowui.component.combobox.EntityComboBox;
@@ -53,6 +50,9 @@ public class ReconciliationDashboardView extends StandardView {
 
     @Subscribe("appropriationsComboBox")
     protected void onAppropriationsComboBoxComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Appropriation>, Appropriation> event) {
+        if (event.getValue() == null) {
+            appropriationsComboBox.setValue(event.getOldValue());
+        }
         appropriation = appropriationsComboBox.getValue();
         reconFragment.setAppropriation(appropriation);
     }
