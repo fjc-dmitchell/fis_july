@@ -7,6 +7,7 @@
               title="msg://gov.fjc.fis.view.dashboard.reconciliationdashboard/reconciliationDashboardView.title"/>
         <item view="fis_SpendingChartDashboardView"
               title="msg://gov.fjc.fis.view.spendingchartdashboard/spendingChartDashboardView.title"/>
+        <item view="fis_JitfDashboardView" title="msg://gov.fjc.fis.view.jitfdashboard/jitfDashboardView.title"/>
     </menu>
     <menu opened="true" id="primary" description="msg://gov.fjc.fis/menu_config.primary.description"
           title="msg://gov.fjc.fis/menu_config.primary.title">
@@ -21,7 +22,7 @@
               title="msg://gov.fjc.fis.view.fileattachment/fileAttachmentListView.title"/>
     </menu>
     <menu id="secondary" description="msg://gov.fjc.fis/menu_config.secondary.description" title="Secondary Displays">
-        <item view="fis_Jitf.list" title="msg://gov.fjc.fis.view.jitf/jitfListView.title"/>
+        <item view="fis_JitfTransfer.list" title="msg://gov.fjc.fis.view.jitftransfer/jitfTransferListView.title"/>
         <item view="fis_Branch.list" title="msg://gov.fjc.fis.view.branch/branchListView.title"/>
         <item view="fis_Group.list" title="msg://gov.fjc.fis.view.group/groupListView.title"/>
         <item view="fis_Category.list" title="msg://gov.fjc.fis.view.category/categoryListView.title"/>
@@ -78,6 +79,8 @@
         <item bean="fis_ReportRouter" beanMethod="openBudgetRequestReport"
               title="msg://gov.fjc.fis.view.report.budgetrequestreport/budgetRequestReportView.title"/>
         <item bean="fis_EducationProgramsAnalysis" beanMethod="generateReportData" title="Program Analysis"/>
+        <item bean="fis_EducationProgramsAnalysis" beanMethod="generateCalendarYearReportData"
+              title="Program Analysis for Mike"/>
     </menu>
     <menu id="forms" description="msg://gov.fjc.fis/menu_config.forms.description"
           title="msg://gov.fjc.fis/menu_config.forms.title" icon="vaadin:form">
