@@ -25,6 +25,7 @@ import java.util.List;
 @Route(value = "budget-request-report-view", layout = MainView.class)
 @ViewController("fis_BudgetRequestReportView")
 @ViewDescriptor("budget-request-report-view.xml")
+@DialogMode(closeOnEsc = true)
 public class BudgetRequestReportView extends StandardView {
     @Autowired
     private SessionData sessionData;

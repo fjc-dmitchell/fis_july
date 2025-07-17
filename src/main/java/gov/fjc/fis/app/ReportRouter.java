@@ -23,6 +23,6 @@ public class ReportRouter {
     }
 
     public void openBudgetRequestReport() {
-        dialogWindows.view(UiComponentUtils.getCurrentView(), BudgetRequestReportView.class).open();
+        dialogWindows.view(UiComponentUtils.getCurrentView(), BudgetRequestReportView.class).open().setWidth(20, Unit.EM);
     }
 }
