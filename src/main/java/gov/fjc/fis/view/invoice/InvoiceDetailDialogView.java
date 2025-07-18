@@ -30,8 +30,6 @@ public class InvoiceDetailDialogView extends StandardDetailView<Invoice> {
     private TypedDatePicker<Date> paymentDateField;
     @ViewComponent
     private Paragraph createdByString;
-    @ViewComponent
-    private JmixTextArea memoField;
 
     @Subscribe
     protected void onBeforeShow(final BeforeShowEvent event) {
@@ -47,6 +45,6 @@ public class InvoiceDetailDialogView extends StandardDetailView<Invoice> {
 
     @Subscribe("memoField")
     protected void onMemoFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixTextArea, ?> event) {
-        memoField.setValue(((String) event.getValue()).trim());
+        event.getSource().setValue(((String) event.getValue()).trim());
     }
 }

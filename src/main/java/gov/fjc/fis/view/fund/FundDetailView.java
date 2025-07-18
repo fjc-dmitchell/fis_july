@@ -1,9 +1,11 @@
 package gov.fjc.fis.view.fund;
 
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.router.Route;
 import gov.fjc.fis.entity.Fund;
 import gov.fjc.fis.view.main.MainView;
+import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.view.*;
 
 @Route(value = "funds/:id", layout = MainView.class)
@@ -17,5 +19,10 @@ public class FundDetailView extends StandardDetailView<Fund> {
     @Subscribe
     public void onBeforeShow(final BeforeShowEvent event) {
         createdByString.setText(getEditedEntity().getCreatedByString());
+    }
+
+    @Subscribe("memoField")
+    protected void onMemoFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixTextArea, ?> event) {
+        event.getSource().setValue(((String) event.getValue()).trim());
     }
 }

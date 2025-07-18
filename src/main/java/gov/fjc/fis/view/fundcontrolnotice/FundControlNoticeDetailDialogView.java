@@ -13,6 +13,7 @@ import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 @Route(value = "fund-control-notices-dialog/:id", layout = MainView.class)
 @ViewController(id = "fis_FundControlNotice_dialog.detail")
@@ -24,11 +25,9 @@ public class FundControlNoticeDetailDialogView extends StandardDetailView<FundCo
     @ViewComponent
     private FileAttachmentFragment attachmentFragment;
     @ViewComponent
-    private TypedDatePicker<Comparable> fcnDateField;
+    private TypedDatePicker<Date> fcnDateField;
     @ViewComponent
     private Paragraph createdByString;
-    @ViewComponent
-    private JmixTextArea memoField;
 
     @Subscribe
     protected void onBeforeShow(final BeforeShowEvent event) {
@@ -43,6 +42,6 @@ public class FundControlNoticeDetailDialogView extends StandardDetailView<FundCo
 
     @Subscribe("memoField")
     protected void onMemoFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixTextArea, ?> event) {
-        memoField.setValue(((String) event.getValue()).trim());
+        event.getSource().setValue(((String) event.getValue()).trim());
     }
 }

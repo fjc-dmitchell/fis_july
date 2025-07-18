@@ -19,6 +19,7 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.formlayout.JmixFormLayout;
+import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.view.*;
@@ -99,6 +100,11 @@ public class FundControlNoticeDetailView extends StandardDetailView<FundControlN
                 attachmentFragment.setReadOnly(true);
             }
         }
+    }
+
+    @Subscribe("memoField")
+    protected void onMemoFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixTextArea, ?> event) {
+        event.getSource().setValue(((String) event.getValue()).trim());
     }
 
 //    @Supply(to = "docIdSuggestionField", subject = "renderer")

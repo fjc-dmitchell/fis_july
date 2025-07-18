@@ -58,8 +58,6 @@ public class InvoiceDetailView extends StandardDetailView<Invoice> {
     @ViewComponent
     private TypedDatePicker<Date> paymentDateField;
     @ViewComponent
-    private JmixTextArea memoField;
-    @ViewComponent
     private FileAttachmentFragment attachmentFragment;
     @ViewComponent
     private Paragraph createdByString;
@@ -142,6 +140,6 @@ public class InvoiceDetailView extends StandardDetailView<Invoice> {
 
     @Subscribe("memoField")
     protected void onMemoFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixTextArea, ?> event) {
-        memoField.setValue(((String) event.getValue()).trim());
+        event.getSource().setValue(((String) event.getValue()).trim());
     }
 }

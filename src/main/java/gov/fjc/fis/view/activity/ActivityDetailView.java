@@ -98,8 +98,6 @@ public class ActivityDetailView extends StandardDetailView<Activity> {
     @ViewComponent
     private TypedTextField<String> budgetFiscalYearField;
     @ViewComponent
-    private JmixTextArea memoField;
-    @ViewComponent
     private Paragraph createdByString;
     @ViewComponent
     private FileAttachmentFragment attachmentFragment;
@@ -218,15 +216,17 @@ public class ActivityDetailView extends StandardDetailView<Activity> {
             activityNumberField.setValue("");
         }
 
-        fundsDl.load();
+        if (entityStates.isNew(getEditedEntity())) {
+            fundsDl.load();
+            fundField.setValue(division.getFund());
+            groupField.setValue(null);
+            groupsDl.load();
+            branchField.setValue(null);
+            branchesDl.load();
+        }
         branchField.setVisible(branchService.branchesExist(divisionField.getValue()));
         groupField.setVisible(groupService.groupsExist(divisionField.getValue()));
         tabsheetBox.setVisible(division != null);
-        fundField.setValue(division.getFund());
-        groupField.setValue(null);
-        groupsDl.load();
-        branchField.setValue(null);
-        branchesDl.load();
     }
 
     @Subscribe("activityNumberField")
@@ -264,6 +264,6 @@ public class ActivityDetailView extends StandardDetailView<Activity> {
 
     @Subscribe("memoField")
     protected void onMemoFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixTextArea, ?> event) {
-        memoField.setValue(((String) event.getValue()).trim());
+        event.getSource().setValue(((String) event.getValue()).trim());
     }
 }

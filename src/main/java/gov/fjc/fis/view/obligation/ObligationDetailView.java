@@ -77,8 +77,6 @@ public class ObligationDetailView extends StandardDetailView<Obligation> {
     private Boolean fjcFoundation = false;
     @ViewComponent
     private EntityComboBox<Activity> activityField;
-    @ViewComponent
-    private JmixTextArea memoField;
 
     public void setFjcFoundation(Boolean fjcFoundation) {
         this.fjcFoundation = fjcFoundation;
@@ -186,7 +184,7 @@ public class ObligationDetailView extends StandardDetailView<Obligation> {
 
     @Subscribe("memoField")
     protected void onMemoFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixTextArea, ?> event) {
-       memoField.setValue(((String) event.getValue()).trim());
+        event.getSource().setValue(((String) event.getValue()).trim());
     }
 
     private void checkObjectClass() {
