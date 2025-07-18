@@ -17,6 +17,7 @@
                 <property name="reimbursements" fetchPlan="_base"/>
                 <property name="obligations" fetchPlan="_base"/>
                 <property name="createdByString"/>
+                <property name="attachments" fetchPlan="_base"/>
             </fetchPlan>
             <loader id="activityDl"/>
             <collection id="projectionsDc" property="projections"/>
@@ -63,7 +64,8 @@
                         <!--                    <textField id="sortCodeField" property="sortCode" width="6em" label="Sort Code"/>-->
                     </hbox>
                     <hbox colspan="2">
-                        <textField id="activityNumberField" property="activityNumber" width="9em" label="Activity Number"
+                        <textField id="activityNumberField" property="activityNumber" width="9em"
+                                   label="Activity Number"
                                    datatype="string"/>
                         <textField id="titleField" property="title" width="32em" label="Title"/>
                         <textField id="sortCodeField" property="sortCode" width="6em" label="Sort Code"/>
@@ -166,11 +168,13 @@
                                     <action id="create" type="list_create">
                                         <properties>
                                             <property name="openMode" value="DIALOG"/>
+                                            <property name="viewId" value="fis_ActivityProjection_dialog.detail"/>
                                         </properties>
                                     </action>
                                     <action id="edit" type="list_edit">
                                         <properties>
                                             <property name="openMode" value="DIALOG"/>
+                                            <property name="viewId" value="fis_ActivityProjection_dialog.detail"/>
                                         </properties>
                                     </action>
                                     <action id="remove" type="list_remove"/>
@@ -231,17 +235,19 @@
                                 <button action="reimbursementsDataGrid.editReim"/>
                                 <button action="reimbursementsDataGrid.removeReim"/>
                             </hbox>
-                            <dataGrid id="reimbursementsDataGrid" dataContainer="reimbursementsDc" width="1130px"
+                            <dataGrid id="reimbursementsDataGrid" dataContainer="reimbursementsDc" width="880px"
                                       minHeight="10em">
                                 <actions>
                                     <action id="createReim" type="list_create">
                                         <properties>
                                             <property name="openMode" value="DIALOG"/>
+                                            <property name="viewId" value="fis_ActivityReimbursement_dialog.detail"/>
                                         </properties>
                                     </action>
                                     <action id="editReim" type="list_edit">
                                         <properties>
                                             <property name="openMode" value="DIALOG"/>
+                                            <property name="viewId" value="fis_ActivityReimbursement_dialog.detail"/>
                                         </properties>
                                     </action>
                                     <action id="removeReim" type="list_remove"/>
@@ -249,7 +255,6 @@
                                 <columns>
                                     <column property="objectClass.budgetObjectClass" header="BOC" width="100px"/>
                                     <column property="objectClass.title" header="Object Class title" width="400px"/>
-                                    <column property="documentNumber" width="250px"/>
                                     <column property="source" width="250px"/>
                                     <column property="amount" textAlign="END" width="125px">
                                         <numberRenderer numberFormat="#,##0.00"/>
@@ -289,7 +294,8 @@
                         </vbox>
                     </tab>
                     <tab id="attachmentsTab" label="Attachments">
-                        <fragment id="attachmentFragment" class="gov.fjc.fis.view.fileattachmentfragment.FileAttachmentFragment"/>
+                        <fragment id="attachmentFragment"
+                                  class="gov.fjc.fis.view.fileattachmentfragment.FileAttachmentFragment"/>
                     </tab>
                 </tabSheet>
             </vbox>
