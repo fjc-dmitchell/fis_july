@@ -16,7 +16,6 @@ import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.session.SessionData;
-import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Fragments;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -45,8 +44,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     private SessionData sessionData;
     @Autowired
     private Fragments fragments;
-    @Autowired
-    private Dialogs dialogs;
 
     /**
      * data loaders
@@ -160,7 +157,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     private String branchJoin;
     private String groupJoin;
     private String fileCategoryJoin;
-    //    private List<Condition> subFragmentConditions = new ArrayList<>();
     private Fragment<VerticalLayout> subFragment;
     private List<Appropriation> fiscalYears;
     private List<Appropriation> searchYears;
@@ -212,28 +208,20 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         if (hostContainer == null) {
             throw new IllegalStateException("hostContainer is null in SearchFragment");
         }
-        configureHostEntity();
         fiscalYears = appropriationService.getBfyFilterField(sessionData);
 
         fjcFoundationFund = fundService.getFoundationFund();
-//        setBfyBtnCaption();
-//        fundsDl.load();
-//        divisionsDl.load();
-//        categoriesDl.load();
-//        objectClassesDl.load();
-//        branchesDl.load();
-//        groupsDl.load();
     }
 
     @Subscribe(target = Target.HOST_CONTROLLER)
     protected void onHostReady(final View.ReadyEvent event) {
+        configureHostEntity();
         if (fjcFoundation) {
             fundSearchField.setValue(fjcFoundationFund);
             fundSearchField.setReadOnly(true);
             // set visibility of division box?
         }
         restoreSearchParameters();
-//        performSearch();
     }
 
     private void configureHostEntity() {
@@ -284,6 +272,9 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 categoryJoin = "JOIN {E}.obligation obl JOIN obl.objectClass obj JOIN obj.category cat";
                 objectClassJoin = "JOIN {E}.obligation obl JOIN obl.objectClass obj";
                 obligationJoin = "JOIN {E}.obligation obl";
+                activityJoin = "JOIN {E}.obligation obl JOIN obl.activity act";
+                branchJoin = "JOIN {E}.obligation obl JOIN obl.activity act JOIN act.branch bch";
+                groupJoin = "JOIN {E}.obligation obl JOIN obl.activity act JOIN act.group grp";
                 configureSubFragment(InvoiceSearchFragment.class, "invoicesDc", "invoicesDl");
                 break;
             case "fis_FundControlNotice":
@@ -292,10 +283,12 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 obligationJoin = "JOIN {E}.obligation obl";
                 objectClassJoin = obligationJoin.concat(" JOIN obl.objectClass obj");
                 categoryJoin = objectClassJoin.concat(" JOIN obj.category cat");
-                var activityJoin = obligationJoin.concat(" JOIN obl.activity act");
+                activityJoin = obligationJoin.concat(" JOIN obl.activity act");
                 fundJoin = activityJoin.concat(" JOIN act.fund f");
                 divisionJoin = activityJoin.concat(" JOIN act.division dv");
                 appropriationJoin = divisionJoin.concat(" JOIN dv.appropriation app");
+                branchJoin = obligationJoin.concat(" JOIN obl.activity act JOIN act.branch bch");
+                groupJoin = obligationJoin.concat(" JOIN obl.activity act JOIN act.group grp");
                 configureSubFragment(FcnSearchFragment.class, "fundControlNoticesDc", "fundControlNoticesDl");
                 break;
             case "fis_Division":
@@ -304,7 +297,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 hostEntityQuery = "SELECT dv FROM fis_Division dv";
 //                hostEntityQuery = "SELECT e FROM  e ORDER BY e.appropriation.budgetFiscalYear, e.divisionCode";
                 fundJoin = "JOIN dv.fund f";
-
                 break;
             case "fis_Branch":
                 hostEntityQuery += " ORDER BY e.division.appropriation.budgetFiscalYear, e.division.divisionCode, e.branchCode";
@@ -344,12 +336,11 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 fundJoin = "JOIN {E}.activity.fund f";
                 appropriationJoin = "JOIN {E}.activity.division dv JOIN dv.appropriation app";
                 divisionJoin = "JOIN {E}.activity.division dv";
+                activityJoin = "JOIN {E}.activity act";
                 branchJoin = "JOIN {E}.activity act JOIN act.branch bch";
                 groupJoin = "JOIN {E}.activity act JOIN act.group grp";
                 fileCategoryJoin = "JOIN {E}.category fcat";
-
                 configureSubFragment(FileAttachmentSearchFragment.class, "fileAttachmentsDc", "fileAttachmentsDl");
-
                 break;
             default:
                 throw new IllegalStateException(hostEntityName.concat(" has not been configured in CustomSearchFragment"));
@@ -371,7 +362,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         ((EntitySearchFragment) subFragment).addCategoryObjectClass(categorySearchField, objectClassSearchField);
         ((EntitySearchFragment) subFragment).addBranchGroup(branchSearchField, groupSearchField);
         ((EntitySearchFragment) subFragment).addFileCategory(fileCategorySearchField);
-//        subFragmentConditions = ((EntitySearchFragment) subFragment).getPropertyFilterConditions();
 
         // add sub fragment to this view and set visibility
         subFragmentSearchBox.add(subFragment);
@@ -531,13 +521,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
 
         switch (btnId) {
             case "showSubsetBtn":
-//                subsetIds = null;
-//                switch (hostEntityName) {
-//                    case "fis_Activity" ->
-//                            subsetIds = ((Set<Activity>) selectedItems).stream().map(Activity::getId).toList();
-//                    case "fis_Obligation" ->
-//                            subsetIds = ((Set<Obligation>) selectedItems).stream().map(Obligation::getId).toList();
-//                }
                 hostLoader.setParameter("idList", subsetIds);
                 break;
             case "showGroupBtn":
@@ -554,6 +537,9 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                         hostLoader.setParameter("relatedActivityDivision", relatedActivity.getDivision());
                         break;
                     case "fis_Obligation":
+                    case "fis_Invoice":
+                    case "fis_FundControlNotice":
+                    case "fis_FileAttachment":
                         hostLoader.setParameter("relatedActivity", relatedActivity);
                         break;
                 }
@@ -576,6 +562,12 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                             subsetIds = ((Set<Activity>) selectedItems).stream().map(Activity::getId).toList();
                     case "fis_Obligation" ->
                             subsetIds = ((Set<Obligation>) selectedItems).stream().map(Obligation::getId).toList();
+                    case "fis_Invoice" ->
+                            subsetIds = ((Set<Invoice>) selectedItems).stream().map(Invoice::getId).toList();
+                    case "fis_FundControlNotice" ->
+                            subsetIds = ((Set<FundControlNotice>) selectedItems).stream().map(FundControlNotice::getId).toList();
+                    case "fis_FileAttachment" ->
+                            subsetIds = ((Set<FileAttachment>) selectedItems).stream().map(FileAttachment::getId).toList();
                 }
             }
             setSubsetLoaderParameters(subsetButtonId);
@@ -708,7 +700,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
             }
         }
 
-
         sessionData.setAttribute(hostEntityName.concat(".searchParams"), sessionSearchParams);
     }
 
@@ -743,7 +734,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 var tabIdx = Integer.parseInt((String) tabParam);
                 searchTabSheet.setSelectedIndex(tabIdx);
 
-                // quick serch
+                // quick search
                 if (tabIdx == 0) {
                     divisionCode = (String) sessionSearchParams.get("quick_divisionCode");
                     if (divisionCode != null) {
@@ -791,10 +782,6 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
 
         // changeFiscalYears() ?
         if (!searchYears.equals(fiscalYears)) {
-//            dialogs.createMessageDialog()
-//                    .withHeader("Warning")
-//                    .withText("The fiscal years have changed since the search was saved.")
-//                    .open();
             changeFiscalYears();
             searchYears = fiscalYears;
             loadEntityComboBoxes();
@@ -803,7 +790,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
 
     private void performSearch() {
         List<Condition> customConditions = new ArrayList<>();
-        List<Condition> subFragmentConditions = new ArrayList<>();
+        List<Condition> subFragmentConditions;
 
         if (tabIdx != null && tabIdx.equals(2)) {
             customConditions.add(JpqlCondition.create("e.id in :idList", null).skipNullOrEmpty());
@@ -813,7 +800,10 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 customConditions.add(JpqlCondition.create("dv = :relatedActivityDivision", divisionJoin).skipNullOrEmpty());
                 customConditions.add(JpqlCondition.create("e.activityNumber like :genericActivityNumber", null).skipNullOrEmpty());
             }
-            if (hostEntityName.equals("fis_Obligation")) {
+            if (hostEntityName.equals("fis_Obligation")
+                    || hostEntityName.equals("fis_Invoice")
+                    || hostEntityName.equals("fis_FundControlNotice")
+                    || hostEntityName.equals("fis_FileAttachment")) {
                 customConditions.add(JpqlCondition.create("act = :relatedActivity", activityJoin).skipNullOrEmpty());
             }
         } else {
@@ -869,42 +859,62 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     }
 
     /**
-     * updates button visibility depending on grid size
+     * if datagrid match, sets related items and button visibility
      *
-     * @param event custom event
+     * @param event custom event that publishes grid and selection size
      */
     @EventListener
     public void handleSearchGridSelectedItemsEvent(SearchGridSelectedItemsEvent event) {
-        var size = (Integer) sessionData.getAttribute("searchDataGridSize");
+        if (event.getDataGrid().equals(dataGrid)) {
+            var size = event.getSelectionSize();
 
-        relatedGroup = null;
-        relatedBranch = null;
-        relatedActivity = null;
+            relatedGroup = null;
+            relatedBranch = null;
+            relatedActivity = null;
 
-        if (size == 1) {
-            var selectedItems = dataGrid.getSelectedItems();
-            switch (hostEntityName) {
-                case "fis_Activity":
-                    var activity = (Activity) selectedItems.stream().findFirst().get();
-                    relatedGroup = activity.getGroup();
-                    relatedBranch = activity.getBranch();
-                    relatedActivity = activity;
-                    break;
-                case "fis_Obligation":
-                    var obligation = (Obligation) selectedItems.stream().findFirst().get();
-                    relatedGroup = obligation.getActivity().getGroup();
-                    relatedBranch = obligation.getActivity().getBranch();
-                    relatedActivity = obligation.getActivity();
-                    break;
+            if (size == 1) {
+                var selectedItems = dataGrid.getSelectedItems();
+                switch (hostEntityName) {
+                    case "fis_Activity":
+                        var activity = (Activity) selectedItems.stream().findFirst().get();
+                        relatedGroup = activity.getGroup();
+                        relatedBranch = activity.getBranch();
+                        relatedActivity = activity;
+                        break;
+                    case "fis_Obligation":
+                        var obligation = (Obligation) selectedItems.stream().findFirst().get();
+                        relatedGroup = obligation.getActivity().getGroup();
+                        relatedBranch = obligation.getActivity().getBranch();
+                        relatedActivity = obligation.getActivity();
+                        break;
+                    case "fis_Invoice":
+                        var invoice = (Invoice) selectedItems.stream().findFirst().get();
+                        relatedGroup = invoice.getObligation().getActivity().getGroup();
+                        relatedBranch = invoice.getObligation().getActivity().getBranch();
+                        relatedActivity = invoice.getObligation().getActivity();
+                        break;
+                    case "fis_FundControlNotice":
+                        var fcn = (FundControlNotice) selectedItems.stream().findFirst().get();
+                        relatedGroup = fcn.getObligation().getActivity().getGroup();
+                        relatedBranch = fcn.getObligation().getActivity().getBranch();
+                        relatedActivity = fcn.getObligation().getActivity();
+                        break;
+                    case "fis_FileAttachment":
+                        var fileAttachment = (FileAttachment) selectedItems.stream().findFirst().get();
+                        relatedGroup = fileAttachment.getActivity().getGroup();
+                        relatedBranch = fileAttachment.getActivity().getBranch();
+                        relatedActivity = fileAttachment.getActivity();
+                        break;
+                }
             }
+
+            showGroupBtn.setEnabled(size == 1 && relatedGroup != null);
+            showBranchBtn.setEnabled(size == 1 && relatedBranch != null);
+            showActivityBtn.setEnabled(size == 1 && relatedActivity != null);
+
+            showSubsetBtn.setEnabled(size > 0);
+            showSubsetBtn.setText("Show Subset (".concat(String.valueOf(size)).concat(")"));
         }
-
-        showGroupBtn.setEnabled(size == 1 && relatedGroup != null);
-        showBranchBtn.setEnabled(size == 1 && relatedBranch != null);
-        showActivityBtn.setEnabled(size == 1 && relatedActivity != null);
-
-        showSubsetBtn.setEnabled(size > 0);
-        showSubsetBtn.setText("Show Subset (".concat(String.valueOf(size)).concat(")"));
     }
 
     private void changeFiscalYears() {

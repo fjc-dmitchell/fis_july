@@ -53,12 +53,20 @@
                         width="70px"/>
                 <column property="obligation.activity.division.divisionCode" header="Division"
                         width="90px" textAlign="CENTER"/>
+
                 <column property="obligation.activity.activityNumber" header="Activity"
                         width="110px" visible="false"/>
                 <column property="obligation.activity.title" header="Activity Title"
                         width="350px" visible="false"/>
+                <column property="obligation.activity.branch.branchCode" header="Branch"
+                        width="90px" visible="false"/>
                 <column property="obligation.activity.branch.title" header="Branch Title"
                         width="350px" visible="false"/>
+                <column property="obligation.activity.group.groupCode" header="Group"
+                        width="90px" visible="false"/>
+                <column property="obligation.activity.group.title" header="Group Title"
+                        width="350px" visible="false"/>
+
                 <column property="obligation.documentNumber" header="Document ID" width="130px"/>
                 <column property="obligation.objectClass.budgetObjectClass" header="BOC" width="90px"/>
                 <column property="obligation.vendor" header="Vendor" width="350px"/>

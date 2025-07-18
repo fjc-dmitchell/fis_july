@@ -2,12 +2,12 @@ package gov.fjc.fis.view.fundcontrolnotice;
 
 import com.vaadin.flow.data.selection.SelectionEvent;
 import gov.fjc.fis.entity.FundControlNotice;
-
+import gov.fjc.fis.event.SearchGridSelectedItemsEvent;
 import gov.fjc.fis.service.AppropriationService;
 import gov.fjc.fis.view.main.MainView;
-
 import com.vaadin.flow.router.Route;
 import gov.fjc.fis.view.search.CustomSearchFragment;
+import io.jmix.flowui.UiEventPublisher;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -22,11 +22,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 @DialogMode(width = "64em")
 public class FundControlNoticeListView extends StandardListView<FundControlNotice> {
     @Autowired
+    private UiEventPublisher uiEventPublisher;
+    @Autowired
     private ViewNavigators viewNavigators;
     @Autowired
     private AppropriationService appropriationService;
+
     @ViewComponent
     private CustomSearchFragment searchFragment;
+    @ViewComponent
+    private DataGrid<FundControlNotice> fundControlNoticesDataGrid;
     @ViewComponent
     private JmixButton removeBtn;
 
@@ -39,6 +44,7 @@ public class FundControlNoticeListView extends StandardListView<FundControlNotic
     @Subscribe
     protected void onBeforeShow(final BeforeShowEvent event) {
         searchFragment.setFjcFoundation(fjcFoundation);
+        searchFragment.setDataGrid(fundControlNoticesDataGrid);
     }
 
     @Subscribe("fundControlNoticesDataGrid.create")
@@ -62,5 +68,7 @@ public class FundControlNoticeListView extends StandardListView<FundControlNotic
         } else {
             removeBtn.setEnabled(false);
         }
+
+        uiEventPublisher.publishEvent(new SearchGridSelectedItemsEvent(this, fundControlNoticesDataGrid, selectedItems.size()));
     }
 }

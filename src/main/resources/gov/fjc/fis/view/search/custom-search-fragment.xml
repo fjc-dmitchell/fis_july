@@ -130,7 +130,7 @@
                             </hbox>
                         </vbox>
                     </tab>
-                    <tab id="subsetTab" label="Subset and Related (experimental)" visible="false">
+                    <tab id="subsetTab" label="Subset Search (experimental)" visible="false">
                         <vbox>
                             <h1>Select rows and click button</h1>
                             <hbox>

@@ -8,6 +8,12 @@
             <fetchPlan extends="_base">
                 <property fetchPlan="_base" name="activity">
                     <property name="fund" fetchPlan="_base"/>
+                    <property name="branch" fetchPlan="_base">
+                        <property name="title"/>
+                    </property>
+                    <property name="group" fetchPlan="_base">
+                        <property name="title"/>
+                    </property>
                 </property>
                 <property fetchPlan="_base" name="objectClass">
                     <property fetchPlan="_base" name="category"/>
@@ -63,7 +69,9 @@
                 <column property="activity.activityNumber" header="Activity"/>
                 <column property="activity.title" visible="false" width="350px" header="Activity Title"/>
                 <column property="activity.branch.branchCode" visible="false" header="Branch"/>
+                <column property="activity.branch.title" visible="false" width="350px" header="Branch Title"/>
                 <column property="activity.group.groupCode" visible="false" header="Group"/>
+                <column property="activity.group.title" visible="false" width="350px" header="Group Title"/>
                 <column property="vendor" width="350px"/>
                 <column property="statusString" header="Status"/>
                 <column property="amount" textAlign="END" width="130px">

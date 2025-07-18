@@ -3,9 +3,11 @@ package gov.fjc.fis.view.invoice;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.Route;
 import gov.fjc.fis.entity.Invoice;
+import gov.fjc.fis.event.SearchGridSelectedItemsEvent;
 import gov.fjc.fis.service.AppropriationService;
 import gov.fjc.fis.view.main.MainView;
 import gov.fjc.fis.view.search.CustomSearchFragment;
+import io.jmix.flowui.UiEventPublisher;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -20,11 +22,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 @DialogMode(width = "64em")
 public class InvoiceListView extends StandardListView<Invoice> {
     @Autowired
+    private UiEventPublisher uiEventPublisher;
+    @Autowired
     private ViewNavigators viewNavigators;
     @Autowired
     private AppropriationService appropriationService;
+
     @ViewComponent
     private CustomSearchFragment searchFragment;
+    @ViewComponent
+    private DataGrid<Invoice> invoicesDataGrid;
     @ViewComponent
     private JmixButton removeBtn;
 
@@ -37,6 +44,7 @@ public class InvoiceListView extends StandardListView<Invoice> {
     @Subscribe
     protected void onBeforeShow(final BeforeShowEvent event) {
         searchFragment.setFjcFoundation(fjcFoundation);
+        searchFragment.setDataGrid(invoicesDataGrid);
     }
 
     @Subscribe("invoicesDataGrid.create")
@@ -60,5 +68,7 @@ public class InvoiceListView extends StandardListView<Invoice> {
         } else {
             removeBtn.setEnabled(false);
         }
+
+        uiEventPublisher.publishEvent(new SearchGridSelectedItemsEvent(this, invoicesDataGrid, selectedItems.size()));
     }
 }

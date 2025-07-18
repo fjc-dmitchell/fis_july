@@ -6,7 +6,6 @@ import gov.fjc.fis.entity.FileAttachment;
 import gov.fjc.fis.event.SearchGridSelectedItemsEvent;
 import gov.fjc.fis.view.main.MainView;
 import gov.fjc.fis.view.search.CustomSearchFragment;
-import io.jmix.core.session.SessionData;
 import io.jmix.flowui.UiEventPublisher;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.view.*;
@@ -22,8 +21,6 @@ public class FileAttachmentListView extends StandardListView<FileAttachment> {
 
     @Autowired
     private UiEventPublisher uiEventPublisher;
-    @Autowired
-    private SessionData sessionData;
     @ViewComponent
     private CustomSearchFragment searchFragment;
     @ViewComponent
@@ -36,7 +33,6 @@ public class FileAttachmentListView extends StandardListView<FileAttachment> {
 
     @Subscribe("fileAttachmentsDataGrid")
     protected void onFileAttachmentsDataGridSelection(final SelectionEvent<DataGrid<FileAttachment>, FileAttachment> event) {
-        sessionData.setAttribute("searchDataGridSize", event.getAllSelectedItems().size());
-        uiEventPublisher.publishEvent(new SearchGridSelectedItemsEvent(this, "searchGridChanged"));
+        uiEventPublisher.publishEvent(new SearchGridSelectedItemsEvent(this, fileAttachmentsDataGrid, event.getAllSelectedItems().size()));
     }
 }

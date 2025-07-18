@@ -2,14 +2,11 @@ package gov.fjc.fis.view.obligation;
 
 import com.vaadin.flow.data.selection.SelectionEvent;
 import gov.fjc.fis.entity.Obligation;
-
 import gov.fjc.fis.event.SearchGridSelectedItemsEvent;
 import gov.fjc.fis.service.AppropriationService;
 import gov.fjc.fis.view.main.MainView;
-
 import com.vaadin.flow.router.Route;
 import gov.fjc.fis.view.search.CustomSearchFragment;
-import io.jmix.core.session.SessionData;
 import io.jmix.flowui.UiEventPublisher;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -26,8 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ObligationListView extends StandardListView<Obligation> {
     @Autowired
     private UiEventPublisher uiEventPublisher;
-    @Autowired
-    private SessionData sessionData;
     @Autowired
     private ViewNavigators viewNavigators;
     @Autowired
@@ -51,20 +46,6 @@ public class ObligationListView extends StandardListView<Obligation> {
         searchFragment.setDataGrid(obligationsDataGrid);
     }
 
-    @Subscribe("obligationsDataGrid")
-    protected void onObligationsDataGridSelection(final SelectionEvent<DataGrid<Obligation>, Obligation> event) {
-        sessionData.setAttribute("searchDataGridSize", event.getAllSelectedItems().size());
-        uiEventPublisher.publishEvent(new SearchGridSelectedItemsEvent(this, "searchGridChanged"));
-
-        var selectedItems = event.getAllSelectedItems();
-        if (selectedItems.size() == 1) {
-            var selectedItem = selectedItems.stream().findFirst();
-            removeBtn.setEnabled(appropriationService.isAppropriationOpen(selectedItem.get()));
-        } else {
-            removeBtn.setEnabled(false);
-        }
-    }
-
     @Subscribe("obligationsDataGrid.create")
     protected void onObligationsDataGridCreate(final ActionPerformedEvent event) {
         viewNavigators.detailView(this, Obligation.class)
@@ -77,5 +58,16 @@ public class ObligationListView extends StandardListView<Obligation> {
                 .navigate();
     }
 
+    @Subscribe("obligationsDataGrid")
+    protected void onObligationsDataGridSelection(final SelectionEvent<DataGrid<Obligation>, Obligation> event) {
+        var selectedItems = event.getAllSelectedItems();
+        if (selectedItems.size() == 1) {
+            var selectedItem = selectedItems.stream().findFirst();
+            removeBtn.setEnabled(appropriationService.isAppropriationOpen(selectedItem.get()));
+        } else {
+            removeBtn.setEnabled(false);
+        }
 
+        uiEventPublisher.publishEvent(new SearchGridSelectedItemsEvent(this, obligationsDataGrid, selectedItems.size()));
+    }
 }
