@@ -206,7 +206,7 @@ public class ActivityReimbursementService {
         Fund twoYearFund = fundService.getAppropriationTwoYearFund();
         return dataManager.loadValues(
                         "SELECT fund.fundCode, app.budgetFiscalYear, dv.divisionCode, act.activityNumber,"
-                                + " act.title, cat.masterObjectClass, obj.budgetObjectClass, r.documentNumber,"
+                                + " act.title, cat.masterObjectClass, obj.budgetObjectClass, r.note,"
                                 + " r.source, r.amount,"
                                 + " CASE WHEN dv.appropriation = :priorYear AND act.fund = :twoYearFund THEN r.amount ELSE 0 END,"
                                 + " CASE WHEN dv.appropriation = :appropriation AND act.fund = :oneYearFund THEN r.amount ELSE 0 END,"
@@ -225,7 +225,7 @@ public class ActivityReimbursementService {
                 .parameter("oneYearFund", oneYearFund)
                 .parameter("twoYearFund", twoYearFund)
                 .parameter("activities", activities)
-                .properties("fund", "bfy", "division", "actnum", "title", "moc", "boc", "docnum", "source", "amount", "prioryear", "oneyear", "twoyear")
+                .properties("fund", "bfy", "division", "actnum", "title", "moc", "boc", "note", "source", "amount", "prioryear", "oneyear", "twoyear")
                 .list();
     }
 
@@ -243,7 +243,7 @@ public class ActivityReimbursementService {
         var activityIds = activities.stream().map(ActivityDto::getId).toList();
         return dataManager.loadValues(
                         "SELECT r.id, fund.id, fund.fundCode, app.id, app.budgetFiscalYear, dv.id, dv.divisionCode, act.id, act.activityNumber,"
-                                + " act.title, cat.id, cat.masterObjectClass, obj.id, obj.budgetObjectClass, r.documentNumber,"
+                                + " act.title, cat.id, cat.masterObjectClass, obj.id, obj.budgetObjectClass, r.note,"
                                 + " r.source, r.amount,"
                                 + " CASE WHEN dv.appropriation = :priorYear AND act.fund = :twoYearFund THEN r.amount ELSE 0 END,"
                                 + " CASE WHEN dv.appropriation = :appropriation AND act.fund = :oneYearFund THEN r.amount ELSE 0 END,"
@@ -262,7 +262,7 @@ public class ActivityReimbursementService {
                 .parameter("oneYearFund", oneYearFund)
                 .parameter("twoYearFund", twoYearFund)
                 .parameter("activities", activityIds)
-                .properties("id", "fundId", "fundCode", "appropriationId", "budgetFiscalYear", "divisionId", "divisionCode", "activityId", "activityNumber", "activityTitle", "categoryId", "masterObjectClass", "objectClassId", "budgetObjectClass", "documentNumber", "source", "amount", "prioryear", "oneyear", "twoyear")
+                .properties("id", "fundId", "fundCode", "appropriationId", "budgetFiscalYear", "divisionId", "divisionCode", "activityId", "activityNumber", "activityTitle", "categoryId", "masterObjectClass", "objectClassId", "budgetObjectClass", "note", "source", "amount", "prioryear", "oneyear", "twoyear")
                 .list();
     }
 
@@ -331,7 +331,7 @@ public class ActivityReimbursementService {
             dto.setMasterObjectClass(kvEntity.getValue("masterObjectClass"));
             dto.setObjectClassId(kvEntity.getValue("objectClassId"));
             dto.setBudgetObjectClass(kvEntity.getValue("budgetObjectClass"));
-            dto.setDocumentNumber(kvEntity.getValue("documentNumber"));
+            dto.setNote(kvEntity.getValue("note"));
             dto.setSource(kvEntity.getValue("source"));
             dto.setAmount(kvEntity.getValue("amount"));
             dto.setPriorTwoYearAmount(kvEntity.getValue("prioryear"));
