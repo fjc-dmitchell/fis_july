@@ -9,7 +9,6 @@ import gov.fjc.fis.view.main.MainView;
 import io.jmix.core.LoadContext;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.textfield.TypedTextField;
-import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
@@ -52,6 +51,8 @@ public class ObligationLookupView extends StandardListView<Obligation> {
     @ViewComponent
     private CollectionLoader<Obligation> obligationsDl;
     @ViewComponent
+    private CollectionLoader<Division> divisionsDl;
+    @ViewComponent
     private CollectionLoader<Activity> activitiesDl;
     @ViewComponent
     private CollectionLoader<Category> categoriesDl;
@@ -76,9 +77,20 @@ public class ObligationLookupView extends StandardListView<Obligation> {
      * instance variables
      */
     private Appropriation appropriation;
-    private boolean foundation;
+    private boolean fjcFoundation;
     private List<Fund> funds;
 
+    public void setFjcFoundation(boolean fjcFoundation) {
+        this.fjcFoundation = fjcFoundation;
+//       if(fjcFoundation) {
+//           divisionsDl.load();
+//           activitiesDl.load();
+//
+//           funds = fundService.getFundSearchList(fjcFoundation);
+//           searchObligations();
+//
+//       }
+    }
 
     public Appropriation getAppropriation() {
         return appropriation;
@@ -88,18 +100,10 @@ public class ObligationLookupView extends StandardListView<Obligation> {
         this.appropriation = appropriation;
     }
 
-    public Boolean getFoundation() {
-        return foundation;
-    }
-
-    public void setFoundation(Boolean foundation) {
-        this.foundation = foundation;
-    }
-
     @Subscribe
     protected void onBeforeShow(final BeforeShowEvent event) {
         budgetFiscalYearField.setValue(appropriation.getBudgetFiscalYear());
-        funds = fundService.getFundSearchList(foundation);
+        funds = fundService.getFundSearchList(fjcFoundation);
         searchObligations();
         divisionSearchField.focus();
     }
@@ -121,10 +125,10 @@ public class ObligationLookupView extends StandardListView<Obligation> {
         categoriesDl.load();
         objectClassSearchField.setValue(null);
         objectClassesDl.load();
-        if(categoriesDc.getItems().size()==1) {
+        if (categoriesDc.getItems().size() == 1) {
             categorySearchField.setValue(categoriesDc.getItems().getFirst());
         }
-        if(objectClassesDc.getItems().size()==1) {
+        if (objectClassesDc.getItems().size() == 1) {
             objectClassSearchField.setValue(objectClassesDc.getItems().getFirst());
         }
         searchObligations();
@@ -134,30 +138,35 @@ public class ObligationLookupView extends StandardListView<Obligation> {
     protected void onCategorySearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Category>, Category> event) {
         objectClassSearchField.setValue(null);
         objectClassesDl.load();
-        if(objectClassesDc.getItems().size()==1) {
+        if (objectClassesDc.getItems().size() == 1) {
             objectClassSearchField.setValue(objectClassesDc.getItems().getFirst());
         }
         searchObligations();
     }
 
+    @Subscribe("objectClassSearchField")
+    protected void onObjectClassSearchFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<ObjectClass>, ObjectClass> event) {
+        searchObligations();
+    }
+
     @Install(to = "divisionsDl", target = Target.DATA_LOADER)
     protected List<Division> divisionsDlLoadDelegate(final LoadContext<Division> loadContext) {
-        return divisionService.getObligationDivisionsForAppropriationFoundation(appropriation, foundation);
+        return divisionService.getObligationDivisionsForAppropriationFoundation(appropriation, fjcFoundation);
     }
 
     @Install(to = "activitiesDl", target = Target.DATA_LOADER)
     protected List<Activity> activitiesDlLoadDelegate(final LoadContext<Activity> loadContext) {
-        return activityService.getObligationActivities(appropriation, divisionSearchField.getValue(), foundation);
+        return activityService.getObligationActivities(appropriation, divisionSearchField.getValue(), fjcFoundation);
     }
 
     @Install(to = "categoriesDl", target = Target.DATA_LOADER)
     protected List<Category> categoriesDlLoadDelegate(final LoadContext<Category> loadContext) {
-        return categoryService.getObligationCategoriesForDivision(appropriation, divisionSearchField.getValue(), activitySearchField.getValue(), foundation);
+        return categoryService.getObligationCategoriesForDivision(appropriation, divisionSearchField.getValue(), activitySearchField.getValue(), fjcFoundation);
     }
 
     @Install(to = "objectClassesDl", target = Target.DATA_LOADER)
     protected List<ObjectClass> objectClassesDlLoadDelegate(final LoadContext<ObjectClass> loadContext) {
-        return objectClassService.getObligationObjectClasses(appropriation, divisionSearchField.getValue(), activitySearchField.getValue(), categorySearchField.getValue(), foundation);
+        return objectClassService.getObligationObjectClasses(appropriation, divisionSearchField.getValue(), activitySearchField.getValue(), categorySearchField.getValue(), fjcFoundation);
     }
 
     @Install(to = "divisionSearchField", subject = "itemLabelGenerator")
