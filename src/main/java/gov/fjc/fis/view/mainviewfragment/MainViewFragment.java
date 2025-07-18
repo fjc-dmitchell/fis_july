@@ -17,6 +17,10 @@ public class MainViewFragment extends Fragment<VerticalLayout> {
 
     @Subscribe(target = Target.HOST_CONTROLLER)
     protected void onHostInit(final View.InitEvent event) {
+        postMessage();
+    }
+
+    private void postMessage() {
         var userMessage = userMessageService.getCurrentMessage();
         if (userMessage.getMessage() != null && !userMessage.getMessage().isEmpty()) {
             var message = "<div>".concat(userMessage.getMessage()).concat("</div>");
