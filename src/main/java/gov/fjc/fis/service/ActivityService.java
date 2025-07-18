@@ -7,10 +7,13 @@ import gov.fjc.fis.entity.dto.ActivityReimbursementDto;
 import gov.fjc.fis.entity.dto.ObligationDto;
 import io.jmix.core.DataManager;
 import io.jmix.core.entity.KeyValueEntity;
+import jakarta.persistence.TemporalType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +29,8 @@ public class ActivityService {
     private FundService fundService;
     @Autowired
     private AppropriationService appropriationService;
+    @Autowired
+    private DivisionService divisionService;
     @Autowired
     private ObligationService obligationService;
 
@@ -239,6 +244,107 @@ public class ActivityService {
                 .parameter("bfyEndDate", bfyEndDate)
                 .list();
     }
+
+
+    /**
+     * 6/25/2025 - per Nancy, ED programs based on calendar year.
+     *
+     * @param appropriation represents the calendar year to be reported (i.e., 2017=1/1/17-12/31/17)
+     * @param branchCodes
+     * @param groupCodes
+     * @return list of KeyValueEntity representing activities
+     */
+    public List<KeyValueEntity> fetchCalendarYearEducationActivities(Appropriation appropriation, List<String> branchCodes, List<String> groupCodes) {
+
+        Appropriation priorYearAppropriation = appropriationService.getPreviousFiscalYear(appropriation);
+        String calendarYear = appropriation.getBudgetFiscalYear();
+
+        Fund oneYearFund = fundService.getAppropriationOneYearFund();
+        Fund twoYearFund = fundService.getAppropriationTwoYearFund();
+
+        String divisionCode = divisionService.getEducationDivisionCode();
+
+        SimpleDateFormat mdyFormat = new SimpleDateFormat("MM/dd/yyyy");
+        Date firstDayOfCalendarYear, lastDayOfCalendarYear;
+        try {
+            firstDayOfCalendarYear = mdyFormat.parse("01/01/" + calendarYear);
+            lastDayOfCalendarYear = mdyFormat.parse("12/31/" + calendarYear);
+        } catch (ParseException e) {
+            throw new RuntimeException("unable to parse date " + calendarYear);
+        }
+        return dataManager.loadValues(
+                        "SELECT act.id, fund.id, fund.fundCode, app.id, app.budgetFiscalYear, dv.id, dv.divisionCode,"
+                                + " act.activityNumber, act.title, act.startDate, act.endDate, act.city, act.state, bch.id,"
+                                + " bch.branchCode, bch.title, grp.id, grp.groupCode, grp.title, act.initialProjection,"
+                                + " CASE WHEN dv.appropriation = :priorYear AND act.fund = :twoYearFund THEN :priorTwoYearFund"
+                                + "      WHEN dv.appropriation = :currentYear AND act.fund = :twoYearFund THEN :currentTwoYearFund"
+                                + "      ELSE :currentOneYearFund"
+                                + " END"
+                                + " FROM fis_Activity act"
+                                + " LEFT JOIN fis_Branch bch ON bch=act.branch"
+                                + " LEFT JOIN fis_Group grp ON grp=act.group"
+                                + " INNER JOIN fis_Division dv ON dv=act.division"
+                                + " INNER JOIN fis_Appropriation app ON app=dv.appropriation"
+                                + " INNER JOIN fis_Fund fund ON fund=act.fund"
+                                + " WHERE (dv.divisionCode = :divisionCode)"
+                                + " AND (bch.branchCode in :branchCodes) AND (grp.groupCode in :groupCodes)"
+                                + " AND ((act.startDate BETWEEN :firstDayOfCalendarYear AND :lastDayOfCalendarYear)"
+                                + " OR (act.endDate BETWEEN :firstDayOfCalendarYear AND :lastDayOfCalendarYear)"
+                                + " OR (act.endDate IS NULL and act.startDate IS NULL AND app=:currentYear))"
+                                + " ORDER BY bch.branchCode, app.budgetFiscalYear, fund.fundCode, dv.divisionCode, act.activityNumber")
+                .parameter("divisionCode", divisionCode)
+                .parameter("branchCodes", branchCodes)
+                .parameter("groupCodes", groupCodes)
+                .parameter("currentYear", appropriation)
+                .parameter("priorYear", priorYearAppropriation)
+                .parameter("twoYearFund", twoYearFund)
+                .parameter("firstDayOfCalendarYear", firstDayOfCalendarYear, TemporalType.DATE)
+                .parameter("lastDayOfCalendarYear", lastDayOfCalendarYear, TemporalType.DATE)
+                .parameter("priorTwoYearFund", PRIOR_TWO_YEAR_FUND.getId())
+                .parameter("currentOneYearFund", CURRENT_ONE_YEAR_FUND.getId())
+                .parameter("currentTwoYearFund", CURRENT_TWO_YEAR_FUND.getId())
+                .properties("id", "fundId", "fundCode", "appropriationId", "budgetFiscalYear", "divisionId", "divisionCode",
+                        "activityNumber", "title", "startDate", "endDate", "city", "state", "branchId", "branchCode",
+                        "branchTitle", "groupId", "groupCode", "groupTitle", "initialProjection", "fundingType")
+                .list();
+
+        // Doug - running report twice for both included and excluded programs. Use either of below conditions:
+//                                        + " AND (act.endDate BETWEEN :firstDayOfCalendarYear AND :lastDayOfCalendarYear)"
+//                                        + " AND (act.endDate IS NULL AND app=:currentYear)"
+//                                        + " AND (act.endDate IS NULL and act.startDate IS NULL AND app=:currentYear)"
+
+//                .parameter("firstDayOfCalendarYear", firstDayOfCalendarYear, TemporalType.DATE)
+//                .parameter("lastDayOfCalendarYear", lastDayOfCalendarYear, TemporalType.DATE)
+//        return dataManager.load(Activity.class)
+//                .query("SELECT a FROM fis_Activity a"
+//                        + " INNER JOIN fis_Division dv ON dv = a.division"
+//                        + " INNER JOIN fis_Branch bch ON bch=a.branch"
+//                        + " INNER JOIN fis_Group grp ON grp=a.group"
+//                        + " WHERE dv.divisionCode = '2'"
+//                        + " AND (bch.branchCode in :branchCodes) AND (grp.groupCode in :groupCodes)"
+//                        + " AND (a.endDate BETWEEN :firstDayOfCalendarYear AND :lastDayOfCalendarYear"
+//                        + " OR a.endDate IS NULL AND a.endDate <= :lastDayOfCalendarYear)")
+//                .parameter("firstDayOfCalendarYear", firstDayOfCalendarYear, TemporalType.DATE)
+//                .parameter("lastDayOfCalendarYear", lastDayOfCalendarYear, TemporalType.DATE)
+//                .parameter("branchCodes", branchCodes)
+//                .parameter("groupCodes", groupCodes)
+//                .list();
+    }
+
+//    public List<Activity> fetchExcludedActivities(Appropriation appropriation, List<String> branchCodes, List<String> groupCodes) {
+//        return dataManager.load(Activity.class)
+//                .query("SELECT a FROM fis_Activity a"
+//                        + " INNER JOIN fis_Division dv ON dv = a.division"
+//                        + " INNER JOIN fis_Branch bch ON bch=a.branch"
+//                        + " INNER JOIN fis_Group grp ON grp=a.group"
+//                        + " WHERE dv.divisionCode = '2'"
+//                        + " AND (bch.branchCode in :branchCodes) AND (grp.groupCode in :groupCodes)"
+//                        + " AND (a.endDate IS NULL AND dv.appropriation = :appropriation)")
+//                .parameter("appropriation", appropriation)
+//                .parameter("branchCodes", branchCodes)
+//                .parameter("groupCodes", groupCodes)
+//                .list();
+//    }
 
     // NEW - should fetch KV, not entities
     public List<KeyValueEntity> fetchBiFiscalActivitiesNew(Appropriation currentYearAppropriation) {
@@ -462,7 +568,7 @@ public class ActivityService {
             dto.setGroupCode(kvEntity.getValue("groupCode"));
             dto.setGroupTitle(kvEntity.getValue("groupTitle"));
             dto.setInitialProjection(kvEntity.getValue("initialProjection"));
-            dto.setFundingType(ActivityFundingType.fromId(kvEntity.getValue("fundingType")));
+            dto.setFundingType(fromId(kvEntity.getValue("fundingType")));
             activityDtos.add(dto);
         }
         return activityDtos;
@@ -483,6 +589,13 @@ public class ActivityService {
     // 2025-02-20 program analysis for Nancy
     public List<ActivityDto> getBiFiscalActivityDtos(Division division, List<String> branchCodes, List<String> groupCodes) {
         List<KeyValueEntity> activities = fetchBiFiscalActivitiesNew2(division, branchCodes, groupCodes);
+        List<ActivityDto> activityDtos = convertBiFiscalEntitiesToActivityDtos(activities);
+        return activityDtos;
+    }
+
+    // 2025-06-25 program analysis for Nancy (Mike Zubrensky)
+    public List<ActivityDto> getCalendarYearActivityDtos(Appropriation appropriation, List<String> branchCodes, List<String> groupCodes) {
+        List<KeyValueEntity> activities = fetchCalendarYearEducationActivities(appropriation, branchCodes, groupCodes);
         List<ActivityDto> activityDtos = convertBiFiscalEntitiesToActivityDtos(activities);
         return activityDtos;
     }
