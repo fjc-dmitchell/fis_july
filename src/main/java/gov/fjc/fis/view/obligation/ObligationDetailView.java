@@ -10,13 +10,19 @@ import io.jmix.core.EntityStates;
 import io.jmix.core.LoadContext;
 import io.jmix.core.session.SessionData;
 import io.jmix.flowui.component.combobox.EntityComboBox;
+import io.jmix.flowui.component.combobox.JmixComboBox;
+import io.jmix.flowui.component.select.JmixSelect;
+import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.InstanceLoader;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Route(value = "obligations/:id", layout = MainView.class)
 @ViewController(id = "fis_Obligation.detail")
@@ -57,27 +63,44 @@ public class ObligationDetailView extends StandardDetailView<Obligation> {
     @ViewComponent
     private EntityComboBox<Category> categoryField;
     @ViewComponent
+    private EntityComboBox<ObjectClass> budgetObjectClassField;
+    @ViewComponent
+    private JmixComboBox<Boolean> statusField;
+    @ViewComponent
+    private JmixComboBox<Boolean> blanketPurchaseOrderField;
+    @ViewComponent
     private Paragraph createdByString;
 
     private Appropriation entryBfy;
     private Division division;
     private Category category;
-    private Boolean foundation = false;
+    private Boolean fjcFoundation = false;
+    @ViewComponent
+    private EntityComboBox<Activity> activityField;
+    @ViewComponent
+    private JmixTextArea memoField;
 
-    public void setFoundation(Boolean foundation) {
-        this.foundation = foundation;
+    public void setFjcFoundation(Boolean fjcFoundation) {
+        this.fjcFoundation = fjcFoundation;
+        if(fjcFoundation) {
+            var obligation = getEditedEntity();
+            divisionsDl.load();
+        }
     }
 
-    @Subscribe
-    protected void onInit(final InitEvent event) {
-        entryBfy = appropriationService.getBfyEntryAppropriation(sessionData);
-    }
 
     @ViewComponent
     private InstanceLoader<Obligation> obligationDl;
 
     @Subscribe
+    protected void onInit(final InitEvent event) {
+        ComponentUtils.setItemsMap(statusField, getStatusItemsMap());
+        ComponentUtils.setItemsMap(blanketPurchaseOrderField, getBpoItemsMap());
+    }
+
+    @Subscribe
     protected void onBeforeShow(final BeforeShowEvent event) {
+        entryBfy = appropriationService.getBfyEntryAppropriation(sessionData);
         obligationDl.load();
         var obligation = getEditedEntity();
         if (entityStates.isNew(obligation)) {
@@ -85,23 +108,33 @@ public class ObligationDetailView extends StandardDetailView<Obligation> {
             if (entryBfy != null) {
                 budgetFiscalYearField.setValue(entryBfy.getBudgetFiscalYear());
             }
-            divisionsDl.load();
-            categoriesDl.load();
-            objectClassesDl.load();
-            divisionField.focus();
+//            divisionField.focus();
 
         } else {
-            divisionsDl.load();
-            categoriesDl.load();
-            objectClassesDl.load();
-            divisionField.focus();
+            Appropriation appropriation = obligation.getObjectClass().getCategory().getAppropriation();
+            budgetFiscalYearField.setValue(appropriation.getBudgetFiscalYear());
+
+            divisionField.setValue(obligation.getActivity().getDivision());
+            categoryField.setValue(obligation.getObjectClass().getCategory());
+            budgetObjectClassField.setValue(obligation.getObjectClass());
+            activityField.setValue(obligation.getActivity());
+
+            divisionField.setReadOnly(true);
+            categoryField.setReadOnly(true);
+            budgetFiscalYearField.setReadOnly(true);
+            activityField.setReadOnly(true);
+
+//            divisionField.focus();
             createdByString.setText(obligation.getCreatedByString());
         }
+        divisionsDl.load();
+        categoriesDl.load();
+        objectClassesDl.load();
     }
 
     @Install(to = "divisionsDl", target = Target.DATA_LOADER)
     protected List<Division> divisionsDlLoadDelegate(final LoadContext<Division> loadContext) {
-        return divisionService.getDivisions(entryBfy, foundation);
+        return divisionService.getDivisions(entryBfy, fjcFoundation);
     }
 
     @Install(to = "activitiesDl", target = Target.DATA_LOADER)
@@ -142,15 +175,58 @@ public class ObligationDetailView extends StandardDetailView<Obligation> {
     @Subscribe("divisionField")
     protected void onDivisionFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Division>, Division> event) {
         division = event.getValue();
-        activitiesDl.load();
+        checkActivity();
     }
 
     @Subscribe("categoryField")
     protected void onCategoryFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Category>, Category> event) {
-       category =  event.getValue();
-       // clear object class or keep, depending on value
-       objectClassesDl.load();
+        category = event.getValue();
+        checkObjectClass();
     }
 
+    @Subscribe("memoField")
+    protected void onMemoFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixTextArea, ?> event) {
+       memoField.setValue(((String) event.getValue()).trim());
+    }
 
+    private void checkObjectClass() {
+        objectClassesDl.load();
+        if (budgetObjectClassField.getValue() != null) {
+            budgetObjectClassField.setValue(
+                    objectClassesDl.getContainer().getItems().stream()
+                            .filter(boc -> boc.getBudgetObjectClass().equals(budgetObjectClassField.getValue().getBudgetObjectClass()))
+                            .findFirst()
+                            .orElse(null)
+            );
+        }
+    }
+
+    private void checkActivity() {
+        activitiesDl.load();
+        if (activityField.getValue() != null) {
+            activityField.setValue(
+                    activitiesDl.getContainer().getItems().stream()
+                            .filter(act -> act.equals(activityField.getValue()))
+                            .findFirst()
+                            .orElse(null)
+            );
+        }
+    }
+
+    protected Map<Boolean, String> getStatusItemsMap() {
+        LinkedHashMap<Boolean, String> map = new LinkedHashMap<>();
+        map.put(Boolean.TRUE, "Open");
+        map.put(Boolean.FALSE, "Closed");
+        return map;
+    }
+
+    protected Map<Boolean, String> getBpoItemsMap() {
+        LinkedHashMap<Boolean, String> map = new LinkedHashMap<>();
+        map.put(Boolean.TRUE, "Yes");
+        map.put(Boolean.FALSE, "No");
+        return map;
+    }
+
+    @ViewComponent
+    private JmixSelect<Boolean> xxxx;
 }
