@@ -5,6 +5,7 @@ import gov.fjc.fis.entity.dto.ActivityDto;
 import gov.fjc.fis.entity.dto.ObligationDto;
 import gov.fjc.fis.entity.dto.ReconciliationDto;
 import io.jmix.core.DataManager;
+import io.jmix.core.Id;
 import io.jmix.core.entity.KeyValueEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -140,14 +141,14 @@ public class ObligationService {
     public List<Obligation> getObligationSuggestion(
             String budgetFiscalYear, String docidSearchString, boolean foundation) {
         return dataManager.load(Obligation.class)
-                .query("select o from fis_Obligation o" +
-                        " where o.activity.division.appropriation.budgetFiscalYear = :bfy" +
-                        " and o.documentNumber like :docid" +
-                        " and ((:foundation = true and o.activity.fund.fundCode = '812300') " +
-                        " or (:foundation = false and o.activity.fund.fundCode <> '812300'))" +
-                        " order by o.documentNumber")
+                .query("SELECT o FROM fis_Obligation o" +
+                        " WHERE o.activity.division.appropriation.budgetFiscalYear = :bfy" +
+                        " AND (o.documentNumber LIKE :searchString OR o.vendor LIKE :searchString)" +
+                        " AND ((:foundation = true AND o.activity.fund.fundCode = '812300') " +
+                        " OR (:foundation = false AND o.activity.fund.fundCode <> '812300'))" +
+                        " ORDER BY o.documentNumber")
                 .parameter("bfy", budgetFiscalYear)
-                .parameter("docid", "(?i)%" + docidSearchString + "%")
+                .parameter("searchString", "(?i)%" + docidSearchString + "%")
                 .parameter("foundation", foundation)
                 .list();
     }
@@ -521,6 +522,30 @@ public class ObligationService {
                         + " FROM fis_Obligation obl"
                         + " WHERE obl.activity=:activity", BigDecimal.class)
                 .parameter("activity", activity)
+                .one();
+    }
+
+    /**
+     * sum obligations for activity, either travel or non-travel
+     * quick and dirty for Nancy (Mike) 6/25/2025
+     *
+     * @param activity
+     * @param travel
+     * @return
+     */
+    public BigDecimal sumObligations(ActivityDto activityDto, boolean travel) {
+        String travelMoc = categoryService.getTravel();
+        return dataManager.loadValue("SELECT coalesce(sum(obl.amount),0)"
+                        + " FROM fis_Obligation obl"
+                        + " INNER JOIN fis_Activity act ON act=obl.activity"
+                        + " INNER JOIN fis_ObjectClass obj ON obj=obl.objectClass"
+                        + " INNER JOIN fis_Category cat ON cat=obj.category"
+                        + " WHERE act.id = :activity"
+                        + " AND ((:travel=TRUE AND cat.masterObjectClass = :travelMoc)"
+                        + " OR (:travel=FALSE AND cat.masterObjectClass <> :travelMoc))", BigDecimal.class)
+                .parameter("activity", activityDto.getId())
+                .parameter("travel", travel)
+                .parameter("travelMoc", travelMoc)
                 .one();
     }
 

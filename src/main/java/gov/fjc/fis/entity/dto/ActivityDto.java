@@ -74,10 +74,14 @@ public class ActivityDto {
     private BigDecimal initialProjection;
 
     private BigDecimal totalProjected = BigDecimal.ZERO;
+    private BigDecimal travelProjected = BigDecimal.ZERO;
+    private BigDecimal nonTravelProjected = BigDecimal.ZERO;
 
     private BigDecimal totalReimbursed = BigDecimal.ZERO;
 
     private BigDecimal totalObligated = BigDecimal.ZERO;
+    private BigDecimal travelObligated = BigDecimal.ZERO;
+    private BigDecimal nonTravelObligated = BigDecimal.ZERO;
 
     private BigDecimal totalDisbursed = BigDecimal.ZERO;
 
@@ -331,6 +335,22 @@ public class ActivityDto {
         this.totalObligated = requireNonNullElse(totalObligated, BigDecimal.ZERO);
     }
 
+    public BigDecimal getTravelObligated() {
+        return requireNonNullElse(travelObligated, BigDecimal.ZERO);
+    }
+
+    public void setTravelObligated(BigDecimal travelObligated) {
+        this.travelObligated = travelObligated;
+    }
+
+    public BigDecimal getNonTravelObligated() {
+        return requireNonNullElse(nonTravelObligated, BigDecimal.ZERO);
+    }
+
+    public void setNonTravelObligated(BigDecimal nonTravelObligated) {
+        this.nonTravelObligated = nonTravelObligated;
+    }
+
     public BigDecimal getTotalReimbursed() {
         return totalReimbursed;
     }
@@ -345,6 +365,22 @@ public class ActivityDto {
 
     public void setTotalProjected(BigDecimal totalProjected) {
         this.totalProjected = requireNonNullElse(totalProjected, BigDecimal.ZERO);
+    }
+
+    public BigDecimal getTravelProjected() {
+        return travelProjected;
+    }
+
+    public void setTravelProjected(BigDecimal travelProjected) {
+        this.travelProjected = requireNonNullElse(travelProjected, BigDecimal.ZERO);
+    }
+
+    public BigDecimal getNonTravelProjected() {
+        return nonTravelProjected;
+    }
+
+    public void setNonTravelProjected(BigDecimal nonTravelProjected) {
+        this.nonTravelProjected = requireNonNullElse(nonTravelProjected, BigDecimal.ZERO);
     }
 
     public List<ObligationDto> getObligationDtos() {

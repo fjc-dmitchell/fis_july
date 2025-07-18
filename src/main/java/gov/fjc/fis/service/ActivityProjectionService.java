@@ -136,7 +136,7 @@ public class ActivityProjectionService {
                         + " INNER JOIN fis_Category cat ON obj.category = cat"
                         + " WHERE obj = :objectClass AND p.amount <> 0"
                         + " ORDER BY dv.divisionCode, fund.fundCode, act.activityNumber, cat.masterObjectClass, obj.budgetObjectClass")
-                .parameter("objectClass",objectClass)
+                .parameter("objectClass", objectClass)
                 .fetchPlan("activityProjection-fetch-plan")
                 .list();
 //        return dataManager.load(ActivityProjection.class)
@@ -473,5 +473,27 @@ public class ActivityProjectionService {
             projectionDtos.add(dto);
         }
         return projectionDtos;
+    }
+
+    /**
+     * sum projections for activity, either travel or non-travel
+     * quick and dirty for Nancy (Mike) 6/25/2025
+     *
+     * @param activity
+     * @param travel
+     * @return
+     */
+    public BigDecimal sumProjections(ActivityDto activityDto, boolean travel) {
+        return dataManager.loadValue("SELECT coalesce(sum(proj.amount),0)"
+                        + " FROM fis_ActivityProjection proj"
+                        + " INNER JOIN fis_Activity act ON act=proj.activity"
+                        + " INNER JOIN fis_ObjectClass obj ON obj=proj.objectClass"
+                        + " INNER JOIN fis_Category cat ON cat=obj.category"
+                        + " WHERE act.id = :activity"
+                        + " AND ((:travel=TRUE AND cat.masterObjectClass='21')"
+                        + " OR (:travel=FALSE AND cat.masterObjectClass <> '21'))", BigDecimal.class)
+                .parameter("activity", activityDto.getId())
+                .parameter("travel", travel)
+                .one();
     }
 }

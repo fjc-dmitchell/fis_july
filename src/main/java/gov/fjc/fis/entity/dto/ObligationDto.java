@@ -76,21 +76,21 @@ public class ObligationDto {
 
     private BigDecimal currentOneYearAmount = BigDecimal.ZERO;
 
-    private BigDecimal currentOneYearObligated = BigDecimal.ZERO;;
+    private BigDecimal currentOneYearObligated = BigDecimal.ZERO;
 
-    private BigDecimal currentOneYearDisbursed = BigDecimal.ZERO;;
+    private BigDecimal currentOneYearDisbursed = BigDecimal.ZERO;
 
     private BigDecimal currentTwoYearAmount = BigDecimal.ZERO;
 
-    private BigDecimal currentTwoYearObligated = BigDecimal.ZERO;;
+    private BigDecimal currentTwoYearObligated = BigDecimal.ZERO;
 
-    private BigDecimal currentTwoYearDisbursed = BigDecimal.ZERO;;
+    private BigDecimal currentTwoYearDisbursed = BigDecimal.ZERO;
 
     private BigDecimal priorTwoYearAmount = BigDecimal.ZERO;
 
-    private BigDecimal priorTwoYearObligated = BigDecimal.ZERO;;
+    private BigDecimal priorTwoYearObligated = BigDecimal.ZERO;
 
-    private BigDecimal priorTwoYearDisbursed = BigDecimal.ZERO;;
+    private BigDecimal priorTwoYearDisbursed = BigDecimal.ZERO;
 
     public BigDecimal getPriorTwoYearDisbursed() {
         return priorTwoYearDisbursed;
@@ -214,6 +214,17 @@ public class ObligationDto {
 
     public BigDecimal getObligated() {
         return obligated;
+    }
+
+    // quick & dirty for Nancy for program analysis 6/25/2025
+    // create instance variables and properly set them in report code
+    // avoid hardcoding travel code; use business rule instead
+    public BigDecimal getTravelObligated() {
+        return masterObjectClass.equals("21") ? obligated : BigDecimal.ZERO;
+    }
+
+    public BigDecimal getNonTravelObligated() {
+        return masterObjectClass.equals("21") ? BigDecimal.ZERO : obligated;
     }
 
     public void setObligated(BigDecimal obligated) {
