@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<mainView xmlns="http://jmix.io/schema/flowui/main-view"
+<mainView xmlns="http://jmix.io/schema/tabmod/main-view"
           title="msg://MainView.title">
-
     <data>
         <collection id="bfyEntryDc" class="gov.fjc.fis.entity.Appropriation">
             <loader id="bfyEntryDl" readOnly="true"/>
@@ -20,7 +19,6 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
-
     <actions>
         <action id="logout" type="logout"/>
     </actions>
@@ -35,22 +33,12 @@
             </header>
         </navigationBar>
         <drawerLayout>
-            <section id="section" classNames="jmix-list-menu,jmix-menubar-item">
+            <section id="section" classNames="jmix-main-view-section">
                 <div id="applicationTitlePlaceholder" classNames="jmix-main-view-title-holder"/>
-<!--                <h2 id="applicationTitle"-->
-<!--                    classNames="jmix-main-view-application-title">-->
-<!--                    <anchor id="baseLink"-->
-<!--                            href="."-->
-<!--                            text="msg://applicationTitle.text"-->
-<!--                            classNames="jmix-main-view-application-title-base-link"/>-->
-<!--                </h2>-->
-<!--start here-->
-
-<!--                <nav id="fiscalYear" classNames="jmix-main-view-navigation">-->
-                <vbox classNames="jmix-main-view-navigation bordered-panel" width="100%" spacing="false" css="margin-bottom: 15px;">
+<!--                <vbox classNames="bordered-panel bfy-selector-box" width="100%" spacing="false" css="margin-bottom: 15px;">-->
+                <vbox classNames="bordered-panel bfy-selector-box" width="100%" spacing="false" css="margin-bottom: 15px;">
                     <h5 text="Budget Fiscal Year" css="font-family: sans-serif;"/>
                     <hbox spacing="true">
-
                         <entityComboBox id="bfyEntry" itemsContainer="bfyEntryDc" width="140px"
                                         metaClass="fis_Appropriation" property="budgetFiscalYear" label="Data Entry"
                                         css="font-family: sans-serif;"/>
@@ -64,12 +52,10 @@
                         </actions>
                     </multiSelectComboBoxPicker>
                 </vbox>
-<!--                </nav>-->
-<!--end here-->
                 <nav id="navigation"
                      classNames="jmix-main-view-navigation"
                      ariaLabel="msg://navigation.ariaLabel">
-                    <listMenu id="menu"/>
+                    <listMenu id="menu" themeNames="toggle-reverse"/>
                 </nav>
                 <footer id="footer" classNames="jmix-main-view-footer">
                     <userIndicator id="userIndicator"/>
@@ -79,8 +65,26 @@
                 </footer>
             </section>
         </drawerLayout>
-        <initialLayout>
-            <fragment class="gov.fjc.fis.view.mainviewfragment.MainViewFragment"/>
-        </initialLayout>
+        <workArea id="workArea"
+                  classNames="jmix-work-area">
+            <mainTabSheet id="mainTabSheet"
+                          classNames="jmix-main-tabsheet"
+                          tabsDraggable="true"
+                          width="100%" height="100%">
+                <actions>
+                    <action id="closeThisTabAction" type="tabmod_closeThisTab"/>
+                    <action id="closeOthersTabsAction" type="tabmod_closeOtherTabs"/>
+                    <action id="closeAllTabsAction" type="tabmod_closeAllTabs"/>
+                </actions>
+            </mainTabSheet>
+            <initialLayout id="initialLayout"
+                           classNames="jmix-initial-layout"
+                           width="100%" height="100%">
+                <fragment class="gov.fjc.fis.view.mainviewfragment.MainViewFragment"/>
+            </initialLayout>
+        </workArea>
+<!--        <initialLayout>-->
+<!--            <fragment class="gov.fjc.fis.view.mainviewfragment.MainViewFragment"/>-->
+<!--        </initialLayout>-->
     </appLayout>
 </mainView>

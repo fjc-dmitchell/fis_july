@@ -20,9 +20,18 @@ repositories {
     maven {
         url = 'https://global.repo.jmix.io/repository/public'
     }
+    maven {
+        url = 'https://global.repo.jmix.io/repository/premium'
+        credentials {
+            username = rootProject['premiumRepoUser']
+            password = rootProject['premiumRepoPass']
+        }
+    }
 }
 
 dependencies {
+    implementation 'io.jmix.tabbedmode:jmix-tabbedmode-flowui-starter'
+
     // 2024-12-13 DEM added liquibase dependencey due to bug:
     // https://github.com/jmix-framework/jmix/issues/3888
     implementation 'org.liquibase:liquibase-core:4.25.0!!'

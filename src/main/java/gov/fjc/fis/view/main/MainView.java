@@ -5,6 +5,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
@@ -14,7 +15,6 @@ import gov.fjc.fis.event.AppropriationClosedEvent;
 import gov.fjc.fis.event.FiscalYearChangeEvent;
 import gov.fjc.fis.service.AppropriationService;
 import io.jmix.core.LoadContext;
-import io.jmix.core.Resources;
 import io.jmix.core.session.SessionData;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.UiEventPublisher;
@@ -24,24 +24,25 @@ import io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBo
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
+import io.jmix.tabbedmode.app.main.StandardTabbedModeMainView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 @Route("")
 @ViewController("fis_MainView")
 @ViewDescriptor("main-view.xml")
-public class MainView extends StandardMainView {
+public class MainView extends StandardTabbedModeMainView {
 
     @Autowired
     private UiEventPublisher uiEventPublisher;
     @ViewComponent
+    private CollectionContainer<Appropriation> bfyEntryDc;
+    @ViewComponent
+
     private CollectionLoader<Appropriation> bfyEntryDl;
     @Autowired
     private AppropriationService appropriationService;
@@ -58,12 +59,38 @@ public class MainView extends StandardMainView {
     private Div applicationTitlePlaceholder;
     @ViewComponent
     private MessageBundle messageBundle;
+    @ViewComponent
+    private Header header;
 
     @Subscribe
     public void onInit(final InitEvent event) {
-        bfyEntry.setValue(appropriationService.getCurrentBudgetFiscalYear());
         bfySearch.setAutoExpand(MultiSelectComboBox.AutoExpandMode.VERTICAL);
         initApplicationTitle();
+//        ThemeToggle themeToggle = new ThemeToggle();
+//        themeToggle.setClassName("theme-toggle");
+//        header.add(themeToggle);
+    }
+
+    @Subscribe
+    protected void onBeforeShow(final BeforeShowEvent event) {
+        // set variables in user session only if they have not been previously set in another browser tab
+
+        var sessionBfyLimit = sessionData.getAttribute("bfyLimitYear");
+        if (sessionBfyLimit == null) {
+            sessionData.setAttribute("bfyLimitYear", appropriationService.getLimitBfy());
+        }
+
+        var sessionEntryBfy = (Appropriation) sessionData.getAttribute("bfyEntry");
+        if (sessionEntryBfy == null) {
+            bfyEntry.setValue(appropriationService.getCurrentOrLatestOpenBudgetFiscalYear());
+        } else {
+            bfyEntry.setValue(sessionEntryBfy);
+        }
+
+        var sessionBfySearch = (Set<Appropriation>) sessionData.getAttribute("bfySearch");
+        if (sessionBfySearch != null) {
+            bfySearch.setValue(sessionBfySearch);
+        }
     }
 
     protected void initApplicationTitle() {
@@ -80,8 +107,8 @@ public class MainView extends StandardMainView {
         Image image = uiComponents.create(Image.class);
         image.setSrc("icons/icon.png");
 
-        image.setWidth("1.5em");
-        image.setHeight("1.5em");
+        image.setWidth("3em");
+        image.setHeight("3em");
         return image;
     }
 
@@ -103,25 +130,54 @@ public class MainView extends StandardMainView {
     }
 
     @Subscribe("bfyEntry")
-    public void onBfyEntryComponentValueChange(final AbstractField.ComponentValueChangeEvent event) {
-        if (event.getValue() == null) {
-            bfyEntry.setValue(appropriationService.getCurrentBudgetFiscalYear());
+    protected void onBfyEntryComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Appropriation>, Appropriation> event) {
+        var newBfyEntry = event.getValue();
+        var sessionBfyEntry = (Appropriation) sessionData.getAttribute("bfyEntry");
+
+        if (newBfyEntry == null) {
+            if (sessionBfyEntry == null) {
+                bfyEntry.setValue(appropriationService.getCurrentOrLatestOpenBudgetFiscalYear());
+                sessionData.setAttribute("bfyEntry", bfyEntry.getValue());
+                uiEventPublisher.publishEvent(new FiscalYearChangeEvent(this, bfyEntry.getValue().getBudgetFiscalYear()));
+            } else {
+                bfyEntry.setValue(sessionBfyEntry);
+            }
+        } else {
+            sessionData.setAttribute("bfyEntry", newBfyEntry);
+            uiEventPublisher.publishEvent(new FiscalYearChangeEvent(this, bfyEntry.getValue().getBudgetFiscalYear()));
         }
-        sessionData.setAttribute("bfyEntry", bfyEntry.getValue());
-        // ToDo: check for null before the following statement to avoid exception on bfyEntry.getValue()
-        uiEventPublisher.publishEvent(new FiscalYearChangeEvent(this, bfyEntry.getValue().getBudgetFiscalYear()));
     }
 
     @Subscribe("bfySearch")
     public void onBfySearchComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixMultiSelectComboBoxPicker<Appropriation>, Set<?>> event) {
-        sessionData.setAttribute("bfySearch", bfySearch.getValue());
-        uiEventPublisher.publishEvent(new FiscalYearChangeEvent(this, "searchYears"));
+        var sessionBfySearch = (Set<Appropriation>) sessionData.getAttribute("bfySearch");
+        if (!bfySearch.getValue().equals(sessionBfySearch)) {
+            sessionData.setAttribute("bfySearch", bfySearch.getValue());
+            uiEventPublisher.publishEvent(new FiscalYearChangeEvent(this, "searchYears"));
+        }
+    }
+
+    // added 11/12/2024 to keep user's multiple browser tabs in sync
+    @Async
+    @EventListener
+    public void handleAsyncEvent(FiscalYearChangeEvent event) {
+        var sessionEntryBfy = (Appropriation) sessionData.getAttribute("bfyEntry");
+        if (!bfyEntry.getValue().equals(sessionEntryBfy)) {
+            bfyEntry.setValue(sessionEntryBfy);
+        }
+        var sessionBfySearch = (Set<Appropriation>) sessionData.getAttribute("bfySearch");
+        if (!bfySearch.getValue().equals(sessionBfySearch)) {
+            bfySearch.setValue(sessionBfySearch);
+        }
     }
 
     @Async
     @EventListener
     public void handleAsyncEvent(AppropriationClosedEvent event) {
         bfyEntryDl.load();
+        if (!bfyEntryDc.containsItem(bfyEntry.getValue())) {
+            bfyEntry.setValue(appropriationService.getCurrentOrLatestOpenBudgetFiscalYear());
+        }
     }
 
     // Doug added everything below to create landing page
