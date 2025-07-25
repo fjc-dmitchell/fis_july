@@ -23,7 +23,7 @@ import static java.util.Objects.requireNonNullElse;
 @Table(name = "FIS_OBLIGATION", indexes = {
         @Index(name = "IDX_FIS_OBLIGATION_ACTIVITY", columnList = "ACTIVITY_ID"),
         @Index(name = "IDX_FIS_OBLIGATION_OBJECT_CLASS", columnList = "OBJECT_CLASS_ID"),
-        @Index(name = "IDX_FIS_OBLIGATION_RESPONSIBLE_DIVISION", columnList = "RESPONSIBLE_DIVISION_ID"),
+        @Index(name = "IDX_FIS_OBLIGATION_COST_ORG", columnList = "COST_ORG_ID"),
         @Index(name = "IDX_FIS_OBLIGATION", columnList = "ACTIVITY_ID, STATUS"),
         @Index(name = "IDX_FIS_OBLIGATION_ACTIVITY_OBJCLASS", columnList = "ACTIVITY_ID, OBJECT_CLASS_ID")
 }, uniqueConstraints = {
@@ -102,11 +102,6 @@ public class Obligation {
     @Temporal(TemporalType.DATE)
     private Date travelEndDate;
 
-    @OnDeleteInverse(DeletePolicy.DENY)
-    @JoinColumn(name = "RESPONSIBLE_DIVISION_ID")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Division responsibleDivision;
-
     @Column(name = "RECONCILED")
     private Boolean reconciled = false;
 
@@ -116,8 +111,15 @@ public class Obligation {
     @Column(name = "UPDATED")
     private Boolean updated = false;
 
+    @Comment("legacy field for certain Foundation obligations from the 1990s")
     @Column(name = "BUDGET_ORG", length = 7)
     private String budgetOrg;
+
+    @Comment("formerly responsible division")
+    @OnDeleteInverse(DeletePolicy.DENY)
+    @JoinColumn(name = "COST_ORG_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Division costOrg;
 
     @Column(name = "MEMO")
     @Lob
@@ -156,6 +158,14 @@ public class Obligation {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    public Division getCostOrg() {
+        return costOrg;
+    }
+
+    public void setCostOrg(Division costOrg) {
+        this.costOrg = costOrg;
+    }
 
     public void setDocumentType(DocumentType documentType) {
         this.documentType = documentType == null ? null : documentType.getId();
@@ -275,14 +285,6 @@ public class Obligation {
 
     public void setReconciled(Boolean reconciled) {
         this.reconciled = reconciled;
-    }
-
-    public Division getResponsibleDivision() {
-        return responsibleDivision;
-    }
-
-    public void setResponsibleDivision(Division responsibleDivision) {
-        this.responsibleDivision = responsibleDivision;
     }
 
     public Date getTravelEndDate() {
