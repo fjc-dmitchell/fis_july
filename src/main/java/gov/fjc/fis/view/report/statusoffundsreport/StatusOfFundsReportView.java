@@ -89,16 +89,17 @@ public class StatusOfFundsReportView extends StandardView {
 
         var reportData = statusOfFundsReportService.generateReportData(appropriation, scale);
 
+        var templateCode = appropriationService.isOneBigBeautifulBillAct(appropriation) ? "obbba" : "default";
         var reportCode = reportOutputType.equals(ReportOutputType.PDF) ? "status-of-funds-pdf" : "status-of-funds-excel";
         var fluentUiReportRunner = uiReportRunner.byReportCode(reportCode);
 
         fluentUiReportRunner.addParam("reportData", reportData)
+                .withTemplateCode(templateCode)
                 .withOutputType(reportOutputType)
                 .withOutputNamePattern(reportData.getFileName())
                 .withParametersDialogShowMode(ParametersDialogShowMode.NO)
                 .runAndShow();
 
         closeWithDefaultAction();
-
     }
 }

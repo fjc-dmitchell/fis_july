@@ -28,7 +28,7 @@
                         <responsiveStep minWidth="0" columns="2" labelsPosition="ASIDE"/>
                     </responsiveSteps>
                     <formItem>
-                        <datePicker id="fcnDateField" property="fcnDate"/>
+                        <datePicker id="fcnDateField" property="fcnDate" datatype="date"/>
                     </formItem>
                     <formItem>
                         <textField id="amountField" property="amount"/>
