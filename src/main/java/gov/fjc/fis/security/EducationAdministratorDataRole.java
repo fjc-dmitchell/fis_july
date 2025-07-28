@@ -1,6 +1,7 @@
 package gov.fjc.fis.security;
 
 import gov.fjc.fis.entity.*;
+import io.jmix.flowuidata.entity.UserSettingsItem;
 import io.jmix.security.role.annotation.JpqlRowLevelPolicy;
 import io.jmix.security.role.annotation.RowLevelRole;
 
@@ -60,4 +61,7 @@ public interface EducationAdministratorDataRole extends AppropriationYearsDataRo
             join = "{E}.obligation.activity.division d",
             where = "d.divisionCode in ('2','6')")
     void fundControlNotice();
+
+    @JpqlRowLevelPolicy(entityClass = UserSettingsItem.class, where = "{E}.createdBy = :current_user_username")
+    void userSettingsItem();
 }
