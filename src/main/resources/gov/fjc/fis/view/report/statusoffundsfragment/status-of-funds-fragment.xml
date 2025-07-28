@@ -14,7 +14,7 @@
             <vbox padding="false">
                 <details id="oneYearDetails" summaryText="One Year Appropriation" opened="true">
                     <dataGrid id="categoryDtoesDataGrid1" dataContainer="categorySofDc"
-                              aggregatable="true" selectionMode="NONE"
+                              aggregatable="true" selectionMode="SINGLE"
                               themeNames="no-row-borders column-borders compact row-stripes"
                               allRowsVisible="true" width="950px">
                         <actions/>
@@ -69,7 +69,7 @@
                 </details>
                 <details id="twoYearDetails" summaryText="Two Year Appropriation" opened="true">
                     <dataGrid id="categoryDtoesDataGrid2" dataContainer="categorySof2Dc"
-                              aggregatable="true" selectionMode="NONE"
+                              aggregatable="true" selectionMode="SINGLE"
                               themeNames="no-row-borders column-borders compact row-stripes"
                               allRowsVisible="true" width="950px">
                         <actions/>

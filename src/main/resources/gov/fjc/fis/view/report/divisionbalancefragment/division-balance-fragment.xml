@@ -12,7 +12,7 @@
         <vbox id="root">
             <details id="oneYearDetails" opened="true">
                 <dataGrid id="oneYearDataGrid" dataContainer="divisionBalancesDc"
-                          aggregatable="true" selectionMode="NONE"
+                          aggregatable="true" selectionMode="SINGLE"
                           themeNames="no-row-borders column-borders compact row-stripes"
                           allRowsVisible="true" width="955px">
                     <columns>
@@ -68,7 +68,7 @@
             </details>
             <details id="twoYearDetails" opened="true">
                 <dataGrid id="twoYearDataGrid" dataContainer="divisionBalances2Dc"
-                          aggregatable="true" selectionMode="NONE"
+                          aggregatable="true" selectionMode="SINGLE"
                           themeNames="no-row-borders column-borders compact row-stripes"
                           allRowsVisible="true" width="955px">
                     <columns>
