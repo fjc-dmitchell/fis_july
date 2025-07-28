@@ -50,6 +50,7 @@
                                 <button id="showDiv6Btn" action="showDivisionAction" text="Show JED"/>
                                 <button id="showDiv7Btn" action="showDivisionAction" text="Show MPO"/>
                                 <button id="showDiv8Btn" action="showDivisionAction" text="Show JITF"/>
+                                <button id="showDiv9Btn" action="showDivisionAction" text="Show OBBBA"/>
                             </hbox>
                         </hbox>
                     </tab>

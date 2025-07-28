@@ -111,6 +111,8 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
     @ViewComponent
     private JmixButton showDiv8Btn;
     @ViewComponent
+    private JmixButton showDiv9Btn;
+    @ViewComponent
     private JmixButton showGroupBtn;
     @ViewComponent
     private JmixButton showSubsetBtn;
@@ -395,6 +397,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
         showDiv6Btn.setVisible(divisionCodes.contains("6"));
         showDiv7Btn.setVisible(divisionCodes.contains("7"));
         showDiv8Btn.setVisible(divisionCodes.contains("8"));
+        showDiv9Btn.setVisible(divisionCodes.contains("9"));
         return divisionList;
     }
 
@@ -486,6 +489,7 @@ public class CustomSearchFragment extends Fragment<VerticalLayout> {
                 case "showDiv6Btn" -> "6";
                 case "showDiv7Btn" -> "7";
                 case "showDiv8Btn" -> "8";
+                case "showDiv9Btn" -> "9";
                 default -> null;
             };
 
