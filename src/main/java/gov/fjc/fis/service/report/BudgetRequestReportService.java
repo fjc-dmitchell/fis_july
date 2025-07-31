@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component("fis_BudgetRequestReportService")
 public class BudgetRequestReportService {
@@ -53,6 +50,9 @@ public class BudgetRequestReportService {
         var hillPLan = getHillPlanCategoryDtos(categories);
         var divisions = getDivisionDtos(appropriation, obligations, projections, reimbursements);
 
+        var discretionaryCategories = getDiscretionaryDtos(appropriation, obligations, projections, reimbursements);
+        var mandatoryCategories = getMandatoryDtos(appropriation, obligations, projections, reimbursements);
+
         reportData.setDivisions(divisions);
         reportData.setActivities(activities);
         reportData.setObligations(obligations);
@@ -61,6 +61,14 @@ public class BudgetRequestReportService {
         reportData.setObjectClasses(objectClasses);
         reportData.setCategories(categories);
         reportData.setHillPlanCategories(hillPLan);
+        reportData.setDiscretionaryCategories(discretionaryCategories);
+        reportData.setMandatoryCategories(mandatoryCategories);
+
+        reportData.setUncommittedCurrentOneYearBalance(BigDecimal.ZERO);
+        reportData.setUncommittedPriorTwoYearBalance(BigDecimal.ZERO);
+        reportData.setUncommittedCurrentTwoYearBalance(BigDecimal.ZERO);
+
+//        var spendingAuthority = appropriationService.getSpendingAuthority(appropriation);
 
         return reportData;
     }
@@ -236,6 +244,125 @@ public class BudgetRequestReportService {
         return hillPlanDtos;
     }
 
+    /**
+     * 7/31/25 - last minute hack to separate discretionary Categories due to signing of OBBBA
+     * hardcodes division code "9" to represent obbba fund.
+     * @param appropriation
+     * @param obligationDtos
+     * @param activityProjectionDtos
+     * @param activityReimbursementDtos
+     * @return
+     */
+    public List<CategoryDto> getDiscretionaryDtos(Appropriation appropriation, List<ObligationDto> obligationDtos, List<ActivityProjectionDto> activityProjectionDtos, List<ActivityReimbursementDto> activityReimbursementDtos) {
+        Set<String> showCategories = Set.of("11", "12", "13", "21", "22", "23", "24", "25", "26", "31", "90", "91");
+
+        Appropriation priorBfy = appropriationService.getPreviousFiscalYear(appropriation);
+
+        List<Appropriation> fiscalYears = new ArrayList<>();
+        fiscalYears.add(appropriation);
+
+        List<Category> categories = categoryService.getCategorySearchList(fiscalYears);
+        List<CategoryDto> categoryDtoDtos = new ArrayList<>();
+
+        CategoryDto uncategorized = dataManager.create(CategoryDto.class);
+        uncategorized.setMasterObjectClass("00");
+        uncategorized.setTitle("Uncategorized");
+
+        CategoryDto undefinedDisbursments = dataManager.create(CategoryDto.class);
+        undefinedDisbursments.setMasterObjectClass("91");
+        undefinedDisbursments.setTitle("Undefined Disbursements");
+
+        CategoryDto dto;
+
+        for (Category cat : categories) {
+
+            var moc = cat.getMasterObjectClass();
+
+            if (showCategories.contains(moc)) {
+                // consolidate 90 and 91 into 9100
+                if (moc.equals("90") || moc.equals("91")) {
+                    dto = undefinedDisbursments;
+                } else {
+                    dto = dataManager.create(CategoryDto.class);
+                    dto.setId(cat.getId());
+                    dto.setMasterObjectClass(moc);
+                    dto.setTitle(cat.getTitle());
+                    categoryDtoDtos.add(dto);
+                }
+            } else {
+                dto = uncategorized;
+            }
+
+            var obligations = obligationService.getObligationDtosForMasterObjectClass(obligationDtos, moc);
+            dto.addCurrentYearObligated(obligations.stream().filter(n -> !Objects.equals(n.getDivisionCode(), "9")).map(ObligationDto::getCurrentOneYearObligated).reduce(BigDecimal.ZERO, BigDecimal::add));
+            dto.addCurrentYearDisbursed(obligations.stream().filter(n -> !Objects.equals(n.getDivisionCode(), "9")).map(ObligationDto::getCurrentOneYearDisbursed).reduce(BigDecimal.ZERO, BigDecimal::add));
+
+            var projections = activityProjectionService.getProjectionDtosForMasterObjectClass(activityProjectionDtos, moc);
+            dto.addCurrentYearProjected(projections.stream().filter(n -> !Objects.equals(n.getDivisionCode(), "9")).map(ActivityProjectionDto::getCurrentOneYearAmount).reduce(BigDecimal.ZERO, BigDecimal::add));
+
+            var reimbursements = activityReimbursementService.getReimbursementDtosForMasterObjectClass(activityReimbursementDtos, moc);
+            dto.addCurrentYearReimbursed(reimbursements.stream().filter(n -> !Objects.equals(n.getDivisionCode(), "9")).map(ActivityReimbursementDto::getCurrentOneYearAmount).reduce(BigDecimal.ZERO, BigDecimal::add));
+        }
+        Collections.addAll(categoryDtoDtos, undefinedDisbursments, uncategorized);
+
+        return categoryDtoDtos;
+    }
+
+    public List<CategoryDto> getMandatoryDtos(Appropriation appropriation, List<ObligationDto> obligationDtos, List<ActivityProjectionDto> activityProjectionDtos, List<ActivityReimbursementDto> activityReimbursementDtos) {
+        Set<String> showCategories = Set.of("11", "12", "13", "21", "22", "23", "24", "25", "26", "31", "90", "91");
+
+        Appropriation priorBfy = appropriationService.getPreviousFiscalYear(appropriation);
+
+        List<Appropriation> fiscalYears = new ArrayList<>();
+        fiscalYears.add(appropriation);
+
+        List<Category> categories = categoryService.getCategorySearchList(fiscalYears);
+        List<CategoryDto> categoryDtoDtos = new ArrayList<>();
+
+        CategoryDto uncategorized = dataManager.create(CategoryDto.class);
+        uncategorized.setMasterObjectClass("00");
+        uncategorized.setTitle("Uncategorized");
+
+        CategoryDto undefinedDisbursments = dataManager.create(CategoryDto.class);
+        undefinedDisbursments.setMasterObjectClass("91");
+        undefinedDisbursments.setTitle("Undefined Disbursements");
+
+        CategoryDto dto;
+
+        for (Category cat : categories) {
+
+            var moc = cat.getMasterObjectClass();
+
+            if (showCategories.contains(moc)) {
+                // consolidate 90 and 91 into 9100
+                if (moc.equals("90") || moc.equals("91")) {
+                    dto = undefinedDisbursments;
+                } else {
+                    dto = dataManager.create(CategoryDto.class);
+                    dto.setId(cat.getId());
+                    dto.setMasterObjectClass(moc);
+                    dto.setTitle(cat.getTitle());
+                    categoryDtoDtos.add(dto);
+                }
+            } else {
+                dto = uncategorized;
+            }
+
+            var obligations = obligationService.getObligationDtosForMasterObjectClass(obligationDtos, moc);
+            dto.addCurrentYearObligated(obligations.stream().filter(n -> n.getDivisionCode().equals( "9")).map(ObligationDto::getCurrentOneYearObligated).reduce(BigDecimal.ZERO, BigDecimal::add));
+            dto.addCurrentYearDisbursed(obligations.stream().filter(n -> n.getDivisionCode().equals( "9")).map(ObligationDto::getCurrentOneYearDisbursed).reduce(BigDecimal.ZERO, BigDecimal::add));
+
+            var projections = activityProjectionService.getProjectionDtosForMasterObjectClass(activityProjectionDtos, moc);
+            dto.addCurrentYearProjected(projections.stream().filter(n -> n.getDivisionCode().equals( "9")).map(ActivityProjectionDto::getCurrentOneYearAmount).reduce(BigDecimal.ZERO, BigDecimal::add));
+
+            var reimbursements = activityReimbursementService.getReimbursementDtosForMasterObjectClass(activityReimbursementDtos, moc);
+            dto.addCurrentYearReimbursed(reimbursements.stream().filter(n -> n.getDivisionCode().equals( "9")).map(ActivityReimbursementDto::getCurrentOneYearAmount).reduce(BigDecimal.ZERO, BigDecimal::add));
+        }
+        Collections.addAll(categoryDtoDtos, undefinedDisbursments, uncategorized);
+
+        return categoryDtoDtos;
+    }
+
     public List<DivisionDto> getDivisionDtos(Appropriation appropriation, List<ObligationDto> obligationDtos, List<ActivityProjectionDto> activityProjectionDtos, List<ActivityReimbursementDto> activityReimbursementDtos) {
         List<Appropriation> appropriations = new ArrayList<>();
         Appropriation priorBfy = appropriationService.getPreviousFiscalYear(appropriation);
@@ -252,6 +379,9 @@ public class BudgetRequestReportService {
         DivisionDto programSupport = dataManager.create(DivisionDto.class);
         programSupport.setTitle("Program Support");
 
+        DivisionDto mandatorySpending = dataManager.create(DivisionDto.class);
+        mandatorySpending.setTitle("Mandatory Spending");
+
         DivisionDto dto;
 
         for (Division div : divisions) {
@@ -259,6 +389,7 @@ public class BudgetRequestReportService {
             dto = switch (divCode) {
                 case "2", "3", "5" -> educationAndTraining;
                 case "4" -> research;
+                case "9" -> mandatorySpending;
                 default -> programSupport;
             };
 
@@ -277,7 +408,7 @@ public class BudgetRequestReportService {
             dto.addCurrentOneYearObligated(obligations.stream().map(ObligationDto::getCurrentOneYearAmount).reduce(BigDecimal.ZERO, BigDecimal::add));
             dto.addCurrentTwoYearObligated(obligations.stream().map(ObligationDto::getCurrentTwoYearAmount).reduce(BigDecimal.ZERO, BigDecimal::add));
         }
-        Collections.addAll(divisionDtos, educationAndTraining, research, programSupport);
+        Collections.addAll(divisionDtos, educationAndTraining, research, programSupport, mandatorySpending);
 
         return divisionDtos;
     }
