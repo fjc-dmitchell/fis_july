@@ -59,6 +59,8 @@ public class ActivityDto {
 
     private Integer fundingType;
 
+    private String memo;
+
     @Temporal(TemporalType.DATE)
     private Date startDate;
 
@@ -74,13 +76,17 @@ public class ActivityDto {
     private BigDecimal initialProjection;
 
     private BigDecimal totalProjected = BigDecimal.ZERO;
+
     private BigDecimal travelProjected = BigDecimal.ZERO;
+
     private BigDecimal nonTravelProjected = BigDecimal.ZERO;
 
     private BigDecimal totalReimbursed = BigDecimal.ZERO;
 
     private BigDecimal totalObligated = BigDecimal.ZERO;
+
     private BigDecimal travelObligated = BigDecimal.ZERO;
+
     private BigDecimal nonTravelObligated = BigDecimal.ZERO;
 
     private BigDecimal totalDisbursed = BigDecimal.ZERO;
@@ -112,6 +118,14 @@ public class ActivityDto {
     private BigDecimal currentTwoYearObligations = BigDecimal.ZERO;
 
     private BigDecimal currentTwoYearDisbursements = BigDecimal.ZERO;
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
 
     public BigDecimal getInitialProjection() {
         return initialProjection;
@@ -517,6 +531,10 @@ public class ActivityDto {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Boolean hasObligations() {
+        return  obligationDtos != null && !obligationDtos.isEmpty();
     }
 
     public String getBranchTitleAndCode() {

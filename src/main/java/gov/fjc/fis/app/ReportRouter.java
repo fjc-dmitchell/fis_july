@@ -2,6 +2,7 @@ package gov.fjc.fis.app;
 
 import com.vaadin.flow.component.Unit;
 import gov.fjc.fis.view.report.budgetrequestreport.BudgetRequestReportView;
+import gov.fjc.fis.view.report.divisionobligationsreport.DivisionObligationsReportView;
 import gov.fjc.fis.view.report.educationprogramsreport.EducationProgramsReportView;
 import gov.fjc.fis.view.report.statusoffundsreport.StatusOfFundsReportView;
 import io.jmix.flowui.DialogWindows;
@@ -24,5 +25,9 @@ public class ReportRouter {
 
     public void openBudgetRequestReport() {
         dialogWindows.view(UiComponentUtils.getCurrentView(), BudgetRequestReportView.class).open().setWidth(20, Unit.EM);
+    }
+
+    public void openDivisionObligationsReport() {
+        dialogWindows.view(UiComponentUtils.getCurrentView(), DivisionObligationsReportView.class).open();
     }
 }

@@ -69,4 +69,13 @@
             <property name="category" fetchPlan="_base"/>
         </property>
     </fetchPlan>
+    <fetchPlan entity="fis_Activity" name="division-obligations-report-fetch-plan" extends="_base">
+        <property name="projections" fetchPlan="_base"/>
+        <property name="obligations" fetchPlan="_base">
+            <property name="invoices" fetchPlan="_base"/>
+            <property name="objectClass" fetchPlan="_base">
+                <property name="category" fetchPlan="_base"/>
+            </property>
+        </property>
+    </fetchPlan>
 </fetchPlans>
