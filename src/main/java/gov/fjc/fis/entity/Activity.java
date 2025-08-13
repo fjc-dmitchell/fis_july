@@ -29,7 +29,8 @@ import static gov.fjc.fis.FisUtilities.toUpperNullAllowed;
         @Index(name = "IDX_FIS_ACTIVITY_BRANCH", columnList = "BRANCH_ID"),
         @Index(name = "IDX_FIS_ACTIVITY_GROUP", columnList = "GROUP_ID"),
         @Index(name = "IDX_FIS_ACTIVITY_DIVISION_FUND_ENDDATE", columnList = "DIVISION_ID, FUND_ID, END_DATE"),
-        @Index(name = "IDX_FIS_ACTIVITY_FUND", columnList = "FUND_ID")
+        @Index(name = "IDX_FIS_ACTIVITY_FUND", columnList = "FUND_ID"),
+        @Index(name = "IDX_FIS_ACTIVITY_COST_ORG", columnList = "COST_ORG_ID")
 }, uniqueConstraints = {
         @UniqueConstraint(name = "IDX_FIS_ACTIVITY_UNQ", columnNames = {"DIVISION_ID", "ACTIVITY_NUMBER"})
 })
@@ -61,6 +62,11 @@ public class Activity {
     @JoinColumn(name = "GROUP_ID")
     @ManyToOne(fetch = FetchType.LAZY)
     private Group group;
+
+    @OnDeleteInverse(DeletePolicy.DENY)
+    @JoinColumn(name = "COST_ORG_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Division costOrg;
 
     @Pattern(message = "Activity number must contain 4 digits", regexp = "^[0-9]{4}$")
     @Column(name = "ACTIVITY_NUMBER", nullable = false, length = 4)
@@ -185,6 +191,20 @@ public class Activity {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    @DependsOnProperties({"costOrg"})
+    @JmixProperty
+    public String getBudgetOrgOfCostOrg() {
+        return costOrg == null ? null : costOrg.getBudgetOrg();
+    }
+
+    public Division getCostOrg() {
+        return costOrg;
+    }
+
+    public void setCostOrg(Division costOrg) {
+        this.costOrg = costOrg;
+    }
 
     public List<FileAttachment> getAttachments() {
         return attachments;
