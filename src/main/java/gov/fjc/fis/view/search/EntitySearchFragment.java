@@ -1,7 +1,6 @@
 package gov.fjc.fis.view.search;
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.QueryParameters;
 import gov.fjc.fis.entity.*;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -11,18 +10,11 @@ import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.view.Subscribe;
-import io.jmix.flowui.view.Target;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewComponent;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.requireNonNullElse;
 
 @FragmentDescriptor("entity-search-fragment.xml")
 public abstract class EntitySearchFragment extends Fragment<VerticalLayout> {
@@ -32,8 +24,8 @@ public abstract class EntitySearchFragment extends Fragment<VerticalLayout> {
 //    private final List<Condition> propertyFilterConditions = new ArrayList<>();
     protected final List<PropertyFilter<?>> propertyFilters = new ArrayList<>();
 
-    @Subscribe(target = Target.HOST_CONTROLLER)
-    protected void onHostReady(final View.ReadyEvent event) {
+    @Subscribe
+    protected void onReady(final ReadyEvent event) {
         for (var component : UiComponentUtils.getComponents(root)) {
             if (component instanceof PropertyFilter<?> propertyFilter) {
 //                addFilterCondition(propertyFilter);
