@@ -34,6 +34,32 @@ public class DivisionService {
                 .list();
     }
 
+    public List<Division> getCostOrgDivisions(Appropriation appropriation) {
+        var oneYearFund = fundService.getAppropriationOneYearFund();
+        return dataManager.load(Division.class)
+                .query("SELECT d FROM fis_Division d"
+                        + " WHERE d.appropriation=:appropriation"
+                        + " AND d.fund=:oneYearFund")
+                .parameter("appropriation", appropriation)
+                .parameter("oneYearFund", oneYearFund)
+                .list();
+    }
+
+    public Division getMandatoryDivision(Appropriation appropriation) {
+        var obbbaBudgetOrg = "JXXMAPP";
+        var divisions = dataManager.load(Division.class)
+                .query("SELECT d FROM fis_Division d"
+                        + " WHERE d.appropriation=:appropriation AND d.budgetOrg=:budgetOrg")
+                .parameter("appropriation", appropriation)
+                .parameter("budgetOrg", obbbaBudgetOrg)
+                .list();
+        if (divisions.isEmpty()) {
+            return null;
+        } else {
+            return divisions.get(0);
+        }
+    }
+
     public List<Division> getAppropriationDivisions(Appropriation appropriation) {
         List<Fund> funds = new ArrayList<>();
         funds.add(fundService.getAppropriationOneYearFund());
@@ -256,6 +282,7 @@ public class DivisionService {
 
     /**
      * this is a bad idea but sometimes necessary. used for Nancy's ED program analysis
+     *
      * @return
      */
     public String getEducationDivisionCode() {

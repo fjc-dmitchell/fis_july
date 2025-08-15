@@ -119,7 +119,8 @@ public class CategoryService {
                     dataManager.load(Category.class)
                             .query("SELECT c FROM fis_Category c"
                                     + " WHERE c.appropriation = :year"
-                                    + " AND c.masterObjectClass NOT IN :categoryCodes")
+                                    + " AND c.masterObjectClass NOT IN :categoryCodes"
+                                    + " ORDER BY c.masterObjectClass")
                             .parameter("year", year)
                             .parameter("categoryCodes", categoryCodes)
                             .list();

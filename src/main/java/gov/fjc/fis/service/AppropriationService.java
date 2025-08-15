@@ -1,18 +1,17 @@
 package gov.fjc.fis.service;
 
-import gov.fjc.fis.entity.Appropriation;
+import gov.fjc.fis.entity.*;
 import io.jmix.core.DataManager;
+import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.session.SessionData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Year;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component("fis_AppropriationService")
 public class AppropriationService {
@@ -38,6 +37,18 @@ public class AppropriationService {
                         + " ORDER BY a.budgetFiscalYear DESC")
                 .parameter("budgetFiscalYears", budgetFiscalYears)
                 .list();
+    }
+
+    /**
+     * determine if appropriation is affected by One Big Beautiful Bill Act
+     * enacted by 119th Congress and signed into law on 7/4/2025
+     *
+     * @param appropriation
+     * @return boolean
+     */
+    public Boolean isOneBigBeautifulBillAct(Appropriation appropriation) {
+        List<String> obbbaYears = Arrays.asList("2025", "2026", "2027", "2028");
+        return obbbaYears.contains(appropriation.getBudgetFiscalYear());
     }
 
     public Appropriation getBfyEntryAppropriation(SessionData sessionData) {
@@ -248,6 +259,36 @@ public class AppropriationService {
         return oldAppropriations.contains(appropriation);
     }
 
+    /**
+     * getSpendingAuthority
+     * @param appropriation
+     * @return
+     */
+    public KeyValueEntity getSpendingAuthority(Appropriation appropriation) {
+        return dataManager.loadValues(
+                "SELECT app.oneYearAmount, app.twoYearAmount,"
+                +" COALESCE(SUM(adj.oneYearAmount),0), COALESCE(SUM(adj.twoYearAmount),0),"
+                +" app.oneYearAmount+COALESCE(SUM(adj.oneYearAmount),0), app.twoYearAmount+COALESCE(SUM(adj.twoYearAmount),0)"
+                +" FROM fis_Appropriation app"
+                +" LEFT JOIN fis_AppropriationAdjustment adj ON adj.appropriation=app"
+                +" WHERE app=:appropriation"
+                +" GROUP BY app.oneYearAmount, app.twoYearAmount")
+                .parameter("appropriation", appropriation)
+                .properties("one_year_appropriation", "two_year_appropriation", "one_year_adjust", "two_year_adjust", "one_year_total", "two_year_total")
+                .optional().orElse(createDefaultSpendingAuthority());
+    }
+    private KeyValueEntity createDefaultSpendingAuthority() {
+        KeyValueEntity defaultResult = dataManager.create(KeyValueEntity.class);
+        defaultResult.setValue("one_year_appropriation", BigDecimal.ZERO);
+        defaultResult.setValue("two_year_appropriation", BigDecimal.ZERO);
+        defaultResult.setValue("one_year_adjust", BigDecimal.ZERO);
+        defaultResult.setValue("two_year_adjust", BigDecimal.ZERO);
+        defaultResult.setValue("one_year_total", BigDecimal.ZERO);
+        defaultResult.setValue("two_year_total", BigDecimal.ZERO);
+        return defaultResult;
+    }
+
+
 //    public BigDecimal getSpendingAuthority(Appropriation appropriation, AppropriationType appropriationType) {
 //        List<KeyValueEntity> keyValueEntity = dataManager.loadValues(
 //                        "SELECT a.oneYearAmount, a.twoYearAmount," +
@@ -278,4 +319,115 @@ public class AppropriationService {
 //        return spendingAuthority;
 //    }
 
+    //        return dataManager.loadValue(
+//                "select sum(o.amount) from sample_Order o where o.date >= :date",
+//                BigDecimal.class
+//            )
+//            .store("main")
+//            .parameter("date", toDate)
+//            .one();
+
+    public Boolean isAppropriationOpen(Category entity) {
+        return dataManager.loadValue(
+                        "SELECT app.status FROM fis_Category e"
+                                + " INNER JOIN fis_Appropriation app ON app=e.appropriation"
+                                + " WHERE e = :entity", Boolean.class)
+                .parameter("entity", entity)
+                .one();
+    }
+
+    public Boolean isAppropriationOpen(ObjectClass entity) {
+        return dataManager.loadValue(
+                        "SELECT app.status FROM fis_ObjectClass e"
+                                + " INNER JOIN fis_Category cat ON cat=e.category"
+                                + " INNER JOIN fis_Appropriation app ON app=cat.appropriation"
+                                + " WHERE e = :entity", Boolean.class)
+                .parameter("entity", entity)
+                .one();
+    }
+
+    public Boolean isAppropriationOpen(JitfTransfer entity) {
+        return dataManager.loadValue(
+                        "SELECT app.status FROM fis_JitfTransfer e"
+                                + " INNER JOIN fis_ObjectClass obj ON obj=e.objectClass"
+                                + " INNER JOIN fis_Category cat ON cat=obj.category"
+                                + " INNER JOIN fis_Appropriation app ON app=cat.appropriation"
+                                + " WHERE e = :entity", Boolean.class)
+                .parameter("entity", entity)
+                .one();
+    }
+
+    public Boolean isAppropriationOpen(Division entity) {
+        return dataManager.loadValue(
+                        "SELECT app.status FROM fis_Division e"
+                                + " INNER JOIN fis_Appropriation app ON app=e.appropriation"
+                                + " WHERE e = :entity", Boolean.class)
+                .parameter("entity", entity)
+                .one();
+    }
+
+    public Boolean isAppropriationOpen(Branch entity) {
+        return dataManager.loadValue(
+                        "SELECT app.status FROM fis_Branch e"
+                                + " INNER JOIN fis_Division dv ON dv=e.division"
+                                + " INNER JOIN fis_Appropriation app ON app=dv.appropriation"
+                                + " WHERE e = :entity", Boolean.class)
+                .parameter("entity", entity)
+                .one();
+    }
+
+    public Boolean isAppropriationOpen(Group entity) {
+        return dataManager.loadValue(
+                        "SELECT app.status FROM fis_Group e"
+                                + " INNER JOIN fis_Division dv ON dv=e.division"
+                                + " INNER JOIN fis_Appropriation app ON app=dv.appropriation"
+                                + " WHERE e = :entity", Boolean.class)
+                .parameter("entity", entity)
+                .one();
+    }
+
+    public Boolean isAppropriationOpen(Activity entity) {
+        return dataManager.loadValue(
+                        "SELECT app.status FROM fis_Activity e"
+                                + " INNER JOIN fis_Division dv ON dv=e.division"
+                                + " INNER JOIN fis_Appropriation app ON app=dv.appropriation"
+                                + " WHERE e = :entity", Boolean.class)
+                .parameter("entity", entity)
+                .one();
+    }
+
+    public Boolean isAppropriationOpen(Obligation entity) {
+        return dataManager.loadValue(
+                        "SELECT app.status FROM fis_Obligation e"
+                                + " INNER JOIN fis_Activity act ON act=e.activity"
+                                + " INNER JOIN fis_Division dv ON dv=act.division"
+                                + " INNER JOIN fis_Appropriation app ON app=dv.appropriation"
+                                + " WHERE e = :entity", Boolean.class)
+                .parameter("entity", entity)
+                .one();
+    }
+
+    public Boolean isAppropriationOpen(Invoice entity) {
+        return dataManager.loadValue(
+                        "SELECT app.status FROM fis_Invoice e"
+                                + " INNER JOIN fis_Obligation obl ON obl=e.obligation"
+                                + " INNER JOIN fis_Activity act ON act=obl.activity"
+                                + " INNER JOIN fis_Division dv ON dv=act.division"
+                                + " INNER JOIN fis_Appropriation app ON app=dv.appropriation"
+                                + " WHERE e = :entity", Boolean.class)
+                .parameter("entity", entity)
+                .one();
+    }
+
+    public Boolean isAppropriationOpen(FundControlNotice entity) {
+        return dataManager.loadValue(
+                        "SELECT app.status FROM fis_FundControlNotice e"
+                                + " INNER JOIN fis_Obligation obl ON obl=e.obligation"
+                                + " INNER JOIN fis_Activity act ON act=obl.activity"
+                                + " INNER JOIN fis_Division dv ON dv=act.division"
+                                + " INNER JOIN fis_Appropriation app ON app=dv.appropriation"
+                                + " WHERE e = :entity", Boolean.class)
+                .parameter("entity", entity)
+                .one();
+    }
 }

@@ -99,6 +99,15 @@ public class CategoryDto {
 
     private BigDecimal twoYearDisbursed = BigDecimal.ZERO;
 
+    private BigDecimal discretionaryProjected = BigDecimal.ZERO;
+    private BigDecimal discretionaryReimbursed = BigDecimal.ZERO;
+    private BigDecimal discretionaryObligated = BigDecimal.ZERO;
+    private BigDecimal discretionaryDisbursed = BigDecimal.ZERO;
+    private BigDecimal mandatoryProjected = BigDecimal.ZERO;
+    private BigDecimal mandatoryReimbursed = BigDecimal.ZERO;
+    private BigDecimal mandatoryObligated = BigDecimal.ZERO;
+    private BigDecimal mandatoryDisbursed = BigDecimal.ZERO;
+
     public void configureCategoryDto(Category category) {
         if (category != null) {
             this.masterObjectClass = category.getMasterObjectClass();
@@ -668,8 +677,105 @@ public class CategoryDto {
         setTotalTwoYearBalance(totalTwoYearAllocations.subtract(totalTwoYearObligations).subtract(totalTwoYearProjections).add(totalTwoYearReimbursements));
     }
 
+    public void addDiscretionaryProjected(BigDecimal amount) {
+        discretionaryProjected = getTotalNullAllowed(discretionaryProjected, amount);
+    }
+
+    public void addDiscretionaryObligated(BigDecimal amount) {
+        discretionaryObligated = getTotalNullAllowed(discretionaryObligated, amount);
+    }
+
+    public void addDiscretionaryDisbursed(BigDecimal amount) {
+        discretionaryDisbursed = getTotalNullAllowed(discretionaryDisbursed, amount);
+    }
+
+    public void addDiscretionaryReimbursed(BigDecimal amount) {
+        discretionaryReimbursed = getTotalNullAllowed(discretionaryReimbursed, amount);
+    }
+
+    public void addMandatoryProjected(BigDecimal amount) {
+        mandatoryProjected = getTotalNullAllowed(mandatoryProjected, amount);
+    }
+
+    public void addMandatoryObligated(BigDecimal amount) {
+        mandatoryObligated = getTotalNullAllowed(mandatoryObligated, amount);
+    }
+
+    public void addMandatoryDisbursed(BigDecimal amount) {
+        mandatoryDisbursed = getTotalNullAllowed(mandatoryDisbursed, amount);
+    }
+
+    public void addMandatoryReimbursed(BigDecimal amount) {
+        mandatoryReimbursed = getTotalNullAllowed(mandatoryReimbursed, amount);
+    }
+
+    public BigDecimal getDiscretionaryProjected() {
+        return discretionaryProjected;
+    }
+
+    public void setDiscretionaryProjected(BigDecimal discretionaryProjected) {
+        this.discretionaryProjected = discretionaryProjected;
+    }
+
+    public BigDecimal getDiscretionaryReimbursed() {
+        return discretionaryReimbursed;
+    }
+
+    public void setDiscretionaryReimbursed(BigDecimal discretionaryReimbursed) {
+        this.discretionaryReimbursed = discretionaryReimbursed;
+    }
+
+    public BigDecimal getDiscretionaryObligated() {
+        return discretionaryObligated;
+    }
+
+    public void setDiscretionaryObligated(BigDecimal discretionaryObligated) {
+        this.discretionaryObligated = discretionaryObligated;
+    }
+
+    public BigDecimal getDiscretionaryDisbursed() {
+        return discretionaryDisbursed;
+    }
+
+    public void setDiscretionaryDisbursed(BigDecimal discretionaryDisbursed) {
+        this.discretionaryDisbursed = discretionaryDisbursed;
+    }
+
+    public BigDecimal getMandatoryProjected() {
+        return mandatoryProjected;
+    }
+
+    public void setMandatoryProjected(BigDecimal mandatoryProjected) {
+        this.mandatoryProjected = mandatoryProjected;
+    }
+
+    public BigDecimal getMandatoryReimbursed() {
+        return mandatoryReimbursed;
+    }
+
+    public void setMandatoryReimbursed(BigDecimal mandatoryReimbursed) {
+        this.mandatoryReimbursed = mandatoryReimbursed;
+    }
+
+    public BigDecimal getMandatoryObligated() {
+        return mandatoryObligated;
+    }
+
+    public void setMandatoryObligated(BigDecimal mandatoryObligated) {
+        this.mandatoryObligated = mandatoryObligated;
+    }
+
+    public BigDecimal getMandatoryDisbursed() {
+        return mandatoryDisbursed;
+    }
+
+    public void setMandatoryDisbursed(BigDecimal mandatoryDisbursed) {
+        this.mandatoryDisbursed = mandatoryDisbursed;
+    }
+
     /**
      * isTwoYearCategory determines whether any two year amounts are populated for the CategoryDto
+     *
      * @return true if the CategoryDto if any two year amount is non-zero
      */
     public Boolean isTwoYearCategory() {

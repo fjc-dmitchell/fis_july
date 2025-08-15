@@ -525,6 +525,14 @@ public class ObligationService {
                 .one();
     }
 
+    public BigDecimal sumObligations(List<Activity> activities) {
+        return dataManager.loadValue("SELECT coalesce(sum(obl.amount),0)"
+                        + " FROM fis_Obligation obl"
+                        + " WHERE obl.activity IN :activities", BigDecimal.class)
+                .parameter("activities", activities)
+                .one();
+    }
+
     /**
      * sum obligations for activity, either travel or non-travel
      * quick and dirty for Nancy (Mike) 6/25/2025

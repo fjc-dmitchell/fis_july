@@ -220,6 +220,22 @@ public class ActivityService {
                 .list();
     }
 
+    // 2025-08-04 - used to get two year activities taking place in current year, used to get carry balance
+    public List<Activity> getTwoYearActivitiesHeldInFiscalYear(Appropriation appropriation) {
+        var twoYearFund = fundService.getAppropriationTwoYearFund();
+        Date bfyEndDate = appropriationService.getLastDayOfAppropriationBfy(appropriation);
+        return dataManager.load(Activity.class)
+                .query("SELECT a FROM fis_Activity a"
+                        + " INNER JOIN fis_Division dv ON dv = a.division"
+                        + " WHERE dv.appropriation = :appropriation"
+                        + " AND a.fund = :twoYearFund"
+                        + " AND (a.endDate IS NULL OR a.endDate <= :bfyEndDate)")
+                .parameter("appropriation", appropriation)
+                .parameter("twoYearFund", twoYearFund)
+                .parameter("bfyEndDate", bfyEndDate)
+                .list();
+    }
+
     public List<Activity> fetchBiFiscalActivities(Appropriation currentYearAppropriation) {
         Appropriation priorYearAppropriation = appropriationService.getPreviousFiscalYear(currentYearAppropriation);
         Fund oneYearFund = fundService.getAppropriationOneYearFund();
@@ -448,9 +464,10 @@ public class ActivityService {
         Date bfyEndDate = appropriationService.getLastDayOfAppropriationBfy(currentYearAppropriation);
 
         return dataManager.loadValues(
-                        "SELECT act.id, fund.id, fund.fundCode, app.id, app.budgetFiscalYear, dv.id, dv.divisionCode,"
-                                + " act.activityNumber, act.title, act.startDate, act.endDate, act.city, act.state, bch.id,"
-                                + " bch.branchCode, bch.title, grp.id, grp.groupCode, grp.title, act.initialProjection,"
+                        "SELECT act.id, fund.id, fund.fundCode, app.id, app.budgetFiscalYear, dv.id,"
+                                + " dv.divisionCode, act.costOrg, act.activityNumber, act.title, act.startDate,"
+                                + " act.endDate, act.city, act.state, bch.id, bch.branchCode, bch.title, grp.id,"
+                                + " grp.groupCode, grp.title, act.initialProjection,"
                                 + " CASE WHEN dv.appropriation = :priorYear AND act.fund = :twoYearFund THEN :priorTwoYearFund"
                                 + "      WHEN dv.appropriation = :currentYear AND act.fund = :twoYearFund THEN :currentTwoYearFund"
                                 + "      ELSE :currentOneYearFund"
@@ -474,6 +491,55 @@ public class ActivityService {
                 .parameter("currentYear", currentYearAppropriation)
                 .parameter("priorYear", priorYearAppropriation)
                 .parameter("oneYearFund", oneYearFund)
+                .parameter("twoYearFund", twoYearFund)
+                .parameter("bfyStartDate", bfyStartDate)
+                .parameter("bfyEndDate", bfyEndDate)
+                .parameter("priorTwoYearFund", PRIOR_TWO_YEAR_FUND.getId())
+                .parameter("currentOneYearFund", CURRENT_ONE_YEAR_FUND.getId())
+                .parameter("currentTwoYearFund", CURRENT_TWO_YEAR_FUND.getId())
+                .properties("id", "fundId", "fundCode", "appropriationId", "budgetFiscalYear", "divisionId",
+                        "divisionCode", "costOrg", "activityNumber", "title", "startDate", "endDate", "city",
+                        "state", "branchId", "branchCode", "branchTitle", "groupId", "groupCode", "groupTitle",
+                        "initialProjection", "fundingType")
+                .list();
+    }
+
+    /**
+     * get only activities for appropriation that take place in the current year
+     *
+     * @param appropriation
+     * @param division
+     * @param branch
+     * @return
+     */
+    private List<KeyValueEntity> fetchBiFiscalTwoYearActivities(Appropriation appropriation, Division division, Branch branch) {
+        Appropriation currentYearAppropriation = appropriation == null ? division.getAppropriation() : appropriation;
+        String divisionCode = division == null ? "" : division.getDivisionCode();
+        String branchCode = branch == null ? "" : branch.getBranchCode();
+        Fund twoYearFund = fundService.getAppropriationTwoYearFund();
+        Date bfyStartDate = appropriationService.getFirstDayOfAppropriationBfy(currentYearAppropriation);
+        Date bfyEndDate = appropriationService.getLastDayOfAppropriationBfy(currentYearAppropriation);
+
+        return dataManager.loadValues(
+                        "SELECT act.id, fund.id, fund.fundCode, app.id, app.budgetFiscalYear, dv.id, dv.divisionCode,"
+                                + " act.activityNumber, act.title, act.startDate, act.endDate, act.city, act.state, bch.id,"
+                                + " bch.branchCode, bch.title, grp.id, grp.groupCode, grp.title, act.initialProjection,"
+                                + " act.fund"
+                                + " FROM fis_Activity act"
+                                + " LEFT JOIN fis_Branch bch ON bch=act.branch"
+                                + " LEFT JOIN fis_Group grp ON grp=act.group"
+                                + " INNER JOIN fis_Division dv ON dv=act.division"
+                                + " INNER JOIN fis_Appropriation app ON app=dv.appropriation"
+                                + " INNER JOIN fis_Fund fund ON fund=act.fund"
+                                + " WHERE (:anyDivision = true OR dv.divisionCode = :divisionCode)"
+                                + " AND (:anyBranch = true OR bch.branchCode = :branchCode)"
+                                + " AND (dv.appropriation = :currentYear AND act.fund = :twoYearFund AND (act.endDate IS NULL OR act.endDate <= :bfyEndDate))"
+                                + " ORDER BY app.budgetFiscalYear, fund.fundCode, dv.divisionCode, bch.sortCode, bch.branchCode, act.activityNumber")
+                .parameter("anyDivision", division == null)
+                .parameter("divisionCode", divisionCode)
+                .parameter("anyBranch", branch == null)
+                .parameter("branchCode", branchCode)
+                .parameter("currentYear", currentYearAppropriation)
                 .parameter("twoYearFund", twoYearFund)
                 .parameter("bfyStartDate", bfyStartDate)
                 .parameter("bfyEndDate", bfyEndDate)

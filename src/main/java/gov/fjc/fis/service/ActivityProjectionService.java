@@ -388,6 +388,14 @@ public class ActivityProjectionService {
                 .one();
     }
 
+    public BigDecimal sumProjections(List<Activity> activities) {
+        return dataManager.loadValue("SELECT coalesce(sum(p.amount),0)"
+                        + " FROM fis_ActivityProjection p"
+                        + " WHERE p.activity IN :activities", BigDecimal.class)
+                .parameter("activities", activities)
+                .one();
+    }
+
     public List<KeyValueEntity> sumActivityProjections(List<Division> divisions, Fund fund) {
         return dataManager.loadValues(
                         "SELECT act.fund, act.division, COALESCE(SUM(proj.amount),0)"

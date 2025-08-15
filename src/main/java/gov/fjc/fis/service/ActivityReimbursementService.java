@@ -35,6 +35,14 @@ public class ActivityReimbursementService {
                 .one();
     }
 
+    public BigDecimal sumReimbursements(List<Activity> activities) {
+        return dataManager.loadValue("SELECT coalesce(sum(r.amount),0)"
+                        + " FROM fis_ActivityReimbursement r"
+                        + " WHERE r.activity IN :activities", BigDecimal.class)
+                .parameter("activities", activities)
+                .one();
+    }
+
     public BigDecimal sumReimbursements(Appropriation appropriation) {
         var funds = fundService.getAppropriationFunds();
         return dataManager.loadValue("SELECT coalesce(sum(r.amount),0)"
