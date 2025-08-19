@@ -122,6 +122,8 @@ public class StatusOfFundsReportService {
         Set<String> showCategories = showDefaultCategories ? categoryService.getStandardReportCategoryCodes() : Collections.emptySet();
 
         var divisions = divisionService.getDivisions(appropriation, oneYearFund);
+        var obbbaDivision = divisionService.getMandatoryDivision(appropriation);
+
 //        var divisionDtos = divisionService.getDivisionDtos(appropriation, funds);
 
         var allocations = divisionAllocationService.sumAllocations(appropriation, funds);
@@ -143,11 +145,15 @@ public class StatusOfFundsReportService {
                         amount = kvEntity.getValue("oneyearamount");
                         amount = amount.setScale(scale, RoundingMode.HALF_UP);
                         divisionDto.setOneYearAllocations(amount);
-                        categoryDto.addOneYearAllocation(amount);
+                        if (!division.equals(obbbaDivision)) {
+                            categoryDto.addOneYearAllocation(amount);
+                        }
                         amount = kvEntity.getValue("twoyearamount");
                         amount = amount.setScale(scale, RoundingMode.HALF_UP);
                         divisionDto.setTwoYearAllocations(amount);
-                        categoryDto.addTwoYearAllocation(amount);
+                        if (!division.equals(obbbaDivision)) {
+                            categoryDto.addTwoYearAllocation(amount);
+                        }
                     }
                 }
 
@@ -157,10 +163,14 @@ public class StatusOfFundsReportService {
                         amount = amount.setScale(scale, RoundingMode.HALF_UP);
                         if (kvEntity.getValue("fund").equals(oneYearFund)) {
                             divisionDto.setOneYearProjections(amount);
-                            categoryDto.addOneYearProjection(amount);
+                            if (!division.equals(obbbaDivision)) {
+                                categoryDto.addOneYearProjection(amount);
+                            }
                         } else {
                             divisionDto.setTwoYearProjections(amount);
-                            categoryDto.addTwoYearProjection(amount);
+                            if (!division.equals(obbbaDivision)) {
+                                categoryDto.addTwoYearProjection(amount);
+                            }
                         }
                     }
                 }
@@ -171,10 +181,14 @@ public class StatusOfFundsReportService {
                         amount = amount.setScale(scale, RoundingMode.HALF_UP);
                         if (kvEntity.getValue("fund").equals(oneYearFund)) {
                             divisionDto.setOneYearObligations(amount);
-                            categoryDto.addOneYearObligation(amount);
+                            if (!division.equals(obbbaDivision)) {
+                                categoryDto.addOneYearObligation(amount);
+                            }
                         } else {
                             divisionDto.setTwoYearObligations(amount);
-                            categoryDto.addTwoYearObligation(amount);
+                            if (!division.equals(obbbaDivision)) {
+                                categoryDto.addTwoYearObligation(amount);
+                            }
                         }
                     }
                 }
@@ -184,10 +198,14 @@ public class StatusOfFundsReportService {
                         amount = amount.setScale(scale, RoundingMode.HALF_UP);
                         if (kvEntity.getValue("fund").equals(oneYearFund)) {
                             divisionDto.setOneYearReimbursements(amount);
-                            categoryDto.addOneYearReimbursement(amount);
+                            if (!division.equals(obbbaDivision)) {
+                                categoryDto.addOneYearReimbursement(amount);
+                            }
                         } else {
                             divisionDto.setTwoYearReimbursements(amount);
-                            categoryDto.addTwoYearReimbursement(amount);
+                            if (!division.equals(obbbaDivision)) {
+                                categoryDto.addTwoYearReimbursement(amount);
+                            }
                         }
                     }
                 }

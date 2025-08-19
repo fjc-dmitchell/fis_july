@@ -175,6 +175,21 @@ public class StatusOfFundsReportData {
         return getTotalOneYearReimbursements().add(getTotalTwoYearReimbursements());
     }
 
+    public BigDecimal getTotalOneYearBalance() {
+        return getTotalOneYearAllocations().subtract(getTotalOneYearProjections()).subtract(getTotalOneYearObligations()).add(getTotalOneYearReimbursements());
+    }
+
+    public BigDecimal getTotalTwoYearBalance() {
+        return getTotalTwoYearAllocations().subtract(getTotalTwoYearProjections()).subtract(getTotalTwoYearObligations()).add(getTotalTwoYearReimbursements());
+    }
+
+    public BigDecimal getObbbaBalance() {
+        return getTotalOneYearAllocations("9")
+                .subtract(getTotalOneYearProjections("9"))
+                .subtract(getTotalOneYearObligations("9"))
+                .add(getTotalOneYearReimbursements("9"));
+    }
+
     public String getReportDateTime() {
         return getDateTimeReportString(reportDateTime);
     }

@@ -427,81 +427,49 @@ public class CategoryDto {
     @DependsOnProperties({"oneYearDivisions"})
     public BigDecimal getOneYearAllocations(String divCode) {
         DivisionDto dto = getDivisionDto(oneYearDivisions, divCode);
-        if (dto == null) {
-            return BigDecimal.ZERO;
-        } else {
-            return dto.getOneYearAllocations();
-        }
+        return dto == null ? BigDecimal.ZERO : dto.getOneYearAllocations();
     }
 
     @DependsOnProperties({"oneYearDivisions"})
     public BigDecimal getOneYearProjections(String divCode) {
         DivisionDto dto = getDivisionDto(oneYearDivisions, divCode);
-        if (dto == null) {
-            return BigDecimal.ZERO;
-        } else {
-            return dto.getOneYearProjections();
-        }
+        return dto == null ? BigDecimal.ZERO : dto.getOneYearProjections();
     }
 
     @DependsOnProperties({"oneYearDivisions"})
     public BigDecimal getOneYearObligations(String divCode) {
         DivisionDto dto = getDivisionDto(oneYearDivisions, divCode);
-        if (dto == null) {
-            return BigDecimal.ZERO;
-        } else {
-            return dto.getOneYearObligations();
-        }
+        return dto == null ? BigDecimal.ZERO : dto.getOneYearObligations();
     }
 
     @DependsOnProperties({"oneYearDivisions"})
     public BigDecimal getOneYearReimbursements(String divCode) {
         DivisionDto dto = getDivisionDto(oneYearDivisions, divCode);
-        if (dto == null) {
-            return BigDecimal.ZERO;
-        } else {
-            return dto.getOneYearReimbursements();
-        }
+        return dto == null ? BigDecimal.ZERO : dto.getOneYearReimbursements();
     }
 
     @DependsOnProperties({"twoYearDivisions"})
     public BigDecimal getTwoYearAllocations(String divCode) {
         DivisionDto dto = getDivisionDto(twoYearDivisions, divCode);
-        if (dto == null) {
-            return BigDecimal.ZERO;
-        } else {
-            return dto.getTwoYearAllocations();
-        }
+        return dto == null ? BigDecimal.ZERO : dto.getTwoYearAllocations();
     }
 
     @DependsOnProperties({"twoYearDivisions"})
     public BigDecimal getTwoYearObligations(String divCode) {
         DivisionDto dto = getDivisionDto(twoYearDivisions, divCode);
-        if (dto == null) {
-            return BigDecimal.ZERO;
-        } else {
-            return dto.getTwoYearObligations();
-        }
+        return dto == null ? BigDecimal.ZERO : dto.getTwoYearObligations();
     }
 
     @DependsOnProperties({"twoYearDivisions"})
     public BigDecimal getTwoYearProjections(String divCode) {
         DivisionDto dto = getDivisionDto(twoYearDivisions, divCode);
-        if (dto == null) {
-            return BigDecimal.ZERO;
-        } else {
-            return dto.getTwoYearProjections();
-        }
+        return dto == null ? BigDecimal.ZERO : dto.getTwoYearProjections();
     }
 
     @DependsOnProperties({"twoYearDivisions"})
     public BigDecimal getTwoYearReimbursements(String divCode) {
         DivisionDto dto = getDivisionDto(twoYearDivisions, divCode);
-        if (dto == null) {
-            return BigDecimal.ZERO;
-        } else {
-            return dto.getTwoYearReimbursements();
-        }
+        return dto == null ? BigDecimal.ZERO : dto.getTwoYearReimbursements();
     }
 
     private DivisionDto getDivisionDto(List<DivisionDto> divisions, String divCode) {
