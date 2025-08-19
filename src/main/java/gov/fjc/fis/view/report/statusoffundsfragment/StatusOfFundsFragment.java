@@ -3,7 +3,7 @@ package gov.fjc.fis.view.report.statusoffundsfragment;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.entity.dto.CategoryDto;
-import gov.fjc.fis.entity.dto.DivisionDto;
+import gov.fjc.fis.service.DivisionService;
 import gov.fjc.fis.service.report.StatusOfFundsReportService;
 import io.jmix.core.LoadContext;
 import io.jmix.flowui.component.details.JmixDetails;
@@ -13,7 +13,6 @@ import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @FragmentDescriptor("status-of-funds-fragment.xml")
@@ -21,6 +20,8 @@ public class StatusOfFundsFragment extends Fragment<VerticalLayout> {
 
     @Autowired
     private StatusOfFundsReportService statusOfFundsReportService;
+    @Autowired
+    private DivisionService divisionService;
     @ViewComponent
     private CollectionLoader<CategoryDto> categorySofDl;
     @ViewComponent
@@ -29,6 +30,8 @@ public class StatusOfFundsFragment extends Fragment<VerticalLayout> {
     private JmixDetails oneYearDetails;
     @ViewComponent
     private JmixDetails twoYearDetails;
+    @ViewComponent
+    private JmixDetails obbbaDetails;
 
     Appropriation appropriation;
     List<CategoryDto> categoryBalances;
@@ -38,6 +41,7 @@ public class StatusOfFundsFragment extends Fragment<VerticalLayout> {
         oneYearDetails.setSummaryText(appropriation.getBudgetFiscalYear().concat(" One Year Fund"));
         twoYearDetails.setSummaryText(appropriation.getBudgetFiscalYear().concat(" Two Year Fund"));
 
+        obbbaDetails.setVisible(divisionService.getMandatoryDivision(appropriation) != null);
         categoryBalances = statusOfFundsReportService.getStatusOfFundsCategoryData(appropriation, 0, false);
         categorySofDl.load();
         categorySof2Dl.load();
@@ -59,6 +63,4 @@ public class StatusOfFundsFragment extends Fragment<VerticalLayout> {
         twoYearDetails.setVisible(!twoYearCategories.isEmpty());
         return twoYearCategories;
     }
-
-
 }

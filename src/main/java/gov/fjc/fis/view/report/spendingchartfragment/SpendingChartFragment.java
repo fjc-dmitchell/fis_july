@@ -104,6 +104,13 @@ public class SpendingChartFragment extends Fragment<VerticalLayout> {
                     }
                     Objects.requireNonNull(allocationsChart.getTitle()).setText(appropriation.getBudgetFiscalYear().concat(" Two Year Allocations"));
                     break;
+                case OBBBA_APPROPRIATION:
+                    categories = categorySofDc.getItems().stream().filter(categoryDto -> categoryDto.getMandatoryAllocated().signum() != 0).toList();
+                    for (var cat : categories) {
+                        allocations.addItem(new MapDataItem(Map.of("category", cat.getTitleAndCode(), "value", cat.getMandatoryAllocated())));
+                    }
+                    Objects.requireNonNull(allocationsChart.getTitle()).setText(appropriation.getBudgetFiscalYear().concat(" JXXMAPP Mandatory Fund Allocations"));
+                    break;
                 default:
                     categories = categorySofDc.getItems().stream().filter(categoryDto -> categoryDto.getTotalAllocations().signum() != 0).toList();
                     for (var cat : categories) {
@@ -134,6 +141,13 @@ public class SpendingChartFragment extends Fragment<VerticalLayout> {
                         spending.addItem(new MapDataItem(Map.of("category", cat.getTitleAndCode(), "value", cat.getTotalTwoYearObligations().add(cat.getTotalTwoYearProjections()))));
                     }
                     spendingChart.getTitle().setText(appropriation.getBudgetFiscalYear().concat(" Two Year Spending"));
+                    break;
+                case OBBBA_APPROPRIATION:
+                    categories = categorySpendDc.getItems().stream().filter(categoryDto -> categoryDto.getMandatoryObligated().add(categoryDto.getMandatoryProjected()).signum() != 0).toList();
+                    for (var cat : categories) {
+                        spending.addItem(new MapDataItem(Map.of("category", cat.getTitleAndCode(), "value", cat.getMandatoryObligated().add(cat.getMandatoryProjected()))));
+                    }
+                    Objects.requireNonNull(spendingChart.getTitle()).setText(appropriation.getBudgetFiscalYear().concat(" JXXMAPP Mandatory Fund Allocations"));
                     break;
                 default:
                     categories = categorySpendDc.getItems().stream().filter(categoryDto -> categoryDto.getTotalObligations().add(categoryDto.getTotalProjections()).signum() != 0).toList();

@@ -122,6 +122,61 @@
                         </columns>
                     </dataGrid>
                 </details>
+                <details id="obbbaDetails" summaryText="OBBBA appropriation (JXXMAPP)" visible="false" opened="true">
+                    <dataGrid id="mandatoryCategoryGrid" dataContainer="categorySofDc"
+                              aggregatable="true" selectionMode="SINGLE"
+                              themeNames="no-row-borders column-borders compact row-stripes"
+                              allRowsVisible="true" width="950px">
+                        <actions/>
+                        <columns sortable="false">
+                            <column property="titleAndCode" header="Object Class" width="240px"/>
+                            <column property="mandatoryAllocated" header="Allocations" textAlign="END"
+                                    width="135px">
+                                <numberRenderer numberFormat="#,##0"/>
+                                <aggregation type="SUM">
+                                    <formatter>
+                                        <number format="#,##0"/>
+                                    </formatter>
+                                </aggregation>
+                            </column>
+                            <column property="mandatoryProjected" header="Projections" textAlign="END"
+                                    width="135px">
+                                <numberRenderer numberFormat="#,##0"/>
+                                <aggregation type="SUM">
+                                    <formatter>
+                                        <number format="#,##0"/>
+                                    </formatter>
+                                </aggregation>
+                            </column>
+                            <column property="mandatoryObligated" header="Obligations" textAlign="END"
+                                    width="135px">
+                                <numberRenderer numberFormat="#,##0"/>
+                                <aggregation type="SUM">
+                                    <formatter>
+                                        <number format="#,##0"/>
+                                    </formatter>
+                                </aggregation>
+                            </column>
+                            <column property="mandatoryReimbursed" header="Reimburse." textAlign="END"
+                                    width="135px">
+                                <numberRenderer numberFormat="#,##0"/>
+                                <aggregation type="SUM">
+                                    <formatter>
+                                        <number format="#,##0"/>
+                                    </formatter>
+                                </aggregation>
+                            </column>
+                            <column property="mandatoryBalance" header="Balance" textAlign="END" key="mandatoryBalance">
+                                <numberRenderer numberFormat="#,##0"/>
+                                <aggregation type="SUM">
+                                    <formatter>
+                                        <number format="#,##0"/>
+                                    </formatter>
+                                </aggregation>
+                            </column>
+                        </columns>
+                    </dataGrid>
+                </details>
             </vbox>
         </vbox>
     </content>

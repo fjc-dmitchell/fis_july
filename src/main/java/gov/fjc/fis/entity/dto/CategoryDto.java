@@ -3,10 +3,7 @@ package gov.fjc.fis.entity.dto;
 import gov.fjc.fis.entity.Category;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
-import io.jmix.core.metamodel.annotation.Composition;
-import io.jmix.core.metamodel.annotation.DependsOnProperties;
-import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -103,6 +100,7 @@ public class CategoryDto {
     private BigDecimal discretionaryReimbursed = BigDecimal.ZERO;
     private BigDecimal discretionaryObligated = BigDecimal.ZERO;
     private BigDecimal discretionaryDisbursed = BigDecimal.ZERO;
+    private BigDecimal mandatoryAllocated = BigDecimal.ZERO;
     private BigDecimal mandatoryProjected = BigDecimal.ZERO;
     private BigDecimal mandatoryReimbursed = BigDecimal.ZERO;
     private BigDecimal mandatoryObligated = BigDecimal.ZERO;
@@ -709,6 +707,14 @@ public class CategoryDto {
         this.discretionaryDisbursed = discretionaryDisbursed;
     }
 
+    public BigDecimal getMandatoryAllocated() {
+        return mandatoryAllocated;
+    }
+
+    public void setMandatoryAllocated(BigDecimal mandatoryAllocated) {
+        this.mandatoryAllocated = mandatoryAllocated;
+    }
+
     public BigDecimal getMandatoryProjected() {
         return mandatoryProjected;
     }
@@ -739,6 +745,15 @@ public class CategoryDto {
 
     public void setMandatoryDisbursed(BigDecimal mandatoryDisbursed) {
         this.mandatoryDisbursed = mandatoryDisbursed;
+    }
+
+    @JmixProperty
+    public BigDecimal getMandatoryBalance() {
+        return getMandatoryAllocated()
+                .subtract(getMandatoryProjected())
+                .subtract(getMandatoryObligated())
+                .subtract(getMandatoryDisbursed())
+                .add(getMandatoryReimbursed());
     }
 
     /**

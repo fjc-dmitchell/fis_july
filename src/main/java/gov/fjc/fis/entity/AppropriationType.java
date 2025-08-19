@@ -9,7 +9,8 @@ public enum AppropriationType implements EnumClass<Integer> {
 
     ONE_YEAR_FUND(10),
     TWO_YEAR_FUND(20),
-    COMBINED_YEAR_FUND(30);
+    COMBINED_YEAR_FUND(30),
+    OBBBA_APPROPRIATION(40);
 
     private final Integer id;
 
