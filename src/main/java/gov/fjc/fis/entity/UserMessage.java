@@ -1,7 +1,9 @@
 package gov.fjc.fis.entity;
 
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.CreatedBy;
@@ -11,6 +13,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.OffsetDateTime;
 import java.util.Date;
+
+import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
 
 @JmixEntity
 @Table(name = "FIS_USER_MESSAGE")
@@ -57,6 +61,12 @@ public class UserMessage {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    @DependsOnProperties({"createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"})
+    @JmixProperty
+    public String getCreatedByString() {
+        return getCreatedModifiedString(createdBy, createdDate, lastModifiedBy, lastModifiedDate);
+    }
 
     public Boolean getPublished() {
         return published;

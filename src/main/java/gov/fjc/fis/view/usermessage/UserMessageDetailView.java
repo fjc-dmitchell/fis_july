@@ -1,5 +1,6 @@
 package gov.fjc.fis.view.usermessage;
 
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.router.Route;
 import gov.fjc.fis.entity.UserMessage;
 import gov.fjc.fis.event.UserMessageSavedEvent;
@@ -16,6 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class UserMessageDetailView extends StandardDetailView<UserMessage> {
     @Autowired
     private UiEventPublisher uiEventPublisher;
+    @ViewComponent
+    private Paragraph createdByString;
+
+    @Subscribe
+    protected void onBeforeShow(final BeforeShowEvent event) {
+        createdByString.setText(getEditedEntity().getCreatedByString());
+    }
 
     @Subscribe(target = Target.DATA_CONTEXT)
     protected void onPostSave(final DataContext.PostSaveEvent event) {
