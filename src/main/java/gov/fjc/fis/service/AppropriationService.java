@@ -158,6 +158,10 @@ public class AppropriationService {
                 .optional().orElse(null);
     }
 
+    /**
+     * used by main view. Returns null if there are no open Appropriations. Don't let this happen!
+     * @return Appropriation for the entryBfy selector
+     */
     public Appropriation getCurrentOrLatestOpenBudgetFiscalYear() {
         return dataManager.load(Appropriation.class)
                 .query("SELECT a FROM fis_Appropriation a" +
@@ -261,22 +265,24 @@ public class AppropriationService {
 
     /**
      * getSpendingAuthority
+     *
      * @param appropriation
      * @return
      */
     public KeyValueEntity getSpendingAuthority(Appropriation appropriation) {
         return dataManager.loadValues(
-                "SELECT app.oneYearAmount, app.twoYearAmount,"
-                +" COALESCE(SUM(adj.oneYearAmount),0), COALESCE(SUM(adj.twoYearAmount),0),"
-                +" app.oneYearAmount+COALESCE(SUM(adj.oneYearAmount),0), app.twoYearAmount+COALESCE(SUM(adj.twoYearAmount),0)"
-                +" FROM fis_Appropriation app"
-                +" LEFT JOIN fis_AppropriationAdjustment adj ON adj.appropriation=app"
-                +" WHERE app=:appropriation"
-                +" GROUP BY app.oneYearAmount, app.twoYearAmount")
+                        "SELECT app.oneYearAmount, app.twoYearAmount,"
+                                + " COALESCE(SUM(adj.oneYearAmount),0), COALESCE(SUM(adj.twoYearAmount),0),"
+                                + " app.oneYearAmount+COALESCE(SUM(adj.oneYearAmount),0), app.twoYearAmount+COALESCE(SUM(adj.twoYearAmount),0)"
+                                + " FROM fis_Appropriation app"
+                                + " LEFT JOIN fis_AppropriationAdjustment adj ON adj.appropriation=app"
+                                + " WHERE app=:appropriation"
+                                + " GROUP BY app.oneYearAmount, app.twoYearAmount")
                 .parameter("appropriation", appropriation)
                 .properties("one_year_appropriation", "two_year_appropriation", "one_year_adjust", "two_year_adjust", "one_year_total", "two_year_total")
                 .optional().orElse(createDefaultSpendingAuthority());
     }
+
     private KeyValueEntity createDefaultSpendingAuthority() {
         KeyValueEntity defaultResult = dataManager.create(KeyValueEntity.class);
         defaultResult.setValue("one_year_appropriation", BigDecimal.ZERO);

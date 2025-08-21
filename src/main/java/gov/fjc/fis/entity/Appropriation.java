@@ -14,8 +14,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
-import static gov.fjc.fis.FisUtilities.getTotalNullAllowed;
+import static gov.fjc.fis.FisUtilities.*;
 import static java.util.Objects.requireNonNullElse;
 
 @JmixEntity
@@ -68,6 +67,10 @@ public class Appropriation {
     @Column(name = "TWO_YEAR_ADJUSTMENT", nullable = false)
     private BigDecimal twoYearAdjustment = BigDecimal.ZERO;
 
+    @Column(name = "REIMBURSED_AMOUNT", nullable = false, precision = 19, scale = 2)
+    @NotNull
+    private BigDecimal reimbursedAmount = BigDecimal.ZERO;
+
     @Column(name = "STATUS")
     private Boolean status = false;
     @Column(name = "VERSION", nullable = false, columnDefinition = "INT DEFAULT 1")
@@ -86,6 +89,19 @@ public class Appropriation {
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
 
+    @DependsOnProperties({"oneYearAmount", "twoYearAmount", "oneYearAdjustment", "twoYearAdjustment", "reimbursedAmount"})
+    @JmixProperty
+    public BigDecimal getAuthority() {
+        return add(oneYearAmount, twoYearAmount, oneYearAdjustment, twoYearAdjustment, reimbursedAmount);
+    }
+
+    public BigDecimal getReimbursedAmount() {
+        return reimbursedAmount;
+    }
+
+    public void setReimbursedAmount(BigDecimal reimbursedAmount) {
+        this.reimbursedAmount = requireNonNullElse(reimbursedAmount, BigDecimal.ZERO);
+    }
 
     @DependsOnProperties({"status"})
     @JmixProperty

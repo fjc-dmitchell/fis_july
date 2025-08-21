@@ -49,8 +49,8 @@ public interface FinanceUserResourcesRole extends UiMinimalRole, ReportResources
     @EntityPolicy(entityClass = Ape.class, actions = EntityPolicyAction.ALL)
     void ape();
 
-    @EntityAttributePolicy(entityClass = Appropriation.class, attributes = {"oneYearAmount", "twoYearAmount", "status", "oneYearAdjustment", "twoYearAdjustment", "adjustments"}, action = EntityAttributePolicyAction.MODIFY)
-    @EntityAttributePolicy(entityClass = Appropriation.class, attributes = {"id", "divisions", "categories", "budgetFiscalYear", "version", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate", "createdByString", "totalAmount", "totalAdjustment", "statusString"}, action = EntityAttributePolicyAction.VIEW)
+    @EntityAttributePolicy(entityClass = Appropriation.class, attributes = {"oneYearAmount", "twoYearAmount", "status", "oneYearAdjustment", "twoYearAdjustment", "adjustments", "reimbursedAmount"}, action = EntityAttributePolicyAction.MODIFY)
+    @EntityAttributePolicy(entityClass = Appropriation.class, attributes = {"id", "divisions", "categories", "budgetFiscalYear", "version", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate", "createdByString", "totalAmount", "totalAdjustment", "statusString", "authority"}, action = EntityAttributePolicyAction.VIEW)
     @EntityPolicy(entityClass = Appropriation.class, actions = {EntityPolicyAction.READ, EntityPolicyAction.UPDATE})
     void appropriation();
 

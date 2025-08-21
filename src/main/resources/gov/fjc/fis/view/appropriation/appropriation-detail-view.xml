@@ -9,6 +9,8 @@
                 <property name="adjustments" fetchPlan="_base"/>
                 <property name="createdByString"/>
                 <property name="totalAmount"/>
+                <property name="authority"/>
+                <property name="totalAdjustment"/>
             </fetchPlan>
             <loader id="appropriationDl"/>
             <collection id="adjustmentsDc" property="adjustments"/>
@@ -39,15 +41,19 @@
                             <textField id="oneYearAmountField" property="oneYearAmount" label="One year"/>
                             <textField id="twoYearAmountField" property="twoYearAmount" label="Two year"/>
                             <textField id="totalAmountField" property="totalAmount" label="Total appropriation"/>
+                            <textField id="adjustmentField" property="totalAdjustment" label="Adjustments"/>
+                            <textField id="reimbursedField" property="reimbursedAmount" label="Reimbursements"
+                                       readOnly="true"/>
+                            <textField id="authorityField" property="authority" label="Authority"/>
                         </hbox>
-                        <hbox id="adjustmentsBox">
-                            <textField id="oneYearAdjustmentField" label="One Year Adjustments"
-                                       datatype="decimal" readOnly="true" property="oneYearAdjustment"/>
-                            <textField id="twoYearAdjustmentField" label="Two Year Adjustments"
-                                       datatype="decimal" readOnly="true" property="twoYearAdjustment"/>
-                            <textField id="totalAdjustmentField" label="Total Adjustments"
-                                       datatype="decimal" readOnly="true" property="totalAdjustment"/>
-                        </hbox>
+<!--                        <hbox id="adjustmentsBox">-->
+<!--                            <textField id="oneYearAdjustmentField" label="One Year Adjustments"-->
+<!--                                       datatype="decimal" readOnly="true" property="oneYearAdjustment"/>-->
+<!--                            <textField id="twoYearAdjustmentField" label="Two Year Adjustments"-->
+<!--                                       datatype="decimal" readOnly="true" property="twoYearAdjustment"/>-->
+<!--                            <textField id="totalAdjustmentField" label="Total Adjustments"-->
+<!--                                       datatype="decimal" readOnly="true" property="totalAdjustment"/>-->
+<!--                        </hbox>-->
                     </vbox>
                 </formLayout>
             </vbox>
@@ -75,7 +81,7 @@
                                 <button action="adjustmentsDataGrid.remove"/>
                             </hbox>
 
-                            <dataGrid id="adjustmentsDataGrid" dataContainer="adjustmentsDc" width="100%"
+                            <dataGrid id="adjustmentsDataGrid" dataContainer="adjustmentsDc" width="700px"
                                       minHeight="10em" themeNames="compact" height="12em">
                                 <actions>
                                     <action id="create" type="list_create">
@@ -91,9 +97,10 @@
                                     <action id="remove" type="list_remove"/>
                                 </actions>
                                 <columns>
-                                    <column property="adjustmentDate" header="Date"/>
+                                    <column property="adjustmentDate" header="Date" width="120px" flexGrow="0"/>
                                     <column property="title"/>
-                                    <column property="oneYearAmount" header="One Year" textAlign="END">
+                                    <column property="oneYearAmount" header="One Year" textAlign="END" width="130px"
+                                            flexGrow="0">
                                         <numberRenderer numberFormat="#,##0"/>
                                         <aggregation type="SUM">
                                             <formatter>
@@ -101,7 +108,8 @@
                                             </formatter>
                                         </aggregation>
                                     </column>
-                                    <column property="twoYearAmount" header="Two Year" textAlign="END">
+                                    <column property="twoYearAmount" header="Two Year" textAlign="END" width="130px"
+                                            flexGrow="0">
                                         <numberRenderer numberFormat="#,##0"/>
                                         <aggregation type="SUM">
                                             <formatter>

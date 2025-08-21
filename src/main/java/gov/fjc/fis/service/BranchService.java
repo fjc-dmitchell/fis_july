@@ -2,7 +2,6 @@ package gov.fjc.fis.service;
 
 import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.entity.Branch;
-import gov.fjc.fis.entity.Category;
 import gov.fjc.fis.entity.Division;
 import io.jmix.core.DataManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,5 +72,4 @@ public class BranchService {
                 .parameter("division", division)
                 .list();
     }
-
 }

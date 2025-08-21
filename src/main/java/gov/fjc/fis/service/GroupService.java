@@ -1,6 +1,5 @@
 package gov.fjc.fis.service;
 
-import gov.fjc.fis.entity.Activity;
 import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.entity.Division;
 import gov.fjc.fis.entity.Group;

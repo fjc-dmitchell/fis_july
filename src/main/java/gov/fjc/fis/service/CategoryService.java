@@ -137,7 +137,7 @@ public class CategoryService {
      * @param appropriation entity
      * @return List of Categories
      */
-    public List<Category> getCategoriesForBfy(Appropriation appropriation) {
+    public List<Category> getCategories(Appropriation appropriation) {
         return dataManager.load(Category.class)
                 .query("SELECT c FROM fis_Category c"
                         + " WHERE c.appropriation = :appropriation"
@@ -147,7 +147,7 @@ public class CategoryService {
     }
 
     public List<CategoryDto> getCategoryDtosForBfy(Appropriation appropriation) {
-        return getCategoriesForBfy(appropriation).stream().map(cat -> {
+        return getCategories(appropriation).stream().map(cat -> {
             var dto = dataManager.create(CategoryDto.class);
             dto.configureCategoryDto(cat);
             return dto;

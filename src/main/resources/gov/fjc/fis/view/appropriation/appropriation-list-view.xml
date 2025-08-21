@@ -7,6 +7,7 @@
                     class="gov.fjc.fis.entity.Appropriation">
             <fetchPlan extends="_base">
                 <property name="totalAmount"/>
+                <property name="totalAdjustment"/>
             </fetchPlan>
             <loader id="appropriationsDl" readOnly="true"/>
         </collection>
@@ -24,14 +25,14 @@
     </actions>
     <layout>
         <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createBtn" action="appropriationsDataGrid.create"/>
+            <button id="createBtn" enabled="false"/>
             <button id="editBtn" action="appropriationsDataGrid.edit"/>
             <button id="excelExportBtn" action="appropriationsDataGrid.excelExport"/>
             <button id="removeBtn" action="appropriationsDataGrid.remove"/>
             <simplePagination id="pagination" dataLoader="appropriationsDl" autoLoad="true"/>
         </hbox>
         <dataGrid id="appropriationsDataGrid"
-                  width="485px"
+                  width="890px"
                   minHeight="20em"
                   dataContainer="appropriationsDc" themeNames="column-borders compact row-stripes"
                   columnReorderingAllowed="true">
@@ -49,11 +50,16 @@
                 <column property="twoYearAmount" header="Two Year" textAlign="END" width="130px">
                     <numberRenderer numberFormat="#,##0"/>
                 </column>
-                <column property="totalAmount" header="Total" textAlign="END" width="130px">
+                <column property="totalAmount" header="Appropriation" textAlign="END" width="130px">
                     <numberRenderer numberFormat="#,##0"/>
                 </column>
-                <column property="totalAdjustment" header="Total Appropriation Adjustments" textAlign="END"
-                        width="130px" visible="false">
+                <column property="totalAdjustment" header="Adjustments" textAlign="END" width="130px">
+                    <numberRenderer numberFormat="#,##0"/>
+                </column>
+                <column property="reimbursedAmount" header="Reimbursed" textAlign="END" width="130px">
+                    <numberRenderer numberFormat="#,##0"/>
+                </column>
+                <column property="authority" header="Authority" textAlign="END" width="130px">
                     <numberRenderer numberFormat="#,##0"/>
                 </column>
             </columns>

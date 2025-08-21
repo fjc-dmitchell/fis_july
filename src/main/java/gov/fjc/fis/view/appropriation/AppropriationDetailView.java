@@ -7,7 +7,6 @@ import com.vaadin.flow.router.Route;
 import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.entity.AppropriationAdjustment;
 import gov.fjc.fis.event.AppropriationClosedEvent;
-import gov.fjc.fis.service.ActivityReimbursementService;
 import gov.fjc.fis.view.main.MainView;
 import gov.fjc.fis.view.report.divisionbalancefragment.DivisionBalanceFragment;
 import gov.fjc.fis.view.report.spendingchartfragment.SpendingChartFragment;
@@ -18,11 +17,9 @@ import io.jmix.flowui.action.list.CreateAction;
 import io.jmix.flowui.action.list.EditAction;
 import io.jmix.flowui.action.list.RemoveAction;
 import io.jmix.flowui.component.combobox.JmixComboBox;
-import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.CollectionPropertyContainer;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,23 +102,26 @@ public class AppropriationDetailView extends StandardDetailView<Appropriation> {
 
     private void calculateAdjustments() {
         var appropriation = getEditedEntity();
+        var adjustments = appropriation.getAdjustments();
 
-        var oneYearAdjustment = appropriation.getAdjustments()
-                .stream().map(AppropriationAdjustment::getOneYearAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
-        var twoYearAdjustment = appropriation.getAdjustments()
-                .stream().map(AppropriationAdjustment::getTwoYearAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (adjustments != null) {
+            var oneYearAdjustment = adjustments.stream()
+                    .map(AppropriationAdjustment::getOneYearAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+            var twoYearAdjustment = adjustments.stream()
+                    .map(AppropriationAdjustment::getTwoYearAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // don't update fields unless there is a change to existing values,
-        // otherwise user will be prompted to save appropriation
-        if (appropriation.getOneYearAdjustment().compareTo(oneYearAdjustment) != 0) {
-            appropriation.setOneYearAdjustment(oneYearAdjustment);
+            // don't update fields unless there is a change to existing values,
+            // otherwise user will be prompted to save appropriation
+            if (appropriation.getOneYearAdjustment().compareTo(oneYearAdjustment) != 0) {
+                appropriation.setOneYearAdjustment(oneYearAdjustment);
+            }
+            if (appropriation.getTwoYearAdjustment().compareTo(twoYearAdjustment) != 0) {
+                appropriation.setTwoYearAdjustment(twoYearAdjustment);
+            }
         }
-        if (appropriation.getTwoYearAdjustment().compareTo(twoYearAdjustment) != 0) {
-            appropriation.setTwoYearAdjustment(twoYearAdjustment);
-        }
 
-        adjustmentsBox.setVisible((appropriation.getOneYearAdjustment().compareTo(BigDecimal.ZERO) != 0)
-                || (appropriation.getTwoYearAdjustment().compareTo(BigDecimal.ZERO) != 0));
+//        adjustmentsBox.setVisible((appropriation.getOneYearAdjustment().compareTo(BigDecimal.ZERO) != 0)
+//                || (appropriation.getTwoYearAdjustment().compareTo(BigDecimal.ZERO) != 0));
     }
 
     private void setEditable(boolean statusOpen) {

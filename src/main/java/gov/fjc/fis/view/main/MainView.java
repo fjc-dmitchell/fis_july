@@ -13,6 +13,7 @@ import gov.fjc.fis.bean.LandingPageGenerator;
 import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.event.AppropriationClosedEvent;
 import gov.fjc.fis.event.FiscalYearChangeEvent;
+import gov.fjc.fis.event.NewAppropriationEvent;
 import gov.fjc.fis.service.AppropriationService;
 import io.jmix.core.LoadContext;
 import io.jmix.core.session.SessionData;
@@ -49,6 +50,8 @@ public class MainView extends StandardTabbedModeMainView {
 
     @ViewComponent
     private EntityComboBox<Appropriation> bfyEntry;
+    @ViewComponent
+    private CollectionLoader<Appropriation> bfySearchDl;
     @ViewComponent
     private JmixMultiSelectComboBoxPicker<Appropriation> bfySearch;
     @Autowired
@@ -178,6 +181,12 @@ public class MainView extends StandardTabbedModeMainView {
         if (!bfyEntryDc.containsItem(bfyEntry.getValue())) {
             bfyEntry.setValue(appropriationService.getCurrentOrLatestOpenBudgetFiscalYear());
         }
+    }
+
+    @EventListener
+    public void handleNewAppropriationEvent(NewAppropriationEvent event) {
+       bfyEntryDl.load();
+       bfySearchDl.load();
     }
 
     // Doug added everything below to create landing page
