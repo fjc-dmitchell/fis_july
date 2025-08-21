@@ -5,6 +5,8 @@ import io.jmix.core.DataManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component("fis_UserMessageService")
 public class UserMessageService {
     @Autowired
@@ -18,5 +20,13 @@ public class UserMessageService {
                 .maxResults(1)
                 .optional()
                 .orElse(dataManager.create(UserMessage.class));
+    }
+
+    public List<UserMessage> getUserMessages() {
+        return dataManager.load(UserMessage.class)
+                .query("SELECT e FROM fis_UserMessage e"
+                        + " WHERE e.published = TRUE"
+                        + " ORDER BY e.postDate DESC")
+                .list();
     }
 }

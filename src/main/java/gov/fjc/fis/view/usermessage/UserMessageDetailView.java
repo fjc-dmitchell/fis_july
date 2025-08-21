@@ -14,11 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ViewDescriptor("user-message-detail-view.xml")
 @EditedEntityContainer("userMessageDc")
 public class UserMessageDetailView extends StandardDetailView<UserMessage> {
-//    @Autowired
-//    private UiEventPublisher uiEventPublisher;
-//
-//    @Subscribe(target = Target.DATA_CONTEXT)
-//    protected void onPostSave(final DataContext.PostSaveEvent event) {
-//        uiEventPublisher.publishEvent(new UserMessageSavedEvent(this, "userMessageSaved"));
-//    }
+    @Autowired
+    private UiEventPublisher uiEventPublisher;
+
+    @Subscribe(target = Target.DATA_CONTEXT)
+    protected void onPostSave(final DataContext.PostSaveEvent event) {
+        uiEventPublisher.publishEventForUsers(
+                new UserMessageSavedEvent(this, "userMessageSaved"), null);
+    }
 }

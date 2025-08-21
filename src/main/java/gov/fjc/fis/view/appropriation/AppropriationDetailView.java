@@ -53,8 +53,8 @@ public class AppropriationDetailView extends StandardDetailView<Appropriation> {
     private TypedTextField<Object> oneYearAmountField;
     @ViewComponent
     private TypedTextField<Object> twoYearAmountField;
-    @ViewComponent
-    private HorizontalLayout adjustmentsBox;
+//    @ViewComponent
+//    private HorizontalLayout adjustmentsBox;
     @ViewComponent
     private JmixComboBox<Boolean> statusBox;
     @ViewComponent("adjustmentsDataGrid.create")
@@ -97,7 +97,8 @@ public class AppropriationDetailView extends StandardDetailView<Appropriation> {
 
     @Subscribe(target = Target.DATA_CONTEXT)
     protected void onPostSave(final DataContext.PostSaveEvent event) {
-        uiEventPublisher.publishEvent(new AppropriationClosedEvent(this, "appropriationClosed"));
+        uiEventPublisher.publishEventForUsers(
+                new AppropriationClosedEvent(this, "appropriationClosed"), null);
     }
 
     private void calculateAdjustments() {

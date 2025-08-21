@@ -35,8 +35,9 @@
         <drawerLayout>
             <section id="section" classNames="jmix-main-view-section">
                 <div id="applicationTitlePlaceholder" classNames="jmix-main-view-title-holder"/>
-<!--                <vbox classNames="bordered-panel bfy-selector-box" width="100%" spacing="false" css="margin-bottom: 15px;">-->
-                <vbox classNames="bordered-panel bfy-selector-box" width="100%" spacing="false" css="margin-bottom: 15px;">
+                <!--                <vbox classNames="bordered-panel bfy-selector-box" width="100%" spacing="false" css="margin-bottom: 15px;">-->
+                <vbox classNames="bordered-panel bfy-selector-box" width="100%" spacing="false"
+                      css="margin-bottom: 15px;">
                     <h5 text="Budget Fiscal Year" css="font-family: sans-serif;"/>
                     <hbox spacing="true">
                         <entityComboBox id="bfyEntry" itemsContainer="bfyEntryDc" width="140px"
@@ -46,7 +47,8 @@
                     <multiSelectComboBoxPicker id="bfySearch" itemsContainer="bfySearchDc"
                                                metaClass="fis_Appropriation" property="budgetFiscalYear" width="140px"
                                                label="Search" css="font-family: sans-serif;">
-                        <tooltip text="Specifying search years will override the default search year" position="BOTTOM"/>
+                        <tooltip text="Specifying search years will override the default search year"
+                                 position="BOTTOM"/>
                         <actions>
                             <action id="entity_clear" type="entity_clear" icon="vaadin:close-small"/>
                         </actions>
@@ -80,11 +82,13 @@
             <initialLayout id="initialLayout"
                            classNames="jmix-initial-layout"
                            width="100%" height="100%">
-                <fragment class="gov.fjc.fis.view.mainviewfragment.MainViewFragment"/>
+                <vbox id="root">
+                    <header text="Welcome to the FJC Financial Information System"
+                            css="font-size: 22px;"/>
+                    <hr/>
+                    <vbox id="messageBox" spacing="false" padding="false"/>
+                </vbox>
             </initialLayout>
         </workArea>
-<!--        <initialLayout>-->
-<!--            <fragment class="gov.fjc.fis.view.mainviewfragment.MainViewFragment"/>-->
-<!--        </initialLayout>-->
     </appLayout>
 </mainView>

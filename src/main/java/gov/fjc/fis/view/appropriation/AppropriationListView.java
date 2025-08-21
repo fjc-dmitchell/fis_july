@@ -78,7 +78,7 @@ public class AppropriationListView extends StandardListView<Appropriation> {
 
     private void createAppropriation() {
         newFiscalYearService.createAppropriation(nextFiscalYear);
-        uiEventPublisher.publishEvent(new NewAppropriationEvent(this, nextFiscalYear));
+        uiEventPublisher.publishEventForUsers(new NewAppropriationEvent(this, nextFiscalYear),null);
     }
 
     private void refreshCreateBtn() {

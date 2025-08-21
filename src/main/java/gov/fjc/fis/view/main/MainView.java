@@ -2,19 +2,24 @@ package gov.fjc.fis.view.main;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import gov.fjc.fis.bean.LandingPageGenerator;
 import gov.fjc.fis.entity.Appropriation;
+import gov.fjc.fis.entity.UserMessage;
 import gov.fjc.fis.event.AppropriationClosedEvent;
 import gov.fjc.fis.event.FiscalYearChangeEvent;
 import gov.fjc.fis.event.NewAppropriationEvent;
+import gov.fjc.fis.event.UserMessageSavedEvent;
 import gov.fjc.fis.service.AppropriationService;
+import gov.fjc.fis.service.UserMessageService;
 import io.jmix.core.LoadContext;
 import io.jmix.core.session.SessionData;
 import io.jmix.flowui.UiComponents;
@@ -26,6 +31,9 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import io.jmix.tabbedmode.app.main.StandardTabbedModeMainView;
+import io.jmix.tabbedmode.component.tabsheet.MainTabSheet;
+import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
+import io.jmix.tabbedmode.component.workarea.WorkArea;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -47,7 +55,8 @@ public class MainView extends StandardTabbedModeMainView {
     private CollectionLoader<Appropriation> bfyEntryDl;
     @Autowired
     private AppropriationService appropriationService;
-
+    @Autowired
+    private UserMessageService userMessageService;
     @ViewComponent
     private EntityComboBox<Appropriation> bfyEntry;
     @ViewComponent
@@ -64,11 +73,17 @@ public class MainView extends StandardTabbedModeMainView {
     private MessageBundle messageBundle;
     @ViewComponent
     private Header header;
+    @ViewComponent
+    private VerticalLayout messageBox;
+
+    private List<UserMessage> userMessageList;
 
     @Subscribe
     public void onInit(final InitEvent event) {
         bfySearch.setAutoExpand(MultiSelectComboBox.AutoExpandMode.VERTICAL);
         initApplicationTitle();
+        userMessageList = userMessageService.getUserMessages();
+        refreshMessageBox();
 //        ThemeToggle themeToggle = new ThemeToggle();
 //        themeToggle.setClassName("theme-toggle");
 //        header.add(themeToggle);
@@ -185,8 +200,8 @@ public class MainView extends StandardTabbedModeMainView {
 
     @EventListener
     public void handleNewAppropriationEvent(NewAppropriationEvent event) {
-       bfyEntryDl.load();
-       bfySearchDl.load();
+        bfyEntryDl.load();
+        bfySearchDl.load();
     }
 
     // Doug added everything below to create landing page
@@ -204,5 +219,27 @@ public class MainView extends StandardTabbedModeMainView {
 //                    "main",
 //                    "io/jmix/uisamples/view/sys/main/main-overview.xml"));
         }
+    }
+
+    @Subscribe("mainTabSheet")
+    protected void onMainTabSheetTabsCollectionChange(final TabbedViewsContainer.TabsCollectionChangeEvent<MainTabSheet> event) {
+        refreshMessageBox();
+    }
+
+    @EventListener
+    public void handleUserMessageSavedEvent(UserMessageSavedEvent event) {
+        userMessageList = userMessageService.getUserMessages();
+        refreshMessageBox();
+    }
+
+    private void refreshMessageBox() {
+        messageBox.removeAll();
+        StringBuilder message = new StringBuilder("<div>");
+        for (var userMessage : userMessageList) {
+            message.append(userMessage.getMessage());
+            message.append("<br><hr>");
+        }
+        message.append("</div>");
+        messageBox.add(new Html(message.toString()));
     }
 }
