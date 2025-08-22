@@ -2,7 +2,9 @@ package gov.fjc.fis.listener;
 
 import gov.fjc.fis.entity.Activity;
 import gov.fjc.fis.entity.ActivityReimbursement;
+import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.service.ActivityReimbursementService;
+import gov.fjc.fis.service.AppropriationService;
 import io.jmix.core.DataManager;
 import io.jmix.core.Id;
 import io.jmix.core.event.EntityChangedEvent;
@@ -10,10 +12,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+/**
+ * listen for changes to reimbursements and update totals on activity and appropriation
+ *
+ * @author Doug Mitchell
+ * @version 2.1
+ * @since 2.0
+ */
 @Component("fis_ActivityReimbursementEventListener")
 public class ActivityReimbursementEventListener {
     @Autowired
     private DataManager dataManager;
+    @Autowired
+    private AppropriationService appropriationService;
     @Autowired
     private ActivityReimbursementService activityReimbursementService;
 
@@ -34,5 +45,9 @@ public class ActivityReimbursementEventListener {
 
         activity.setReimbursedAmount(activityReimbursementService.sumReimbursements(activity));
         dataManager.save(activity);
+
+        Appropriation appropriation = appropriationService.getAppropriation(activity);
+        appropriation.setReimbursedAmount(activityReimbursementService.sumReimbursements(appropriation));
+        dataManager.save(appropriation);
     }
 }

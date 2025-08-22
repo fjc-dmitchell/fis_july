@@ -8,6 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+/**
+ * listen for changes to allocations and create audit record
+ *
+ * @author Doug Mitchell
+ * @version 2.1
+ * @since 2.1
+ */
 @Component("fis_DivisionAllocationEventListener")
 public class DivisionAllocationEventListener {
     @Autowired

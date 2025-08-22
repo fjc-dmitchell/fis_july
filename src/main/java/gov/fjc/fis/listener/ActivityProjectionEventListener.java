@@ -9,6 +9,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.jmix.core.DataManager;
 
+/**
+ * listen for changes to projections, create audit record (new in 2.1), and update total on activity
+ *
+ * @author Doug Mitchell
+ * @version 2.1
+ * @since 2.0
+ *
+ */
 @Component
 public class ActivityProjectionEventListener {
     @Autowired
@@ -49,7 +57,7 @@ public class ActivityProjectionEventListener {
         }
         dataManager.save(audit);
 
-        // now, let's update the reimbursement field on activity
+        // now, let's update the projection field on activity
         Activity activity;
         if (event.getType() != EntityChangedEvent.Type.DELETED) {
             Id<ActivityProjection> projectionId = event.getEntityId();
