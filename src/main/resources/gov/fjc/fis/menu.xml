@@ -35,6 +35,10 @@
               title="msg://gov.fjc.fis.view.activityreimbursement/activityReimbursementListView.title"/>
         <item view="fis_FileAttachmentCategory.list"
               title="msg://gov.fjc.fis.view.fileattachmentcategory/fileAttachmentCategoryListView.title"/>
+        <item view="fis_DivisionAllocationAudit.list"
+              title="msg://gov.fjc.fis.view.divisionallocationaudit/divisionAllocationAuditListView.title"/>
+        <item view="fis_ActivityProjectionAudit.list"
+              title="msg://gov.fjc.fis.view.activityprojectionaudit/activityProjectionAuditListView.title"/>
     </menu>
     <menu id="jifms" description="msg://gov.fjc.fis/menu_config.jifms.description"
           title="msg://gov.fjc.fis/menu_config.jifms.title">
@@ -80,6 +84,8 @@
               title="msg://gov.fjc.fis.view.report.budgetrequestreport/budgetRequestReportView.title"/>
         <item bean="fis_ReportRouter" beanMethod="openDivisionObligationsReport"
               title="msg://gov.fjc.fis.view.report.divisionobligationsreport/divisionObligationsReportView.title"/>
+        <item bean="fis_ReportRouter" beanMethod="openOpenObligationsReport"
+              title="msg://gov.fjc.fis.view.report.openobligationsreport/openObligationsReportView.title"/>
         <item bean="fis_EducationProgramsAnalysis" beanMethod="generateReportData" title="Program Analysis"/>
         <item bean="fis_EducationProgramsAnalysis" beanMethod="generateCalendarYearReportData"
               title="Program Analysis for Mike"/>
