@@ -95,7 +95,7 @@ public class ActivityProjectionDetailView extends StandardDetailView<ActivityPro
 
     @Install(to = "categoriesDl", target = Target.DATA_LOADER)
     protected List<Category> categoriesDlLoadDelegate(final LoadContext<Category> loadContext) {
-        return categoryService.getCategoriesForBfy(appropriation);
+        return categoryService.getCategories(appropriation);
     }
 
     @Install(to = "objectClassesDl", target = Target.DATA_LOADER)

@@ -70,4 +70,10 @@ public class ObligationListView extends StandardListView<Obligation> {
 
         uiEventPublisher.publishEvent(new SearchGridSelectedItemsEvent(this, obligationsDataGrid, selectedItems.size()));
     }
+
+    @Install(to = "obligationsDataGrid.costOrg", subject = "partNameGenerator")
+    protected String obligationsDataGridCostOrgPartNameGenerator(final Obligation obligation) {
+        var costOrg = obligation.getCostOrg();
+        return costOrg == null ? null : obligation.getCostOrg().getBudgetOrg();
+    }
 }

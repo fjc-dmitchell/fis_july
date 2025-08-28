@@ -21,6 +21,7 @@
         </collection>
     </data>
     <facets>
+        <settings auto="true"/>
         <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
             <pagination component="pagination"/>
@@ -54,18 +55,20 @@
                 <action id="readAction" type="list_read"/>
             </actions>
             <columns resizable="true">
-                <column property="activity.fund.fundCode" header="Fund" width="85px" flexGrow="0"/>
+                <column property="activity.fund.fundCode" header="Fund" width="85px" flexGrow="0" visible="false"/>
                 <column property="activity.division.appropriation.budgetFiscalYear" header="BFY" width="70px"
                         flexGrow="0"/>
-                <column property="activity.division.titleAndCode" header="Division" width="300px" flexGrow="0"/>
+                <column property="activity.division.divisionCode" header="Division" textAlign="CENTER" width="90px"
+                        flexGrow="0"/>
                 <column property="activity.titleAndCode" header="Activity" width="350px" flexGrow="1"/>
                 <column property="activity.group.titleAndCode" header="Group" width="350px" visible="false"/>
                 <column property="activity.branch.titleAndCode" header="Branch" width="350px" visible="false"/>
                 <column property="objectClass.budgetObjectClass" header="BOC" width="75px" visible="true" flexGrow="0"/>
                 <column property="objectClass.titleAndCode" header="Object Class" width="350px" visible="false"/>
-                <column property="documentNumber" width="250px" visible="false"/>
                 <column property="source" width="300px" flexGrow="0"/>
                 <column property="amount" header="Reimbursement" textAlign="END" width="140px" flexGrow="0"/>
+                <column property="documentNumber" width="250px"/>
+                <column property="documentDate" width="250px"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://userMessageDetailView.title"
-      focusComponent="form">
+      focusComponent="titleField">
     <data>
         <instance id="userMessageDc"
                   class="gov.fjc.fis.entity.UserMessage">
@@ -19,10 +19,12 @@
     <layout expand="contentBox">
         <vbox id="contentBox" css="overflow: auto" padding="false">
             <vbox id="formWrapper" classNames="contrast-panel">
-                <formLayout id="form" dataContainer="userMessageDc">
+                <formLayout id="form" dataContainer="userMessageDc"  maxWidth="60em">
+                    <responsiveSteps>
+                        <responsiveStep minWidth="0" columns="1"/>
+                    </responsiveSteps>
                     <textField id="titleField" property="title"/>
-                    <richTextEditor id="messageField" property="message" minHeight="15em"/>
-                    <!--            <textArea id="messageField" height="9.5em" property="message"/>-->
+                    <richTextEditor id="messageField" property="message" minHeight="30em"/>
                     <dateTimePicker id="postDateField" property="postDate"/>
                     <checkbox id="publishedField" property="published"/>
                 </formLayout>

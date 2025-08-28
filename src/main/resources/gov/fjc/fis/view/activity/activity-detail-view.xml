@@ -18,6 +18,7 @@
                 <property name="obligations" fetchPlan="_base"/>
                 <property name="createdByString"/>
                 <property name="attachments" fetchPlan="_base"/>
+                <property name="costOrg" fetchPlan="_base"/>
             </fetchPlan>
             <loader id="activityDl"/>
             <collection id="projectionsDc" property="projections"/>
@@ -31,6 +32,9 @@
         </collection>
         <collection id="divisionsDc" class="gov.fjc.fis.entity.Division">
             <loader id="divisionsDl" readOnly="true"/>
+        </collection>
+        <collection id="costOrgsDc" class="gov.fjc.fis.entity.Division">
+            <loader id="costOrgsDl" readOnly="true"/>
         </collection>
         <collection id="groupsDc" class="gov.fjc.fis.entity.Group">
             <loader id="groupsDl" readOnly="true"/>
@@ -63,11 +67,15 @@
                                         label="Fund" width="13em"/>
                         <!--                    <textField id="sortCodeField" property="sortCode" width="6em" label="Sort Code"/>-->
                     </hbox>
+                    <hbox id="costOrgBox" colspan="2" visible="false">
+                        <entityComboBox id="costOrgField" itemsContainer="costOrgsDc" property="costOrg" label="Cost Org" width="30em"
+                                        requiredMessage="The division receiving the benefit is required when using the mandatory fund"/>
+                    </hbox>
                     <hbox colspan="2">
                         <textField id="activityNumberField" property="activityNumber" width="9em"
                                    label="Activity Number"
                                    datatype="string"/>
-                        <textField id="titleField" property="title" width="32em" label="Title"/>
+                        <textField id="titleField" property="title" width="42em" label="Title"/>
                         <textField id="sortCodeField" property="sortCode" width="6em" label="Sort Code"/>
                     </hbox>
                     <!--                <textField id="budgetFiscalYearField" enabled="false" datatype="string" label="Budget Fiscal Year"-->
@@ -125,7 +133,7 @@
                             <hbox>
                                 <textField id="programDirectorField" property="programDirector" label="Program Director"
                                            width="25em"/>
-                                <textField id="shortTitleField" property="shortTitle" label="Short Title" width="30em"/>
+                                <textField id="shortTitleField" property="shortTitle" label="Short Title (optional override)" width="30em"/>
                             </hbox>
                             <hbox>
                                 <textField id="initialProjectionField" property="initialProjection"
@@ -199,6 +207,10 @@
                     <tab id="projectionsAuditTab" label="Projections History">
                         <vbox>
                             <!--                            <details id="audit" opened="false" summaryText="Projections History" themeNames="filled">-->
+                            <hbox id="auditButtonsPanel" classNames="buttons-panel">
+                                <button id="excelExportBtn" action="auditProjectionsDataGrid.excelExport"
+                                        text="Export projection audit"/>
+                            </hbox>
                             <hbox>
                                 <dataGrid id="auditProjectionsDataGrid" dataContainer="auditProjectionsDc"
                                           width="795px"
@@ -209,6 +221,7 @@
                                                 <property name="openMode" value="DIALOG"/>
                                             </properties>
                                         </action>
+                                        <action id="excelExport" type="grdexp_excelExport"/>
                                     </actions>
                                     <columns>
                                         <column property="auditDate" header="Date" width="160px">

@@ -13,7 +13,7 @@ jmix {
 }
 
 group = 'gov.fjc'
-version = '2.1.3-SNAPSHOT'
+version = '2.1.9-SNAPSHOT'
 
 repositories {
     mavenCentral()

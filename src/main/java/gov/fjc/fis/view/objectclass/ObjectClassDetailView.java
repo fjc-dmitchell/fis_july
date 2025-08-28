@@ -95,7 +95,7 @@ public class ObjectClassDetailView extends StandardDetailView<ObjectClass> {
 
     @Install(to = "categoriesDl", target = Target.DATA_LOADER)
     protected List<Category> categoriesDlLoadDelegate(final LoadContext<Category> loadContext) {
-        return categoryService.getCategoriesForBfy(appropriation);
+        return categoryService.getCategories(appropriation);
     }
 
     @Install(to = "categoryField", subject = "itemLabelGenerator")

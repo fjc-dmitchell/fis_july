@@ -24,7 +24,6 @@ import io.jmix.core.LoadContext;
 import io.jmix.core.session.SessionData;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.UiEventPublisher;
-import io.jmix.flowui.app.main.StandardMainView;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker;
 import io.jmix.flowui.model.CollectionContainer;
@@ -33,11 +32,11 @@ import io.jmix.flowui.view.*;
 import io.jmix.tabbedmode.app.main.StandardTabbedModeMainView;
 import io.jmix.tabbedmode.component.tabsheet.MainTabSheet;
 import io.jmix.tabbedmode.component.workarea.TabbedViewsContainer;
-import io.jmix.tabbedmode.component.workarea.WorkArea;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Set;
 
@@ -76,13 +75,13 @@ public class MainView extends StandardTabbedModeMainView {
     @ViewComponent
     private VerticalLayout messageBox;
 
-    private List<UserMessage> userMessageList;
+    private StringBuilder message;
 
     @Subscribe
     public void onInit(final InitEvent event) {
         bfySearch.setAutoExpand(MultiSelectComboBox.AutoExpandMode.VERTICAL);
         initApplicationTitle();
-        userMessageList = userMessageService.getUserMessages();
+        fetchMessages();
         refreshMessageBox();
 //        ThemeToggle themeToggle = new ThemeToggle();
 //        themeToggle.setClassName("theme-toggle");
@@ -228,18 +227,26 @@ public class MainView extends StandardTabbedModeMainView {
 
     @EventListener
     public void handleUserMessageSavedEvent(UserMessageSavedEvent event) {
-        userMessageList = userMessageService.getUserMessages();
+        fetchMessages();
         refreshMessageBox();
+    }
+
+    private void fetchMessages() {
+        List<UserMessage> userMessageList = userMessageService.getUserMessages();
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE, yyyy-MM-dd hh:mma");
+        message = new StringBuilder("<div>");
+        for (var userMessage : userMessageList) {
+            var postDate = userMessage.getPostDate();
+            // message.append("<h2><strong>").append(userMessage.getTitle()).append("</strong></h2>");
+            message.append(userMessage.getMessage());
+            message.append("<span style='font-size: 0.857em; color: #68696b; margin-bottom: 10px;'>Posted on ").append(sdf.format(postDate)).append("</span><br>");
+            message.append("<hr>");
+        }
+        message.append("</div>");
     }
 
     private void refreshMessageBox() {
         messageBox.removeAll();
-        StringBuilder message = new StringBuilder("<div>");
-        for (var userMessage : userMessageList) {
-            message.append(userMessage.getMessage());
-            message.append("<br><hr>");
-        }
-        message.append("</div>");
         messageBox.add(new Html(message.toString()));
     }
 }

@@ -145,7 +145,9 @@ public class StatusOfFundsReportService {
                         amount = kvEntity.getValue("oneyearamount");
                         amount = amount.setScale(scale, RoundingMode.HALF_UP);
                         divisionDto.setOneYearAllocations(amount);
-                        if (!division.equals(obbbaDivision)) {
+                        if (division.equals(obbbaDivision)) {
+                            categoryDto.setMandatoryAllocated(amount);
+                        } else {
                             categoryDto.addOneYearAllocation(amount);
                         }
                         amount = kvEntity.getValue("twoyearamount");
@@ -163,7 +165,9 @@ public class StatusOfFundsReportService {
                         amount = amount.setScale(scale, RoundingMode.HALF_UP);
                         if (kvEntity.getValue("fund").equals(oneYearFund)) {
                             divisionDto.setOneYearProjections(amount);
-                            if (!division.equals(obbbaDivision)) {
+                            if (division.equals(obbbaDivision)) {
+                                categoryDto.setMandatoryProjected(amount);
+                            } else {
                                 categoryDto.addOneYearProjection(amount);
                             }
                         } else {
@@ -181,7 +185,9 @@ public class StatusOfFundsReportService {
                         amount = amount.setScale(scale, RoundingMode.HALF_UP);
                         if (kvEntity.getValue("fund").equals(oneYearFund)) {
                             divisionDto.setOneYearObligations(amount);
-                            if (!division.equals(obbbaDivision)) {
+                            if (division.equals(obbbaDivision)) {
+                                categoryDto.setMandatoryObligated(amount);
+                            } else {
                                 categoryDto.addOneYearObligation(amount);
                             }
                         } else {
@@ -198,7 +204,9 @@ public class StatusOfFundsReportService {
                         amount = amount.setScale(scale, RoundingMode.HALF_UP);
                         if (kvEntity.getValue("fund").equals(oneYearFund)) {
                             divisionDto.setOneYearReimbursements(amount);
-                            if (!division.equals(obbbaDivision)) {
+                            if (division.equals(obbbaDivision)) {
+                                categoryDto.setMandatoryReimbursed(amount);
+                            } else {
                                 categoryDto.addOneYearReimbursement(amount);
                             }
                         } else {

@@ -299,7 +299,8 @@ public class CategoryDto {
                         totalOneYearAllocations, totalTwoYearAllocations,
                         totalOneYearObligations, totalTwoYearObligations,
                         totalOneYearProjections, totalTwoYearProjections,
-                        totalOneYearReimbursements, totalTwoYearReimbursements);
+                        totalOneYearReimbursements, totalTwoYearReimbursements, mandatoryAllocated,
+                        mandatoryDisbursed, mandatoryObligated, mandatoryProjected, mandatoryReimbursed);
     }
 
     public BigDecimal getTotalTwoYearReimbursements() {

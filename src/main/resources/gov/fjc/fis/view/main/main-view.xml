@@ -86,7 +86,7 @@
                     <header text="Welcome to the FJC Financial Information System"
                             css="font-size: 22px;"/>
                     <hr/>
-                    <vbox id="messageBox" spacing="false" padding="false"/>
+                    <vbox id="messageBox" spacing="false" padding="false" width="100%"/>
                 </vbox>
             </initialLayout>
         </workArea>

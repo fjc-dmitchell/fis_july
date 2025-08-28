@@ -65,6 +65,7 @@ public class DocumentAuditListView extends StandardListView<DocumentAudit> {
                 case "showDiv3Btn" -> "JXXXXXD";
                 case "showDiv4Btn" -> "JXXXXXC";
                 case "showDiv5Btn" -> "JXXXXXB";
+                case "showDiv9Btn" -> "JXXMAPP";
                 default -> null;
             };
 

@@ -147,7 +147,7 @@ public class SpendingChartFragment extends Fragment<VerticalLayout> {
                     for (var cat : categories) {
                         spending.addItem(new MapDataItem(Map.of("category", cat.getTitleAndCode(), "value", cat.getMandatoryObligated().add(cat.getMandatoryProjected()))));
                     }
-                    Objects.requireNonNull(spendingChart.getTitle()).setText(appropriation.getBudgetFiscalYear().concat(" JXXMAPP Mandatory Fund Allocations"));
+                    Objects.requireNonNull(spendingChart.getTitle()).setText(appropriation.getBudgetFiscalYear().concat(" JXXMAPP Mandatory Fund Spending (does not include unspent funds)"));
                     break;
                 default:
                     categories = categorySpendDc.getItems().stream().filter(categoryDto -> categoryDto.getTotalObligations().add(categoryDto.getTotalProjections()).signum() != 0).toList();

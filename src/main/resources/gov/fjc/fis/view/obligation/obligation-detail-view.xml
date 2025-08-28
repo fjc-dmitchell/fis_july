@@ -17,6 +17,7 @@
                 <!--                    <property name="title"/>-->
                 <!--                </property>-->
                 <property name="statusString"/>
+                <property name="costOrg" fetchPlan="_base"/>
             </fetchPlan>
             <loader id="obligationDl"/>
             <collection id="invoicesDc" property="invoices"/>

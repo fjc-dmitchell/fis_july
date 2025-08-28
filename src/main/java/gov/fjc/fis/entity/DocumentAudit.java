@@ -211,6 +211,12 @@ public class DocumentAudit {
     @Column(name = "LOGGED_CHANGES")
     private String loggedChanges;
 
+    @DependsOnProperties({"id"})
+    @JmixProperty
+    public Integer getProcessId() {
+        return getId();
+    }
+
     @DependsOnProperties({"documentAmount", "obligationAmount"})
     @JmixProperty
     public BigDecimal getFcnAmount() {

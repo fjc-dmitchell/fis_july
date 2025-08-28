@@ -142,7 +142,7 @@ public class ObligationDetailView extends StandardDetailView<Obligation> {
 
     @Install(to = "categoriesDl", target = Target.DATA_LOADER)
     protected List<Category> categoriesDlLoadDelegate(final LoadContext<Category> loadContext) {
-        return categoryService.getCategoriesForBfy(entryBfy);
+        return categoryService.getCategories(entryBfy);
     }
 
     @Install(to = "objectClassesDl", target = Target.DATA_LOADER)

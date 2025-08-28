@@ -35,7 +35,7 @@
                                 <button id="showDiv2Btn" action="showDivisionAction" text="Show JXXXXXA (ED)"/>
                                 <button id="showDiv3Btn" action="showDivisionAction" text="Show JXXXXXD (EIS)"/>
                                 <button id="showDiv4Btn" action="showDivisionAction" text="Show JXXXXXC (RES)"/>
-                                <button id="showDiv5Btn" action="showDivisionAction" text="Show JXXXXXB (ITO)"/>
+                                <button id="showDiv9Btn" action="showDivisionAction" text="Show JXXMAPP (OBBBA)"/>
                             </hbox>
                         </hbox>
                         <hbox width="100%">

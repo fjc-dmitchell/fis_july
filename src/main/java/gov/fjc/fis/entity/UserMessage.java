@@ -40,7 +40,7 @@ public class UserMessage {
     private Date postDate = new Date();
 
     @Column(name = "PUBLISHED")
-    private Boolean published = false;
+    private Boolean published = true;
 
     @Column(name = "VERSION", nullable = false)
     @Version

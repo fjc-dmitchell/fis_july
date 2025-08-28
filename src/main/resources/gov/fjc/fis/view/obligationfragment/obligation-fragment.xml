@@ -5,6 +5,7 @@
             <fetchPlan extends="_base">
                 <property name="activity" fetchPlan="_base"/>
                 <property name="objectClass" fetchPlan="_base"/>
+                <property name="costOrg" fetchPlan="_base"/>
             </fetchPlan>
             <loader id="obligationsDl" readOnly="true"/>
         </collection>

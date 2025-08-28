@@ -16,6 +16,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Date;
 
 import static gov.fjc.fis.FisUtilities.getCreatedModifiedString;
 import static java.util.Objects.requireNonNullElse;
@@ -51,8 +52,16 @@ public class ActivityReimbursement {
     @NotNull
     private BigDecimal amount = BigDecimal.ZERO;
 
-    @Column(name = "NOTE")
-    private String note;
+    @Column(name = "DOCUMENT_NUMBER")
+    private String documentNumber;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "DOCUMENT_DATE")
+    private Date documentDate;
+
+    @Column(name = "MEMO")
+    @Lob
+    private String memo;
 
     @Column(name = "VERSION", nullable = false, columnDefinition = "INT DEFAULT 1")
     @Version
@@ -74,12 +83,28 @@ public class ActivityReimbursement {
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
 
-    public String getNote() {
-        return note;
+    public String getMemo() {
+        return memo;
     }
 
-    public void setNote(String note) {
-        this.note = note;
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
+
+    public Date getDocumentDate() {
+        return documentDate;
+    }
+
+    public void setDocumentDate(Date documentDate) {
+        this.documentDate = documentDate;
+    }
+
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
     }
 
     @DependsOnProperties({"createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"})

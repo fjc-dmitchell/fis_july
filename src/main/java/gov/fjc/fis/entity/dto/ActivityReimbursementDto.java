@@ -3,8 +3,11 @@ package gov.fjc.fis.entity.dto;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import static java.util.Objects.requireNonNullElse;
 
@@ -40,7 +43,12 @@ public class ActivityReimbursementDto {
 
     private String budgetObjectClass;
 
-    private String note;
+    private String documentNumber;
+
+    @Temporal(TemporalType.DATE)
+    private Date documentDate;
+
+    private String memo;
 
     private String source;
 
@@ -51,6 +59,30 @@ public class ActivityReimbursementDto {
     private BigDecimal currentTwoYearAmount = BigDecimal.ZERO;
 
     private BigDecimal priorTwoYearAmount = BigDecimal.ZERO;
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
+
+    public Date getDocumentDate() {
+        return documentDate;
+    }
+
+    public void setDocumentDate(Date documentDate) {
+        this.documentDate = documentDate;
+    }
+
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
+    }
 
     public Integer getCategoryId() {
         return categoryId;
@@ -138,14 +170,6 @@ public class ActivityReimbursementDto {
 
     public void setSource(String source) {
         this.source = source;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
     }
 
     public String getBudgetObjectClass() {

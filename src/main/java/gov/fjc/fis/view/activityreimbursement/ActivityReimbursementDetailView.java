@@ -14,7 +14,6 @@ import io.jmix.core.EntityStates;
 import io.jmix.core.LoadContext;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.textfield.TypedTextField;
-import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +72,7 @@ public class ActivityReimbursementDetailView extends StandardDetailView<Activity
 
     @Install(to = "categoriesDl", target = Target.DATA_LOADER)
     protected List<Category> categoriesDlLoadDelegate(final LoadContext<Category> loadContext) {
-        return categoryService.getCategoriesForBfy(appropriation);
+        return categoryService.getCategories(appropriation);
     }
 
     @Install(to = "objectClassesDl", target = Target.DATA_LOADER)

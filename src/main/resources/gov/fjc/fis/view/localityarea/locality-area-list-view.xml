@@ -11,9 +11,7 @@
         </collection>
     </data>
     <facets>
-        <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
-            <genericFilter component="genericFilter"/>
             <pagination component="pagination"/>
         </urlQueryParameters>
     </facets>
@@ -22,10 +20,6 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
-        <genericFilter id="genericFilter"
-                       dataLoader="localityAreasDl">
-            <properties include=".*"/>
-        </genericFilter>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createButton" action="localityAreasDataGrid.createAction"/>
             <button id="editButton" action="localityAreasDataGrid.editAction"/>
@@ -37,7 +31,7 @@
                   width="100%"
                   minHeight="20em"
                   dataContainer="localityAreasDc"
-                  columnReorderingAllowed="true">
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
             <actions>
                 <action id="createAction" type="list_create"/>
                 <action id="editAction" type="list_edit"/>
@@ -46,7 +40,7 @@
             </actions>
             <columns resizable="true">
                 <column property="effdt" width="120px" flexGrow="0" header="Effective"/>
-                <column property="gvtLocalityArea" width="100px" flexGrow="0" header="Code"/>
+                <column property="gvtLocalityArea" width="90px" flexGrow="0" header="Code"/>
                 <column property="descr" width="320px" flexGrow="0" header="Description"/>
                 <column property="gvtLocalityPct" flexGrow="1" header="Rate"/>
             </columns>

@@ -123,7 +123,7 @@
                   width="100%"
                   minHeight="20em"
                   dataContainer="documentsDc"
-                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes" selectionMode="NONE">
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes" selectionMode="SINGLE">
             <actions>
                 <action id="create" type="list_create"/>
                 <action id="edit" type="list_edit"/>

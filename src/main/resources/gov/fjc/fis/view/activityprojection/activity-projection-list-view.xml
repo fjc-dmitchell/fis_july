@@ -65,15 +65,19 @@
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns resizable="true">
-                <column property="activity.fund.fundCode" header="Fund" width="65px" visible="false"/>
-                <column property="activity.division.appropriation.budgetFiscalYear" header="BFY" width="70px"/>
-                <column property="activity.division.titleAndCode" header="Division" width="350px"/>
-                <column property="activity.titleAndCode" header="Activity" width="350px"/>
-                <column property="activity.group.titleAndCode" header="Group" width="350px" visible="false"/>
-                <column property="activity.branch.titleAndCode" header="Branch" width="350px" visible="false"/>
-                <column property="objectClass.budgetObjectClass" header="BOC" width="75px" visible="false"/>
-                <column property="objectClass.titleAndCode" header="Object Class" width="350px"/>
-                <column property="amount" header="Projection" textAlign="END"/>
+                <column property="activity.fund.fundCode" header="Fund" width="65px" visible="false" flexGrow="0"/>
+                <column property="activity.division.appropriation.budgetFiscalYear" header="BFY" width="70px"
+                        flexGrow="0"/>
+                <column property="activity.division.titleAndCode" header="Division" width="350px" flexGrow="0"/>
+                <column property="activity.titleAndCode" header="Activity" width="350px" flexGrow="1"/>
+                <column property="activity.group.titleAndCode" header="Group" width="350px" visible="false"
+                        flexGrow="0"/>
+                <column property="activity.branch.titleAndCode" header="Branch" width="350px" visible="false"
+                        flexGrow="0"/>
+                <column property="objectClass.budgetObjectClass" header="BOC" width="75px" visible="false"
+                        flexGrow="0"/>
+                <column property="objectClass.titleAndCode" header="Object Class" width="350px" flexGrow="0"/>
+                <column property="amount" header="Projection" textAlign="END" flexGrow="0"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

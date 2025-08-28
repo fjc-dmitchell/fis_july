@@ -57,13 +57,19 @@
                                             itemsContainer="objectClassesDc"/>
                         </formItem>
                         <formItem>
-                            <textField id="documentNumberField" property="documentNumber"/>
-                        </formItem>
-                        <formItem>
                             <textField id="sourceField" property="source"/>
                         </formItem>
                         <formItem>
                             <textField id="amountField" property="amount"/>
+                        </formItem>
+                        <formItem>
+                            <textField id="docidField" property="documentNumber"/>
+                        </formItem>
+                        <formItem>
+                            <textField id="docdateField" property="documentDate"/>
+                        </formItem>
+                        <formItem>
+                            <textArea id="memoField" property="memo"/>
                         </formItem>
                     </formLayout>
                 </vbox>

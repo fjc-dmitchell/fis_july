@@ -15,9 +15,9 @@
         </collection>
     </data>
     <facets>
+        <settings auto="true"/>
         <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
-            <genericFilter component="genericFilter"/>
             <pagination component="pagination"/>
         </urlQueryParameters>
     </facets>
@@ -26,10 +26,6 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
-        <genericFilter id="genericFilter"
-                       dataLoader="departmentsDl">
-            <properties include=".*"/>
-        </genericFilter>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button id="createButton" action="departmentsDataGrid.createAction"/>
             <button id="editButton" action="departmentsDataGrid.editAction"/>
@@ -41,7 +37,7 @@
                   width="100%"
                   minHeight="20em"
                   dataContainer="departmentsDc"
-                  columnReorderingAllowed="true">
+                  columnReorderingAllowed="true" themeNames="column-borders compact row-stripes">
             <actions>
                 <action id="createAction" type="list_create"/>
                 <action id="editAction" type="list_edit"/>
@@ -49,12 +45,12 @@
                 <action id="removeAction" type="list_remove"/>
             </actions>
             <columns resizable="true">
-                <column property="deptid"/>
-                <column property="effdt"/>
-                <column property="effStatus"/>
-                <column property="descr"/>
-                <column property="descrshort"/>
-                <column property="jlCostOrgCd"/>
+                <column property="deptid" width="130px" flexGrow="0"/>
+                <column property="effdt" flexGrow="0" width="120px" textAlign="END"/>
+                <column property="effStatus" flexGrow="0" width="100px" textAlign="CENTER"/>
+                <column property="descr" width="300px" flexGrow="0"/>
+                <column property="descrshort" width="170px" flexGrow="0"/>
+                <column property="jlCostOrgCd" width="130px" flexGrow="0"/>
                 <column property="jlBudCatgCd"/>
             </columns>
         </dataGrid>

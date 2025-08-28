@@ -39,6 +39,16 @@ public class AppropriationService {
                 .list();
     }
 
+    public Appropriation getAppropriation(Activity activity) {
+       return dataManager.load(Appropriation.class)
+               .query("SELECT a FROM fis_Appropriation a"
+               +" INNER JOIN fis_Division dv ON dv.appropriation = a"
+               +" INNER JOIN fis_Activity act ON act.division = dv"
+               +" WHERE act=:activity")
+               .parameter("activity", activity)
+               .one();
+    }
+
     /**
      * determine if appropriation is affected by One Big Beautiful Bill Act
      * enacted by 119th Congress and signed into law on 7/4/2025

@@ -18,6 +18,7 @@
                 <property fetchPlan="_base" name="objectClass">
                     <property fetchPlan="_base" name="category"/>
                 </property>
+                <property name="costOrg" fetchPlan="_base"/>
             </fetchPlan>
             <loader id="obligationsDl" readOnly="true"/>
         </collection>
@@ -62,6 +63,8 @@
             </actions>
             <columns resizable="true">
                 <column property="activity.fund.fundCode" header="Fund" visible="false"/>
+                <column property="documentType" header="Doc Type" visible="false"/>
+                <column property="aoSyncDate" header="Sync Date" visible="false"/>
                 <column property="activity.division.appropriation.budgetFiscalYear" header="BFY" width="70px"/>
                 <column property="activity.division.divisionCode" header="Division" width="90px" textAlign="CENTER"/>
                 <column property="objectClass.budgetObjectClass" header="BOC"/>
@@ -81,8 +84,13 @@
                 <column property="processDate" width="140px" textAlign="END"/>
                 <column property="travelStartDate" width="140px" textAlign="END" header="Travel Start"/>
                 <column property="travelEndDate" width="140px" textAlign="END" header="Travel End"/>
+                <column property="activity.startDate" width="140px" textAlign="END" header="Program Start"
+                        visible="false"/>
+                <column property="activity.endDate" width="140px" textAlign="END" header="Program End"
+                        visible="false"/>
                 <column property="bpoString" header="BPO"/>
                 <column property="budgetOrg"/>
+                <column property="costOrg"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

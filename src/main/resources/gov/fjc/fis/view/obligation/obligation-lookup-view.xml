@@ -8,6 +8,7 @@
                     class="gov.fjc.fis.entity.Obligation">
             <fetchPlan extends="_base">
                 <property name="objectClass" fetchPlan="_base"/>
+                <property name="costOrg" fetchPlan="_base"/>
             </fetchPlan>
             <loader id="obligationsDl" readOnly="true">
                 <query>
