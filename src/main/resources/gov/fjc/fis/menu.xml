@@ -86,6 +86,8 @@
               title="msg://gov.fjc.fis.view.report.divisionobligationsreport/divisionObligationsReportView.title"/>
         <item bean="fis_ReportRouter" beanMethod="openOpenObligationsReport"
               title="msg://gov.fjc.fis.view.report.openobligationsreport/openObligationsReportView.title"/>
+        <item bean="fis_ReportRouter" beanMethod="openOpenTravelObligationsReport"
+              title="msg://gov.fjc.fis.view.report.opentravelobligationsreport/openTravelObligationsReportView.title"/>
         <item bean="fis_EducationProgramsAnalysis" beanMethod="generateReportData" title="Program Analysis"/>
         <item bean="fis_EducationProgramsAnalysis" beanMethod="generateCalendarYearReportData"
               title="Program Analysis for Mike"/>
