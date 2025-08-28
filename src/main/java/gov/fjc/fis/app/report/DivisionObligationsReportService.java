@@ -100,7 +100,7 @@ public class DivisionObligationsReportService {
 
                 obligationDtos.add(obligationDto);
             }
-            activityDto.setTotalObligated(totalObligated.subtract(totalDisbursed));
+            activityDto.setTotalObligated(totalObligated);
             activityDto.setTotalDisbursed(totalDisbursed);
             activityDto.setObligationDtos(obligationDtos);
 

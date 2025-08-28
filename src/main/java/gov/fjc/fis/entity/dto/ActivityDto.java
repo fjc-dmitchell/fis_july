@@ -349,6 +349,10 @@ public class ActivityDto {
         this.totalObligated = requireNonNullElse(totalObligated, BigDecimal.ZERO);
     }
 
+    public BigDecimal getTotalRemaining() {
+        return totalObligated.subtract(totalDisbursed);
+    }
+
     public BigDecimal getTravelObligated() {
         return requireNonNullElse(travelObligated, BigDecimal.ZERO);
     }

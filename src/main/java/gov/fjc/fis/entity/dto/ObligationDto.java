@@ -58,6 +58,14 @@ public class ObligationDto {
 
     private Boolean status;
 
+    @Temporal(TemporalType.DATE)
+    private Date travelStartDate;
+
+    @Temporal(TemporalType.DATE)
+    private Date travelEndDate;
+
+    private String location;
+
     private Integer objectClassId;
 
     private String budgetObjectClass;
@@ -91,6 +99,30 @@ public class ObligationDto {
     private BigDecimal priorTwoYearObligated = BigDecimal.ZERO;
 
     private BigDecimal priorTwoYearDisbursed = BigDecimal.ZERO;
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public Date getTravelEndDate() {
+        return travelEndDate;
+    }
+
+    public void setTravelEndDate(Date travelEndDate) {
+        this.travelEndDate = travelEndDate;
+    }
+
+    public Date getTravelStartDate() {
+        return travelStartDate;
+    }
+
+    public void setTravelStartDate(Date travelStartDate) {
+        this.travelStartDate = travelStartDate;
+    }
 
     public BigDecimal getPriorTwoYearDisbursed() {
         return priorTwoYearDisbursed;

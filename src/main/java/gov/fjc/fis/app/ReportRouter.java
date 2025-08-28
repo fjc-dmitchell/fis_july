@@ -4,6 +4,7 @@ import com.vaadin.flow.component.Unit;
 import gov.fjc.fis.view.report.budgetrequestreport.BudgetRequestReportView;
 import gov.fjc.fis.view.report.divisionobligationsreport.DivisionObligationsReportView;
 import gov.fjc.fis.view.report.educationprogramsreport.EducationProgramsReportView;
+import gov.fjc.fis.view.report.openobligationsreport.OpenObligationsReportView;
 import gov.fjc.fis.view.report.statusoffundsreport.StatusOfFundsReportView;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -29,5 +30,9 @@ public class ReportRouter {
 
     public void openDivisionObligationsReport() {
         dialogWindows.view(UiComponentUtils.getCurrentView(), DivisionObligationsReportView.class).open();
+    }
+
+    public void openOpenObligationsReport() {
+        dialogWindows.view(UiComponentUtils.getCurrentView(), OpenObligationsReportView.class).open();
     }
 }
