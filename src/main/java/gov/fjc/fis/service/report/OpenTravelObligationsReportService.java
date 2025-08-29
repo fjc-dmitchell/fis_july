@@ -1,14 +1,15 @@
 package gov.fjc.fis.service.report;
 
 import gov.fjc.fis.entity.Appropriation;
-import gov.fjc.fis.entity.Branch;
 import gov.fjc.fis.entity.Division;
 import gov.fjc.fis.entity.DocumentType;
 import gov.fjc.fis.entity.dto.ObligationDto;
-import gov.fjc.fis.reportdata.OpenObligationsReportData;
 import gov.fjc.fis.reportdata.OpenTravelObligationsReportData;
+import gov.fjc.fis.service.AppropriationService;
+import gov.fjc.fis.service.DivisionService;
 import io.jmix.core.DataManager;
 import io.jmix.core.entity.KeyValueEntity;
+import jakarta.persistence.TemporalType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,98 +17,141 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
-
-import static gov.fjc.fis.FisUtilities.getCurrentDateMinusDays;
-import static gov.fjc.fis.FisUtilities.getNumberOfDaysFromToday;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component("fis_OpenTravelObligationsReportService")
 public class OpenTravelObligationsReportService {
     @Autowired
+    private AppropriationService appropriationService;
+    @Autowired
+    private DivisionService divisionService;
+    @Autowired
     private DataManager dataManager;
 
-    public List<KeyValueEntity> getOpenObligations(Set<Division> divisions, Branch branch, LocalDate bDate, LocalDate eDate) {
-        Date beginDate = Date.from(bDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date endDate = Date.from(eDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    public List<KeyValueEntity> getOpenTravelObligations(Appropriation appropriation, Set<Division> divisions,
+                                                         LocalDate bDate, LocalDate eDate,
+                                                         boolean obbba) {
+        var priorAppropriation = appropriationService.getPreviousFiscalYear(appropriation);
+        List<Appropriation> appropriations = List.of(appropriation, priorAppropriation);
+
+        Set<String> divisionCodes = divisions.stream().map(Division::getDivisionCode).collect(Collectors.toSet());
+
+        var obbbaDivision = divisionService.getMandatoryDivision(appropriation);
+        if (divisions.contains(obbbaDivision)) {
+            obbba = false;
+        }
+
+        Date beginDate = new Date(), endDate = new Date();
+        if (bDate != null) {
+            beginDate = Date.from(bDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        }
+        if (eDate != null) {
+            endDate = Date.from(eDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        }
+
         var travelAuthorizationId = DocumentType.TRAVEL_AUTHORIZATION.getId();
         var obligations = dataManager.loadValues(
-                        "SELECT o.amount, o.documentNumber, o.vendor, a.activityNumber, a.title, a.city,"
-                                + " a.state, CASE WHEN (o.documentType = :ta) THEN o.travelEndDate ELSE a.endDate END,"
-                                + " o.lineNumber"
+                        "SELECT f.fundCode, app.budgetFiscalYear, dv.divisionCode, a.activityNumber,"
+                                + " a.title,o.documentNumber, o.documentDate, o.vendor, o.amount,"
+                                + " o.lineNumber, COALESCE(a.endDate, o.travelEndDate)"
                                 + " FROM fis_Obligation o"
                                 + " INNER JOIN fis_Activity a ON a=o.activity"
-                                + " WHERE ((:anyBranch = true AND a.division IN :divisions)"
-                                + " OR (:anyBranch = false AND a.branch = :branch))"
+                                + " INNER JOIN fis_Division dv ON dv=a.division"
+                                + " INNER JOIN fis_Fund f ON f=a.fund"
+                                + " INNER JOIN fis_Appropriation app ON app=dv.appropriation"
+                                + " WHERE app IN :appropriations"
+                                + " AND dv.divisionCode IN :divisionCodes"
                                 + " AND o.status=true"
-                                + " AND o.documentType = :ta AND o.documentDate BETWEEN :beginDate AND :endDate"
-                )
+                                + " AND o.documentType = :ta"
+                                + " AND (:anyBeginDate=true OR o.documentDate >=:beginDate)"
+                                + " AND (:anyEndDate=true OR o.documentDate <=:endDate)")
                 .parameter("ta", travelAuthorizationId)
-                .parameter("anyBranch", branch == null)
-                .parameter("branch", branch)
-                .parameter("divisions", divisions)
-                .parameter("beginDate", beginDate)
-                .parameter("endDate", endDate)
-                .properties("amount", "docid", "vendor", "actnum", "title", "city", "state", "enddate", "lineno")
+                .parameter("appropriations", appropriations)
+                .parameter("divisionCodes", divisionCodes)
+                .parameter("anyBeginDate", bDate == null)
+                .parameter("anyEndDate", eDate == null)
+                .parameter("beginDate", beginDate, TemporalType.DATE)
+                .parameter("endDate", endDate, TemporalType.DATE)
+                .properties("fundCode", "budgetFiscalYear", "divisionCode", "activityNumber", "title",
+                        "documentNumber", "documentDate", "vendor", "amount", "lineNumber", "endDate")
                 .list();
 
-        obligations.sort(Comparator.comparing((KeyValueEntity o) -> (Date) o.getValue("enddate"),
+        if (obbba) {
+            List<Division> obbaDivisions = Stream.of(divisionService.getMandatoryDivision(appropriation),
+                    divisionService.getMandatoryDivision(priorAppropriation)).filter(Objects::nonNull).toList();
+
+            var obbbaObligations = dataManager.loadValues(
+                            "SELECT f.fundCode, app.budgetFiscalYear, dv.divisionCode, a.activityNumber,"
+                                    + " a.title,o.documentNumber, o.documentDate, o.vendor, o.amount,"
+                                    + " o.lineNumber, COALESCE(a.endDate, o.travelEndDate)"
+                                    + " FROM fis_Obligation o"
+                                    + " INNER JOIN fis_Activity a ON a=o.activity"
+                                    + " INNER JOIN fis_Division dv ON dv=a.costOrg"
+                                    + " INNER JOIN fis_Fund f ON f=a.fund"
+                                    + " INNER JOIN fis_Appropriation app ON app=dv.appropriation"
+                                    + " WHERE app IN :appropriations"
+                                    + " AND a.division IN :obbaDivisions"
+                                    + " AND dv.divisionCode IN :divisionCodes"
+                                    + " AND o.status=true"
+                                    + " AND o.documentType = :ta"
+                                    + " AND (:anyBeginDate=true OR o.documentDate >=:beginDate)"
+                                    + " AND (:anyEndDate=true OR o.documentDate <=:endDate)")
+                    .parameter("ta", travelAuthorizationId)
+                    .parameter("appropriations", appropriations)
+                    .parameter("obbaDivisions", obbaDivisions)
+                    .parameter("divisionCodes", divisionCodes)
+                    .parameter("anyBeginDate", bDate == null)
+                    .parameter("anyEndDate", eDate == null)
+                    .parameter("beginDate", beginDate, TemporalType.DATE)
+                    .parameter("endDate", endDate, TemporalType.DATE)
+                    .properties("fundCode", "budgetFiscalYear", "divisionCode", "activityNumber", "title",
+                            "documentNumber", "documentDate", "vendor", "amount", "lineNumber", "endDate")
+                    .list();
+
+            obligations.addAll(obbbaObligations);
+        }
+
+        obligations.sort(Comparator.comparing((KeyValueEntity o) -> (Date) o.getValue("endDate"),
                         Comparator.nullsFirst(Comparator.naturalOrder()))
-                .thenComparing(o -> o.getValue("actnum"))
-                .thenComparing(o -> o.getValue("docid"))
-                .thenComparingInt(o -> o.getValue("lineno")));
+                .thenComparing(o -> o.getValue("activityNumber"))
+                .thenComparing(o -> o.getValue("documentNumber"))
+                .thenComparingInt(o -> o.getValue("lineNumber")));
 
         return obligations;
     }
 
     public OpenTravelObligationsReportData generateReportData(Appropriation appropriation,
-                                                              Set<Division> division,
-                                                              Branch branch,
+                                                              Set<Division> divisions,
                                                               LocalDate beginDate,
                                                               LocalDate endDate,
                                                               boolean obbba) {
 
-//        division = branch == null ? division : branch.getDivision();
-//        var appropriation = division.getAppropriation();
+        var reportData = new OpenTravelObligationsReportData(appropriation, divisions);
 
-        var reportData = new OpenObligationsReportData(appropriation, division, branch);
-
-        var obligations = getOpenObligations(division, branch, beginDate, endDate);
+        var obligations = getOpenTravelObligations(appropriation, divisions, beginDate, endDate, obbba);
         var totalObligated = BigDecimal.ZERO;
-        long vDays = 0;
 
         List<ObligationDto> obligationDtos = new ArrayList<>();
         ObligationDto dto;
         for (var kvEntity : obligations) {
             dto = dataManager.create(ObligationDto.class);
-            dto.setAmount(kvEntity.getValue("amount"));
-            dto.setDocumentNumber(kvEntity.getValue("docid"));
-            dto.setVendor(kvEntity.getValue("vendor"));
-            dto.setActivityNumber(kvEntity.getValue("actnum"));
+            dto.setFundCode(kvEntity.getValue("fundCode"));
+            dto.setBudgetFiscalYear(kvEntity.getValue("budgetFiscalYear"));
+            dto.setDivisionCode(kvEntity.getValue("divisionCode"));
+            dto.setActivityNumber(kvEntity.getValue("activityNumber"));
             dto.setActivityTitle(kvEntity.getValue("title"));
-            dto.setTravelEndDate(kvEntity.getValue("enddate"));
-            String city = kvEntity.getValue("city");
-            String state = kvEntity.getValue("state");
-            if (city == null) {
-                dto.setLocation(state);
-            } else if (state == null) {
-                dto.setLocation(city);
-            } else {
-                dto.setLocation(city.concat(", ").concat(state));
-            }
+            dto.setDocumentNumber(kvEntity.getValue("documentNumber"));
+            dto.setDocumentDate(kvEntity.getValue("documentDate"));
+            dto.setVendor(kvEntity.getValue("vendor"));
+            dto.setAmount(kvEntity.getValue("amount"));
+            dto.setTravelEndDate(kvEntity.getValue("endDate"));
             obligationDtos.add(dto);
             totalObligated = totalObligated.add(dto.getAmount());
-            vDays += getNumberOfDaysFromToday(dto.getTravelEndDate());
         }
 
         reportData.setObligations(obligationDtos);
         reportData.setTotalObligated(totalObligated);
-//        reportData.setNumberOfDays(numberOfDays);
-//        var endDate = getCurrentDateMinusDays(numberOfDays);
-        reportData.setLatestTravelDate(endDate);
-        if (reportData.getNumberOfObligations() == 0) {
-            reportData.setAverageDays(0);
-        } else {
-            reportData.setAverageDays((float) vDays / reportData.getNumberOfObligations());
-        }
 
         return reportData;
     }

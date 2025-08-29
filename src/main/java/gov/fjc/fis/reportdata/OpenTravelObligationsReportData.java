@@ -9,12 +9,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import static gov.fjc.fis.FisUtilities.*;
 
 public class OpenTravelObligationsReportData {
     private final String budgetFiscalYear;
-    private final String divisionAndBranch;
+    private String divisionTitle;
     private final LocalDateTime reportDateTime;
 
     private List<ObligationDto> obligations;
@@ -24,11 +25,13 @@ public class OpenTravelObligationsReportData {
     private BigDecimal totalObligated;
     private float averageDays;
 
-    public OpenTravelObligationsReportData(Appropriation appropriation, Division division, Branch branch) {
+    public OpenTravelObligationsReportData(Appropriation appropriation, Set<Division> divisions) {
         budgetFiscalYear = appropriation == null ? "" : appropriation.getBudgetFiscalYear();
-        String divisionTitle = division == null ? "" : division.getTitle();
-        String branchTitle = branch == null ? null : ": ".concat(branch.getTitle());
-        divisionAndBranch = branch == null ? divisionTitle : divisionTitle.concat("-").concat(branch.getTitle());
+        divisionTitle = "";
+        for(var division:divisions){
+            divisionTitle = divisionTitle.concat(division.getTitle());
+
+        }
         reportDateTime = getDateTime();
     }
 
@@ -81,7 +84,7 @@ public class OpenTravelObligationsReportData {
     }
 
     public String getDivisionAndBranch() {
-        return divisionAndBranch;
+        return divisionTitle;
     }
 
     public String getReportDateTime() {
@@ -89,7 +92,7 @@ public class OpenTravelObligationsReportData {
     }
 
     public String getFileName() {
-        return divisionAndBranch
+        return divisionTitle
                 .concat(" open obligations for FY ")
                 .concat(budgetFiscalYear)
                 .concat(" as of ")
