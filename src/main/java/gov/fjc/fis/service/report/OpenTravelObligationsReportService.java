@@ -123,13 +123,13 @@ public class OpenTravelObligationsReportService {
 
     public OpenTravelObligationsReportData generateReportData(Appropriation appropriation,
                                                               Set<Division> divisions,
-                                                              LocalDate beginDate,
-                                                              LocalDate endDate,
+                                                              LocalDate fromDate,
+                                                              LocalDate toDate,
                                                               boolean obbba) {
 
-        var reportData = new OpenTravelObligationsReportData(appropriation, divisions);
+        var reportData = new OpenTravelObligationsReportData(appropriation, divisions, fromDate, toDate);
 
-        var obligations = getOpenTravelObligations(appropriation, divisions, beginDate, endDate, obbba);
+        var obligations = getOpenTravelObligations(appropriation, divisions, fromDate, toDate, obbba);
         var totalObligated = BigDecimal.ZERO;
 
         List<ObligationDto> obligationDtos = new ArrayList<>();

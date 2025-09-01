@@ -35,9 +35,9 @@
 <!--                </actions>-->
 <!--            </entityComboBox>-->
             <hbox>
-                <datePicker id="beginDateField" label="Start date on or after" datatype="localDate"/>
-                <datePicker id="endDateField" label="End date on or before" datatype="localDate"/>
-                <checkbox id="allOpenField" label="All open travel" alignSelf="END"/>
+                <datePicker id="beginDateField" label="Doc date on or after" datatype="localDate"/>
+                <datePicker id="endDateField" label="Doc date on or before" datatype="localDate"/>
+                <checkbox id="allOpenField" label="All open TAs" alignSelf="END"/>
             </hbox>
         </vbox>
         <hbox>

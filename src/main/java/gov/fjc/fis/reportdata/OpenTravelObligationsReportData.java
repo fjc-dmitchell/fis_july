@@ -1,37 +1,39 @@
 package gov.fjc.fis.reportdata;
 
 import gov.fjc.fis.entity.Appropriation;
-import gov.fjc.fis.entity.Branch;
 import gov.fjc.fis.entity.Division;
 import gov.fjc.fis.entity.dto.ObligationDto;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static gov.fjc.fis.FisUtilities.*;
 
 public class OpenTravelObligationsReportData {
     private final String budgetFiscalYear;
-    private String divisionTitle;
+    private final String divisionTitles;
     private final LocalDateTime reportDateTime;
+    private final LocalDate fromDate;
+    private final LocalDate toDate;
 
     private List<ObligationDto> obligations;
 
-    private int numberOfDays;
     private Date latestTravelDate;
     private BigDecimal totalObligated;
-    private float averageDays;
 
-    public OpenTravelObligationsReportData(Appropriation appropriation, Set<Division> divisions) {
+    public OpenTravelObligationsReportData(Appropriation appropriation, Set<Division> divisions,
+                                           LocalDate fromDate, LocalDate toDate) {
         budgetFiscalYear = appropriation == null ? "" : appropriation.getBudgetFiscalYear();
-        divisionTitle = "";
-        for(var division:divisions){
-            divisionTitle = divisionTitle.concat(division.getTitle());
 
-        }
+        divisionTitles = formatListWithDelimiter(divisions.stream()
+                .sorted(Comparator.comparing(Division::getDivisionCode))
+                .map(Division::getShortTitle).toList(), ", ");
+
+        this.fromDate = fromDate;
+        this.toDate = toDate;
+
         reportDateTime = getDateTime();
     }
 
@@ -51,14 +53,6 @@ public class OpenTravelObligationsReportData {
         return obligations == null ? 0 : obligations.size();
     }
 
-    public int getNumberOfDays() {
-        return numberOfDays;
-    }
-
-    public void setNumberOfDays(int numberOfDays) {
-        this.numberOfDays = numberOfDays;
-    }
-
     public Date getLatestTravelDate() {
         return latestTravelDate;
     }
@@ -75,26 +69,36 @@ public class OpenTravelObligationsReportData {
         this.totalObligated = totalObligated;
     }
 
-    public float getAverageDays() {
-        return averageDays;
+    public LocalDate getFromDate() {
+        return fromDate;
     }
 
-    public void setAverageDays(float averageDays) {
-        this.averageDays = averageDays;
+    public LocalDate getToDate() {
+        return toDate;
     }
 
-    public String getDivisionAndBranch() {
-        return divisionTitle;
+    public String getDivisionTitles() {
+        return divisionTitles;
     }
 
     public String getReportDateTime() {
         return getDateTimeReportString(reportDateTime);
     }
 
+    public String getDateString() {
+        if (fromDate != null && toDate != null) {
+            return fromDate.toString().concat(" to ").concat(toDate.toString());
+        } else if (fromDate != null) {
+            return fromDate.toString();
+        } else if (toDate != null) {
+            return toDate.toString();
+        } else return "";
+    }
+
     public String getFileName() {
-        return divisionTitle
-                .concat(" open obligations for FY ")
-                .concat(budgetFiscalYear)
+        return divisionTitles
+                .concat(" open travel authorizations ")
+                .concat(getDateString())
                 .concat(" as of ")
                 .concat(getDateTimeFilenameString(reportDateTime));
     }

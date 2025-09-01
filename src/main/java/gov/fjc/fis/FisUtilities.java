@@ -11,10 +11,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static java.util.Objects.requireNonNullElse;
@@ -213,4 +210,16 @@ public final class FisUtilities {
         return (int) TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
     }
 
+    public static String formatListWithDelimiter(List<String> items, String delimiter) {
+        if (items == null || items.isEmpty()) {
+            return "";
+        }
+        if (items.size() == 1) {
+            return items.getFirst();
+        }
+
+        String allButLast = String.join(delimiter, items.subList(0, items.size() - 1));
+
+        return allButLast + " and " + items.getLast();
+    }
 }
