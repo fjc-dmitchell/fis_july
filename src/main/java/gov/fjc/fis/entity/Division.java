@@ -82,6 +82,10 @@ public class Division {
     @NotNull
     private String title;
 
+    @Comment("abbreviated division title")
+    @Column(name = "SHORT_TITLE")
+    private String shortTitle;
+
     @NotNull
     @Column(name = "ONE_YEAR_AMOUNT", nullable = false, precision = 19, scale = 2)
     private BigDecimal oneYearAmount = BigDecimal.ZERO;
@@ -113,6 +117,14 @@ public class Division {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    public String getShortTitle() {
+        return shortTitle;
+    }
+
+    public void setShortTitle(String shortTitle) {
+        this.shortTitle = shortTitle;
+    }
 
     public List<DivisionAllocationAudit> getAuditAllocations() {
         return auditAllocations;
