@@ -35,8 +35,8 @@
 <!--                </actions>-->
 <!--            </entityComboBox>-->
             <hbox>
-                <datePicker id="beginDateField" label="Doc date on or after" datatype="localDate"/>
-                <datePicker id="endDateField" label="Doc date on or before" datatype="localDate"/>
+                <datePicker id="beginDateField" label="Prog. End Date on or after" datatype="localDate"/>
+                <datePicker id="endDateField" label="Prog. End Date on or before" datatype="localDate"/>
                 <checkbox id="allOpenField" label="All open TAs" alignSelf="END"/>
             </hbox>
         </vbox>

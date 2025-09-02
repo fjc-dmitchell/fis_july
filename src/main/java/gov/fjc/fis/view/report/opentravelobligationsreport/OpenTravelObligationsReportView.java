@@ -5,7 +5,6 @@ import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.router.Route;
 import gov.fjc.fis.entity.Appropriation;
-import gov.fjc.fis.entity.Branch;
 import gov.fjc.fis.entity.Division;
 import gov.fjc.fis.service.AppropriationService;
 import gov.fjc.fis.service.BranchService;
@@ -46,8 +45,6 @@ public class OpenTravelObligationsReportView extends StandardView {
     private CollectionLoader<Appropriation> appropriationsDl;
     @ViewComponent
     private CollectionLoader<Division> divisionsDl;
-    @ViewComponent
-    private CollectionLoader<Branch> branchesDl;
 
     /**
      * services
@@ -56,8 +53,6 @@ public class OpenTravelObligationsReportView extends StandardView {
     private AppropriationService appropriationService;
     @Autowired
     private DivisionService divisionService;
-    @Autowired
-    private BranchService branchService;
     @Autowired
     private OpenTravelObligationsReportService openTravelObligationsReportService;
 
@@ -72,12 +67,8 @@ public class OpenTravelObligationsReportView extends StandardView {
     private JmixMultiSelectComboBoxPicker<Division> divisionSelectorField;
     @ViewComponent
     private TypedDatePicker<LocalDate> endDateField;
-//    @ViewComponent
-//    private EntityComboBox<Branch> branchSelectorField;
     @ViewComponent
     private TypedDatePicker<LocalDate> beginDateField;
-    @ViewComponent
-    private JmixCheckbox allOpenField;
     @ViewComponent
     private JmixButton executeBtn;
 
@@ -121,12 +112,6 @@ public class OpenTravelObligationsReportView extends StandardView {
         return divisionService.getDivisions(appropriation, false);
     }
 
-//    @Install(to = "branchesDl", target = Target.DATA_LOADER)
-//    protected List<Branch> branchesDlLoadDelegate(final LoadContext<Branch> loadContext) {
-//        var divisions = divisionSelectorField.getValue();
-//        return divisions.size() == 1 ? branchService.getBranches(divisions.stream().findFirst().orElse(null)) : null;
-//    }
-
     @Subscribe("bfySelectorField")
     protected void onBfySelectorFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Appropriation>, Appropriation> event) {
         appropriation = event.getValue();
@@ -145,21 +130,6 @@ public class OpenTravelObligationsReportView extends StandardView {
     @Subscribe("divisionSelectorField")
     protected void onDivisionSelectorFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<JmixMultiSelectComboBoxPicker<Division>, Division> event) {
         enableExecuteBtn();
-//        var singleDivisionSelected = divisionSelectorField.getValue().size() == 1;
-//        branchSelectorField.setVisible(singleDivisionSelected);
-//        if (singleDivisionSelected) {
-//            branchesDl.load();
-//            if (branchSelectorField.getValue() != null) {
-//                branchSelectorField.setValue(
-//                        branchesDl.getContainer().getItems().stream()
-//                                .filter(bch ->
-//                                        bch.getBranchCode().equals(branchSelectorField.getValue().getBranchCode()) &&
-//                                                bch.getDivision().getDivisionCode().equals(branchSelectorField.getValue().getDivision().getDivisionCode()))
-//                                .findFirst()
-//                                .orElse(null)
-//                );
-//            }
-//        }
     }
 
     @Subscribe("beginDateField")
@@ -188,11 +158,6 @@ public class OpenTravelObligationsReportView extends StandardView {
         return division.getTitleAndCode();
     }
 
-//    @Install(to = "branchSelectorField", subject = "itemLabelGenerator")
-//    protected Object branchSelectorFieldItemLabelGenerator(final Branch branch) {
-//        return branch.getTitleAndCode();
-//    }
-
     @Subscribe(id = "cancelBtn", subject = "clickListener")
     protected void onCancelBtnClick(final ClickEvent<JmixButton> event) {
         closeWithDefaultAction();
@@ -206,13 +171,10 @@ public class OpenTravelObligationsReportView extends StandardView {
     protected void onExecuteBtnClick(final ClickEvent<JmixButton> event) {
         var appropriation = bfySelectorField.getValue();
         var division = divisionSelectorField.getValue();
-//        var branch = division.size() == 1 ? branchSelectorField.getValue() : null;
         var beginDate = beginDateField.getValue();
         var endDate = endDateField.getValue();
         var obbba = obbbaField.getValue();
 
-//        var reportData = openTravelObligationsReportService.generateReportData(
-//                appropriation, division, branch, beginDate, endDate, obbba);
         var reportData = openTravelObligationsReportService.generateReportData(
                 appropriation, division, beginDate, endDate, obbba);
 

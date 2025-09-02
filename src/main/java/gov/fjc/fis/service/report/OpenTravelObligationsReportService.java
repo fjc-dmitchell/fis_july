@@ -64,8 +64,8 @@ public class OpenTravelObligationsReportService {
                                 + " AND dv.divisionCode IN :divisionCodes"
                                 + " AND o.status=true"
                                 + " AND o.documentType = :ta"
-                                + " AND (:anyBeginDate=true OR o.documentDate >=:beginDate)"
-                                + " AND (:anyEndDate=true OR o.documentDate <=:endDate)")
+                                + " AND (:anyBeginDate=true OR a.endDate >=:beginDate)"
+                                + " AND (:anyEndDate=true OR a.endDate <=:endDate)")
                 .parameter("ta", travelAuthorizationId)
                 .parameter("appropriations", appropriations)
                 .parameter("divisionCodes", divisionCodes)
@@ -95,8 +95,8 @@ public class OpenTravelObligationsReportService {
                                     + " AND dv.divisionCode IN :divisionCodes"
                                     + " AND o.status=true"
                                     + " AND o.documentType = :ta"
-                                    + " AND (:anyBeginDate=true OR o.documentDate >=:beginDate)"
-                                    + " AND (:anyEndDate=true OR o.documentDate <=:endDate)")
+                                    + " AND (:anyBeginDate=true OR a.endDate >=:beginDate)"
+                                    + " AND (:anyEndDate=true OR a.endDate <=:endDate)")
                     .parameter("ta", travelAuthorizationId)
                     .parameter("appropriations", appropriations)
                     .parameter("obbaDivisions", obbaDivisions)
