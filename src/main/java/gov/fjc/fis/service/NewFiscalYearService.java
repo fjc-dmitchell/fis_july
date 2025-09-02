@@ -147,6 +147,7 @@ public class NewFiscalYearService {
             newDivision.setFund(oldDivision.getFund());
             newDivision.setDivisionCode(oldDivision.getDivisionCode());
             newDivision.setTitle(oldDivision.getTitle());
+            newDivision.setShortTitle(oldDivision.getShortTitle());
             newDivision.setBudgetOrg(oldDivision.getBudgetOrg());
             newDivision.setOneYearAmount(BigDecimal.ZERO);
             newDivision.setTwoYearAmount(BigDecimal.ZERO);
