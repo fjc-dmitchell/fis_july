@@ -15,8 +15,8 @@ import io.jmix.securityflowui.role.annotation.ViewPolicy;
 public interface EducationAdministratorResourcesRole extends UiMinimalRole, ReportResourcesRole {
     String CODE = "resources-ed-admin";
 
-    @MenuPolicy(menuIds = {"fis_Division.list", "fis_Activity.list", "fis_Obligation.list", "fis_Invoice.list", "fis_FundControlNotice.list", "fis_Branch.list", "fis_Group.list", "fis_ReportRouter#openEducationProgramsReport", "fis_DistanceLearning.list", "fis_Ape.list"})
-    @ViewPolicy(viewIds = {"fis_Division.list", "fis_Activity.list", "fis_Obligation.list", "fis_Invoice.list", "fis_FundControlNotice.list", "fis_Branch.list", "fis_Group.list", "fis_ReportRouter#openEducationProgramsReport", "fis_DistanceLearning.list", "fis_Ape.list", "fis_EducationProgramsReportView"})
+    @MenuPolicy(menuIds = {"fis_Division.list", "fis_Activity.list", "fis_Obligation.list", "fis_Invoice.list", "fis_FundControlNotice.list", "fis_Branch.list", "fis_Group.list", "fis_ReportRouter#openEducationProgramsReport", "fis_DistanceLearning.list", "fis_Ape.list", "fis_ReportRouter#openEducationBranchReport"})
+    @ViewPolicy(viewIds = {"fis_Division.list", "fis_Activity.list", "fis_Obligation.list", "fis_Invoice.list", "fis_FundControlNotice.list", "fis_Branch.list", "fis_Group.list", "fis_ReportRouter#openEducationProgramsReport", "fis_DistanceLearning.list", "fis_Ape.list", "fis_EducationProgramsReportView", "fis_EducationBranchReportView"})
     void screens();
 
     @EntityAttributePolicy(entityClass = Activity.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)

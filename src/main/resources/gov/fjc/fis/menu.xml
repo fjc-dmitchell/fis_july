@@ -75,11 +75,11 @@
     <menu id="fjcreports" description="msg://gov.fjc.fis/menu_config.fjcreports.description"
           title="msg://gov.fjc.fis/menu_config.fjcreports.title" icon="vaadin:file-table">
         <item bean="fis_ReportRouter" beanMethod="openStatusOfFundsReport"
-              description="msg://gov.fjc.fis/menu_config.fis_ReportRouter#openStatusOfFundsReport.description"
               title="Status of Funds"/>
         <item bean="fis_ReportRouter" beanMethod="openEducationProgramsReport"
-              description="msg://gov.fjc.fis/menu_config.fis_ReportRouter#openEducationProgramsReport.description"
               title="Education Programs"/>
+        <item bean="fis_ReportRouter" beanMethod="openEducationBranchReport"
+              title="msg://gov.fjc.fis.view.report.educationbranchreport/educationBranchReportView.title"/>
         <item bean="fis_ReportRouter" beanMethod="openBudgetRequestReport"
               title="msg://gov.fjc.fis.view.report.budgetrequestreport/budgetRequestReportView.title"/>
         <item bean="fis_ReportRouter" beanMethod="openDivisionObligationsReport"

@@ -3,6 +3,7 @@ package gov.fjc.fis.app;
 import com.vaadin.flow.component.Unit;
 import gov.fjc.fis.view.report.budgetrequestreport.BudgetRequestReportView;
 import gov.fjc.fis.view.report.divisionobligationsreport.DivisionObligationsReportView;
+import gov.fjc.fis.view.report.educationbranchreport.EducationBranchReportView;
 import gov.fjc.fis.view.report.educationprogramsreport.EducationProgramsReportView;
 import gov.fjc.fis.view.report.openobligationsreport.OpenObligationsReportView;
 import gov.fjc.fis.view.report.opentravelobligationsreport.OpenTravelObligationsReportView;
@@ -23,6 +24,10 @@ public class ReportRouter {
 
     public void openEducationProgramsReport() {
         dialogWindows.view(UiComponentUtils.getCurrentView(), EducationProgramsReportView.class).open();
+    }
+
+    public void openEducationBranchReport() {
+        dialogWindows.view(UiComponentUtils.getCurrentView(), EducationBranchReportView.class).open();
     }
 
     public void openBudgetRequestReport() {
