@@ -12,10 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -23,11 +21,13 @@ import java.util.stream.Collectors;
 
 /**
  * Service to process JIFMS Documents in FIS 2.1. This will be triggered by cron job.
- * This service uses EntityManager, not DataManager, and does not rely on other Spring services.
- * The Education division code and Two Year Fund code are hardcoded in this service.
+ * This self-contained service uses EntityManager, not DataManager. It does not rely on
+ * other services, so certain codes (e.g., Education division, Two year fund) are hardcoded.
  * <p>
  * The business rules were specified by Mary Greiner and Nanticha Sansung
  * when JIFMS feeds went into production in September 2019.
+ * <p>
+ * This first draft is ugly.
  *
  * @author Doug Mitchell
  * @version 2.1
@@ -49,11 +49,8 @@ public class ProcessDocumentsService {
     private final ZoneId timeZoneId = ZoneId.of("America/New_York");
     private final Date today = new Date();
     private final String processingUser = "JIFMS-FIS processing";
-    private AuditState auditState;
+    private Audit audit;
 
-    class AuditState {
-       // generic activity, etc.
-    }
 
     private List<Document> getDocuments(String bbfy, int offset, int max) {
 //        System.out.println("bbfy: " + bbfy + " offset: " + offset + " max: " + max);
@@ -179,6 +176,149 @@ public class ProcessDocumentsService {
         return results.isEmpty() ? null : results.get(0);
     }
 
+    enum auditState {
+        REJECT, UPDATE, INSERT, IGNORE
+    }
+
+    class Audit {
+        private Fund twoYearFund;
+        private Division educationDivision;
+        private Fund fund;
+        private Division division;
+        private Activity activity;
+        private Activity genericActivity;
+        private ObjectClass objectClass;
+        private Obligation obligation;
+        private ActivityProjection projection;
+        //        boolean validDocument = true;
+        auditState auditState = ProcessDocumentsService.auditState.IGNORE;
+        StringBuffer loggedChanges = new StringBuffer();
+
+        public Audit(Fund twoYearFund, Division educationDivision) {
+            this.twoYearFund = twoYearFund;
+            this.educationDivision = educationDivision;
+        }
+
+        Fund validateFund(Map<String, Fund> fundMap, String fundCode) {
+            if (!auditState.equals(ProcessDocumentsService.auditState.REJECT)) {
+                fund = fundMap.get(fundCode);
+                if (fund == null) {
+                    auditState = ProcessDocumentsService.auditState.REJECT;
+                    loggedChanges.append(String.format("invalid fund: %s.", fundCode));
+                }
+            }
+            return fund;
+        }
+
+        Division validateDivision(List<Division> divisionList, String budgetOrg) {
+            if (!auditState.equals(ProcessDocumentsService.auditState.REJECT)) {
+                List<Division> foundDivisions = divisionList.stream()
+                        .filter(d -> d.getBudgetOrg().equals(budgetOrg)
+                                && (d.getFund().getFundCode().equals(fund.getFundCode())
+                                || (d.equals(educationDivision)
+                                && fund.getFundCode().equals(twoYearFund.getFundCode()))))
+                        .toList();
+                if (foundDivisions.size() != 1) {
+                    auditState = ProcessDocumentsService.auditState.REJECT;
+                    if (foundDivisions.isEmpty()) {
+                        loggedChanges.append(String.format("invalid budgetOrg: %s.", budgetOrg));
+                    } else {
+                        loggedChanges.append(String.format("multiple divisions matching budgetOrg: %s.", budgetOrg));
+                    }
+                } else {
+                    division = foundDivisions.get(0);
+                }
+            }
+            return division;
+        }
+
+        ObjectClass validateObjectClass(Map<String, ObjectClass> objectClassMap, String budgetObjectClass) {
+            if (!auditState.equals(ProcessDocumentsService.auditState.REJECT)) {
+                objectClass = objectClassMap.get(budgetObjectClass);
+                if (objectClass == null) {
+                    auditState = ProcessDocumentsService.auditState.REJECT;
+                    loggedChanges.append(String.format("invalid objectClass: %s.", budgetObjectClass));
+                }
+            }
+            return objectClass;
+        }
+
+        Activity validateActivity(String activityNumber) {
+            if (!auditState.equals(ProcessDocumentsService.auditState.REJECT)) {
+                activity = getActivity(division, activityNumber);
+                if (activity == null) {
+                    auditState = ProcessDocumentsService.auditState.REJECT;
+                    loggedChanges.append(String.format("invalid activity: %s.", activityNumber));
+                } else if (activity.getFund() != fund) {
+                    auditState = ProcessDocumentsService.auditState.REJECT;
+                    loggedChanges.append(String.format("invalid activity fund: %s.", activity.getFund()));
+                }
+                if (activity != null && activity.getGroup() != null) {
+                    genericActivity = getGenericActivity(division, activity.getGroup());
+                }
+            }
+            return activity;
+        }
+
+        Obligation validateObligation(Document document) {
+            if (!auditState.equals(ProcessDocumentsService.auditState.REJECT)) {
+                if (!validDocumentNumber(division, document)) {
+                    auditState = ProcessDocumentsService.auditState.REJECT;
+                    loggedChanges.append(String.format("invalid documentNumber: %s.",
+                            document.getDocumentNumber()));
+                }
+            }
+
+            // validate Obligation & insert if necessary
+            if (!auditState.equals(ProcessDocumentsService.auditState.REJECT)) {
+                obligation = getObligation(activity, objectClass, document.getDocumentNumber(), document.getLineNumber());
+                if (obligation == null) {
+                    createObligation(activity, objectClass, document);
+                    auditState = ProcessDocumentsService.auditState.INSERT;
+                    loggedChanges.append(String.format("NEW Obligation: %s.", document.getDocumentNumber()));
+                } else {
+                    var log = updateObligation(activity, objectClass, obligation, document);
+                    auditState = ProcessDocumentsService.auditState.UPDATE;
+                    loggedChanges.append(String.format("UPDATE Obligation: %s.", document.getDocumentNumber()));
+                    // mention each field changed
+                }
+            }
+            return obligation;
+        }
+
+        ActivityProjection updateActivityProjection() {
+
+            Activity thisActivity;
+            if (genericActivity != null) {
+                thisActivity = genericActivity;
+            } else {
+                thisActivity = activity;
+            }
+            //find projection for thisactivity, or generic projection
+            // if exists, update
+            // if doesn't exist, create projection or generic projection
+            // persist changes
+            return null;
+        }
+
+        void validateDivisionAllocation() {
+            if (!auditState.equals(ProcessDocumentsService.auditState.REJECT)) {
+                Category category = objectClass.getCategory();
+                var allocation = getDivisionAllocation(division, category);
+                if (allocation == null) {
+                    DivisionAllocation divisionAllocation = metadata.create(DivisionAllocation.class);
+                    divisionAllocation.setDivision(division);
+                    divisionAllocation.setCategory(category);
+                    divisionAllocation.setOneYearAmount(BigDecimal.ZERO);
+                    divisionAllocation.setTwoYearAmount(BigDecimal.ZERO);
+                    entityManager.persist(divisionAllocation);
+                    loggedChanges.append(String.format(" Created zero allocation for moc %s.",
+                            category.getMasterObjectClass()));
+                }
+            }
+        }
+
+    }
 
     /**
      * Process JIFMS Documents that have already been loaded and scrubbed (i.e., documents since FY2020,
@@ -186,7 +326,7 @@ public class ProcessDocumentsService {
      * <p>
      * This method will be triggered by Cron or Quartz job schedule.
      */
-    @Transactional
+//    @Transactional
     public void processDocuments() {
 
         // retain map of funds and list of open appropriations for duration of job
@@ -214,7 +354,7 @@ public class ProcessDocumentsService {
 
             // fetch document entities in small batches to reduce memory overhead
             int offset = 0;
-            int max = 100; // process 100 documents per batch
+            int max = 100; // process documents in small batches
             while ((documents = getDocuments(bbfy, offset, max)).size() > 0) {
 
                 for (var document : documents) {
@@ -222,109 +362,104 @@ public class ProcessDocumentsService {
                     var validDocument = true;
                     var processStatus = "";
                     var loggedChanges = new StringBuffer();
-                    auditState = new AuditState();
+
                     division = null;
                     objectClass = null;
                     activity = null;
                     genericActivity = null;
 
-                    // validate Fund
-                    fund = fundMap.get(document.getFundCode());
-                    if (fund == null) {
-                        validDocument = false;
-                        loggedChanges.append(String.format("invalid fund: %s.", document.getFundCode());
-                    }
+                    audit = new Audit(twoYearFund, education);
 
-                    // validate Division
-                    if (validDocument) {
-                        List<Division> foundDivisions = divisionList.stream()
-                                .filter(d -> d.getBudgetOrg().equals(document.getBudgetOrg())
-                                        && (d.getFund().getFundCode().equals(document.getFundCode())
-                                        || (d.equals(education)
-                                        && document.getFundCode().equals(twoYearFund.getFundCode()))))
-                                .toList();
-                        if (foundDivisions.size() != 1) {
-                            validDocument = false;
-                            if (foundDivisions.isEmpty()) {
-                                loggedChanges.append(String.format("invalid budgetOrg: %s.",
-                                        document.getBudgetOrg()));
-                            } else {
-                                loggedChanges.append(String.format("multiple divisions matching budgetOrg: %s.",
-                                        document.getBudgetOrg()));
-                            }
-                        } else {
-                            division = foundDivisions.get(0);
-                        }
-                    }
+                    fund = audit.validateFund(fundMap, document.getFundCode());
+                    division = audit.validateDivision(divisionList, document.getBudgetOrg());
+                    objectClass = audit.validateObjectClass(bocMap, document.getBudgetObjectClass());
+                    activity = audit.validateActivity(document.getProject());
+                    obligation = audit.validateObligation(document);
 
-                    // validate ObjectClass
-                    if (validDocument) {
-                        objectClass = bocMap.get(document.getBudgetObjectClass());
-                        if (objectClass == null) {
-                            validDocument = false;
-                            loggedChanges.append(String.format("invalid objectClass: %s.",
-                                    document.getBudgetObjectClass()));
-                        }
-                    }
+                    // update/insert projection
+                    // insert zero allocation if necessary
+                    // create fcn
 
-                    // validate activity
-                    if (validDocument) {
-                        activity = getActivity(division, document.getProject());
-                        if (activity == null) {
-                            validDocument = false;
-                            loggedChanges.append(String.format("invalid activity: %s.", document.getProject()));
-                        } else if (activity.getFund() != fund) {
-                            validDocument = false;
-                            loggedChanges.append(String.format("invalid activity fund: %s.", activity.getFund()));
-                        }
-                        genericActivity = getGenericActivity(division, activity.getGroup());
-                    }
 
-                    // validate documentNumber
-                    if (validDocument) {
-                        if (!validDocumentNumber(division, document)) {
-                            validDocument = false;
-                            loggedChanges.append(String.format("invalid documentNumber: %s.",
-                                    document.getDocumentNumber()));
-                        }
-                    }
+                    // create DocumentAudit, copy field, persist data
+                    // what if record should be ignored?
 
-                    // validate Obligation & insert if necessary
-                    if(validDocument) {
-                        obligation = getObligation(activity, objectClass, document.getDocumentNumber(), document.getLineNumber());
-                        if(obligation == null) {
-                            createObligation(activity, objectClass, document);
-                            loggedChanges.append(String.format("NEW Obligation: %s.", document.getDocumentNumber()));
-                        } else {
-                            var log = updateObligation(activity, obligation, document);
-                            loggedChanges.append(String.format("UPDATE Obligation: %s.", document.getDocumentNumber()));
-                            // mention each field changed
-                        }
-                    }
 
-                    // validate Allocation and insert if necessary
-                    if (validDocument) {
-                        category = objectClass.getCategory();
-                        var allocation = getDivisionAllocation(division, category);
-                        if (allocation == null) {
-                            DivisionAllocation divisionAllocation = metadata.create(DivisionAllocation.class);
-                            divisionAllocation.setDivision(division);
-                            divisionAllocation.setCategory(category);
-                            divisionAllocation.setOneYearAmount(BigDecimal.ZERO);
-                            divisionAllocation.setTwoYearAmount(BigDecimal.ZERO);
-                            entityManager.persist(divisionAllocation);
-                            loggedChanges.append(String.format(" Created zero allocation for moc %s.",
-                                    category.getMasterObjectClass()));
-                        }
-                    }
+//                    // validate documentNumber
+//                    if (validDocument) {
+//                        if (!validDocumentNumber(division, document)) {
+//                            validDocument = false;
+//                            loggedChanges.append(String.format("invalid documentNumber: %s.",
+//                                    document.getDocumentNumber()));
+//                        }
+//                    }
+//
+//                    // validate Obligation & insert if necessary
+//                    if (validDocument) {
+//                        obligation = getObligation(activity, objectClass, document.getDocumentNumber(), document.getLineNumber());
+//                        if (obligation == null) {
+//                            createObligation(activity, objectClass, document);
+//                            loggedChanges.append(String.format("NEW Obligation: %s.", document.getDocumentNumber()));
+//                        } else {
+//                            var log = updateObligation(activity, obligation, document);
+//                            loggedChanges.append(String.format("UPDATE Obligation: %s.", document.getDocumentNumber()));
+//                            // mention each field changed
+//                        }
+//                    }
+
+//                    // validate Allocation and insert if necessary
+//                    if (validDocument) {
+//                        category = objectClass.getCategory();
+//                        var allocation = getDivisionAllocation(division, category);
+//                        if (allocation == null) {
+//                            DivisionAllocation divisionAllocation = metadata.create(DivisionAllocation.class);
+//                            divisionAllocation.setDivision(division);
+//                            divisionAllocation.setCategory(category);
+//                            divisionAllocation.setOneYearAmount(BigDecimal.ZERO);
+//                            divisionAllocation.setTwoYearAmount(BigDecimal.ZERO);
+//                            entityManager.persist(divisionAllocation);
+//                            loggedChanges.append(String.format(" Created zero allocation for moc %s.",
+//                                    category.getMasterObjectClass()));
+//                        }
+//                    }
 
                     // create FCN if obligation amount updated
                     // validate projection & insert if necessary
+
+                    if (!audit.auditState.equals(auditState.IGNORE)) {
+                        DocumentAudit documentAudit = metadata.create(DocumentAudit.class);
+                        documentAudit.setProcessDate(today);
+                        setDocumentFields(documentAudit, document);
+                        documentAudit.setLoggedChanges(audit.loggedChanges.toString());
+                        switch (audit.auditState) {
+                            case auditState.REJECT:
+                                documentAudit.setProcessStatus("R");
+                                break;
+                            case auditState.INSERT :
+                                documentAudit.setProcessStatus("I");
+                                break;
+                            case auditState.UPDATE :
+                                documentAudit.setProcessStatus("U");
+                                setObligationFields(documentAudit, obligation);
+                                break;
+                        }
+                        entityManager.persist(documentAudit);
+                        System.out.println("Audit State: " + audit.auditState);
+                    }
 
                 }
                 offset += documents.size();
             }
         }
+    }
+
+    private void createFundControlNotice(Obligation obligation, BigDecimal newAmount) {
+        FundControlNotice fundControlNotice = metadata.create(FundControlNotice.class);
+        fundControlNotice.setObligation(obligation);
+        fundControlNotice.setAmount(newAmount.subtract(obligation.getAmount()));
+        fundControlNotice.setFcnDate(new Date()); // should change this
+        fundControlNotice.setVersion(1);
+        entityManager.persist(fundControlNotice);
     }
 
     // should return string message
@@ -370,39 +505,40 @@ public class ProcessDocumentsService {
 
     public String updateObligation(Activity activity, ObjectClass objectClass, Obligation obligation, Document document) {
         String changes = "";
-        if(obligation.getAmount()!=document.getAmount()) {
+        if (obligation.getAmount() != document.getAmount()) {
+            createFundControlNotice(obligation, document.getAmount());
             obligation.setAmount(document.getAmount());
             changes += " -amount";
         }
-        if(obligation.getVendor()!=document.getTitle()) {
+        if (obligation.getVendor() != document.getTitle()) {
             obligation.setVendor(document.getTitle());
             changes += " -title/vendor";
         }
         // what about fetch plan? add to obligation fetch?
-        if(obligation.getActivity().getActivityNumber()!=document.getProject()) {
+        if (obligation.getActivity().getActivityNumber() != document.getProject()) {
             obligation.setActivity(activity);
             changes += " -activity/project";
         }
-        if(obligation.getTravelStartDate()!=document.getTravelStartDate()) {
+        if (obligation.getTravelStartDate() != document.getTravelStartDate()) {
             obligation.setTravelStartDate(document.getTravelStartDate());
             changes += " -travel/start_date";
         }
-        if(obligation.getTravelEndDate()!=document.getTravelEndDate()) {
+        if (obligation.getTravelEndDate() != document.getTravelEndDate()) {
             obligation.setTravelEndDate(document.getTravelEndDate());
             changes += " -travel/end_date";
         }
         // rule from September 2019, if FIS closed and JIFMS open, keep closed. Why?
-        var closed = document.getClosedDate()!=null;
-        if(closed && !obligation.getStatus()) {
+        var closed = document.getClosedDate() != null;
+        if (closed && !obligation.getStatus()) {
             obligation.setStatus(false);
             changes += " -status";
         }
         // what about fetch plan? add to obligation fetch?
-        if(obligation.getObjectClass().getBudgetObjectClass() != document.getBudgetObjectClass()) {
-           obligation.setObjectClass(objectClass);
-           changes += " -BOC";
+        if (obligation.getObjectClass().getBudgetObjectClass() != document.getBudgetObjectClass()) {
+            obligation.setObjectClass(objectClass);
+            changes += " -BOC";
         }
-        if(obligation.getVendorCode()!=document.getVendorCode()) {
+        if (obligation.getVendorCode() != document.getVendorCode()) {
             obligation.setVendorCode(document.getVendorCode());
             changes += " -vendor code";
         }
