@@ -284,17 +284,19 @@
                     </tab>
                     <tab id="obligationsTab" label="Obligations">
                         <vbox>
-                            <dataGrid id="obligationsDataGrid" dataContainer="obligationsDc" width="900px"
+                            <dataGrid id="obligationsDataGrid" dataContainer="obligationsDc" width="1100px"
                                       minHeight="20em">
                                 <columns resizable="true">
-                                    <column property="documentType" header="Type" width="90px"/>
-                                    <column property="documentNumber" width="110px" header="Doc ID"/>
-                                    <column property="objectClass.budgetObjectClass" width="100px" header="BOC"/>
-                                    <column property="objectClass.titleAndCode" visible="false"/>
-                                    <column property="vendor" width="225px"/>
-                                    <column property="documentDate" width="120px" header="Date" textAlign="END"/>
-                                    <column property="statusString" width="110px" header="Status"/>
-                                    <column property="amount" textAlign="END" width="140px">
+                                    <column property="documentTypeId" header="Type" width="100px" flexGrow="0"/>
+                                    <column property="documentNumber" width="160px" header="Doc ID" flexGrow="0"/>
+                                    <column property="objectClass.budgetObjectClass" width="90px" header="BOC"
+                                            flexGrow="0"/>
+                                    <column property="objectClass.titleAndCode" visible="false" flexGrow="0"/>
+                                    <column property="vendor" flexGrow="1"/>
+                                    <column property="documentDate" width="120px" header="Date" textAlign="END"
+                                            flexGrow="0"/>
+                                    <column property="statusString" width="110px" header="Status" flexGrow="0"/>
+                                    <column property="amount" textAlign="END" width="140px" flexGrow="0">
                                         <numberRenderer numberFormat="#,##0.00"/>
                                         <aggregation type="SUM">
                                             <formatter>

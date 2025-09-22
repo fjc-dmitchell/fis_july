@@ -1,7 +1,9 @@
 package gov.fjc.fis.view.activity;
 
 import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import gov.fjc.fis.entity.*;
@@ -11,6 +13,8 @@ import gov.fjc.fis.view.main.MainView;
 import io.jmix.core.EntityStates;
 import io.jmix.core.LoadContext;
 import io.jmix.core.session.SessionData;
+import io.jmix.data.AttributeChangesProvider;
+import io.jmix.eclipselink.impl.EclipselinkAttributeChangesProvider;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.details.JmixDetails;
@@ -18,9 +22,11 @@ import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.CollectionPropertyContainer;
+import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -61,6 +67,8 @@ public class ActivityDetailView extends StandardDetailView<Activity> {
     private CollectionLoader<Fund> fundsDl;
     @ViewComponent
     private CollectionLoader<Division> divisionsDl;
+    @ViewComponent
+    private CollectionLoader<Division> costOrgsDl;
     @ViewComponent
     private CollectionLoader<Group> groupsDl;
     @ViewComponent
@@ -107,9 +115,13 @@ public class ActivityDetailView extends StandardDetailView<Activity> {
     private VerticalLayout tabsheetBox;
     @ViewComponent
     private TypedTextField<String> activityNumberField;
-
+    @ViewComponent
+    private HorizontalLayout costOrgBox;
+    @ViewComponent
+    private EntityComboBox<Division> costOrgField;
     private Appropriation entryBfy;
     private Division division;
+    private Division mandatoryDivision;
     private Boolean fjcFoundation = false;
 
     public void setFjcFoundation(Boolean fjcFoundation) {
@@ -129,9 +141,11 @@ public class ActivityDetailView extends StandardDetailView<Activity> {
     @Subscribe
     protected void onBeforeShow(final BeforeShowEvent event) {
         var activity = getEditedEntity();
+
         attachmentFragment.setHostEntity(activity);
         if (entityStates.isNew(activity)) {
             entryBfy = appropriationService.getBfyEntryAppropriation(sessionData);
+            mandatoryDivision = divisionService.getMandatoryDivision(entryBfy);
             if (entryBfy != null) {
                 budgetFiscalYearField.setValue(entryBfy.getBudgetFiscalYear());
             }
@@ -147,7 +161,9 @@ public class ActivityDetailView extends StandardDetailView<Activity> {
             });
         } else {
             entryBfy = activity.getDivision().getAppropriation();
+            mandatoryDivision = divisionService.getMandatoryDivision(entryBfy);
             division = activity.getDivision();
+            setCostOrg(division.equals(mandatoryDivision));
             budgetFiscalYearField.setValue(entryBfy.getBudgetFiscalYear());
             divisionsDl.load();
 //            divisionField.setValue(activity.getDivision());
@@ -156,15 +172,22 @@ public class ActivityDetailView extends StandardDetailView<Activity> {
                 readOnlyViewsSupport.setViewReadOnly(this, true);
             }
             canceledField.setVisible(trainingProjectField.getValue());
-            groupField.setVisible(false);
+//            groupField.setVisible(false);
 //            branchField.setVisible(false);
             createdByString.setText(activity.getCreatedByString());
+//            costOrgBox.setVisible(division.equals(divisionService.getMandatoryDivision(entryBfy)));
         }
+        costOrgsDl.load();
     }
 
     @Install(to = "divisionsDl", target = Target.DATA_LOADER)
     protected List<Division> divisionsDlLoadDelegate(final LoadContext<Division> loadContext) {
         return divisionService.getDivisions(entryBfy, fjcFoundation);
+    }
+
+    @Install(to = "costOrgsDl", target = Target.DATA_LOADER)
+    protected List<Division> costOrgsDlLoadDelegate(final LoadContext<Division> loadContext) {
+        return divisionService.getCostOrgDivisions(entryBfy);
     }
 
     @Install(to = "fundsDl", target = Target.DATA_LOADER)
@@ -187,6 +210,11 @@ public class ActivityDetailView extends StandardDetailView<Activity> {
         return division.getTitleAndCode();
     }
 
+    @Install(to = "costOrgField", subject = "itemLabelGenerator")
+    protected String costOrgFieldItemLabelGenerator(final Division division) {
+        return division.getTitleAndBudgetOrg();
+    }
+
     @Install(to = "fundField", subject = "itemLabelGenerator")
     protected String fundFieldItemLabelGenerator(final Fund fund) {
         return fund.getTitleAndCode();
@@ -202,6 +230,14 @@ public class ActivityDetailView extends StandardDetailView<Activity> {
         return branch.getTitleAndCode();
     }
 
+    private void setCostOrg(boolean mandatory) {
+        costOrgBox.setVisible(mandatory);
+        costOrgField.setRequired(mandatory);
+        if(!mandatory) {
+            costOrgField.setValue(null);
+        }
+    }
+
     @Subscribe("divisionField")
     protected void onDivisionFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<EntityComboBox<Division>, Division> event) {
         if (divisionField.isEmpty()) {
@@ -210,6 +246,9 @@ public class ActivityDetailView extends StandardDetailView<Activity> {
         } else {
             division = event.getValue();
         }
+
+
+        setCostOrg(division.equals(mandatoryDivision));
 
         if (activityService.activityNumberExists(division, activityNumberField.getValue())) {
             activityNumberField.focus();
@@ -231,7 +270,7 @@ public class ActivityDetailView extends StandardDetailView<Activity> {
 
     @Subscribe("activityNumberField")
     protected void onActivityNumberFieldComponentValueChange(final AbstractField.ComponentValueChangeEvent<TypedTextField<?>, ?> event) {
-        if (!activityNumberField.isEmpty()) {
+        if (entityStates.isNew(getEditedEntity()) && !activityNumberField.isEmpty()) {
             groupField.setValue(groupService.getGroupByActivity(division, activityNumberField.getValue()));
         }
     }

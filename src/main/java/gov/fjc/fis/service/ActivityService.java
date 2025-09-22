@@ -467,7 +467,7 @@ public class ActivityService {
                         "SELECT act.id, fund.id, fund.fundCode, app.id, app.budgetFiscalYear, dv.id,"
                                 + " dv.divisionCode, act.costOrg, act.activityNumber, act.title, act.startDate,"
                                 + " act.endDate, act.city, act.state, bch.id, bch.branchCode, bch.title, grp.id,"
-                                + " grp.groupCode, grp.title, act.initialProjection,"
+                                + " grp.groupCode, grp.title, grp.sortCode, act.initialProjection,"
                                 + " CASE WHEN dv.appropriation = :priorYear AND act.fund = :twoYearFund THEN :priorTwoYearFund"
                                 + "      WHEN dv.appropriation = :currentYear AND act.fund = :twoYearFund THEN :currentTwoYearFund"
                                 + "      ELSE :currentOneYearFund"
@@ -500,7 +500,7 @@ public class ActivityService {
                 .properties("id", "fundId", "fundCode", "appropriationId", "budgetFiscalYear", "divisionId",
                         "divisionCode", "costOrg", "activityNumber", "title", "startDate", "endDate", "city",
                         "state", "branchId", "branchCode", "branchTitle", "groupId", "groupCode", "groupTitle",
-                        "initialProjection", "fundingType")
+                        "grpSortCode", "initialProjection", "fundingType")
                 .list();
     }
 
@@ -633,6 +633,7 @@ public class ActivityService {
             dto.setGroupId(kvEntity.getValue("groupId"));
             dto.setGroupCode(kvEntity.getValue("groupCode"));
             dto.setGroupTitle(kvEntity.getValue("groupTitle"));
+            dto.setGroupSortCode(kvEntity.getValue("grpSortCode"));
             dto.setInitialProjection(kvEntity.getValue("initialProjection"));
             dto.setFundingType(fromId(kvEntity.getValue("fundingType")));
             activityDtos.add(dto);

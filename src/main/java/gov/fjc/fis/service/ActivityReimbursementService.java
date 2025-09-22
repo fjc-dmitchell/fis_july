@@ -233,7 +233,7 @@ public class ActivityReimbursementService {
                 .parameter("oneYearFund", oneYearFund)
                 .parameter("twoYearFund", twoYearFund)
                 .parameter("activities", activities)
-                .properties("fund", "bfy", "division", "actnum", "title", "moc", "boc", "docid", "source", "amount", "docdate", "memo", "prioryear", "oneyear", "twoyear")
+                .properties("fund", "bfy", "division", "actnum", "title", "moc", "boc", "docnum", "source", "amount", "docdate", "memo", "prioryear", "oneyear", "twoyear")
                 .list();
     }
 
@@ -270,7 +270,7 @@ public class ActivityReimbursementService {
                 .parameter("oneYearFund", oneYearFund)
                 .parameter("twoYearFund", twoYearFund)
                 .parameter("activities", activityIds)
-                .properties("id", "fundId", "fundCode", "appropriationId", "budgetFiscalYear", "divisionId", "divisionCode", "activityId", "activityNumber", "activityTitle", "categoryId", "masterObjectClass", "objectClassId", "budgetObjectClass", "docid", "docdate", "memo", "source", "amount", "prioryear", "oneyear", "twoyear")
+                .properties("id", "fundId", "fundCode", "appropriationId", "budgetFiscalYear", "divisionId", "divisionCode", "activityId", "activityNumber", "activityTitle", "categoryId", "masterObjectClass", "objectClassId", "budgetObjectClass", "documentNumber", "documentDate", "memo", "source", "amount", "prioryear", "oneyear", "twoyear")
                 .list();
     }
 
