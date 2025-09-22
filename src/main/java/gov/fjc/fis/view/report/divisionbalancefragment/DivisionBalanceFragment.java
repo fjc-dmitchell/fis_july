@@ -5,6 +5,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.entity.dto.DivisionDto;
 import gov.fjc.fis.service.AppropriationAdjustmentService;
+import gov.fjc.fis.service.AppropriationService;
 import gov.fjc.fis.service.report.DivisionBalancesReportService;
 import io.jmix.core.LoadContext;
 import io.jmix.flowui.component.details.JmixDetails;
@@ -32,6 +33,8 @@ public class DivisionBalanceFragment extends Fragment<VerticalLayout> {
     private JmixDetails oneYearDetails;
     @ViewComponent
     private JmixDetails twoYearDetails;
+    @Autowired
+    private AppropriationService appropriationService;
     @Autowired
     private AppropriationAdjustmentService appropriationAdjustmentService;
     @ViewComponent
@@ -85,12 +88,18 @@ public class DivisionBalanceFragment extends Fragment<VerticalLayout> {
     }
 
     private void setAllocationWarning(Paragraph paragraph, BigDecimal amount) {
+        var prior2014message = "";
+        if (appropriationService.isAppropriationBefore2014(appropriation)) {
+            prior2014message = ". Prior to 2014, there were no separate 2-year allocations";
+        }
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
             paragraph.setVisible(true);
-            paragraph.setText(String.format("Warning: funds have been overallocated by %s", df.format(amount.abs())));
+            paragraph.setText(String.format("Warning: funds have been overallocated by %s" + prior2014message,
+                    df.format(amount.abs())));
         } else if (amount.compareTo(BigDecimal.ZERO) > 0) {
             paragraph.setVisible(true);
-            paragraph.setText(String.format("Warning: funds have been underallocated by %s", df.format(amount.abs())));
+            paragraph.setText(String.format("Warning: funds have been underallocated by %s" + prior2014message,
+                    df.format(amount.abs())));
         } else {
             paragraph.setVisible(false);
             paragraph.setText(null);

@@ -52,8 +52,12 @@ public class DivisionAllocationDetailView extends StandardDetailView<DivisionAll
             var division = getEditedEntity().getDivision();
             var allCategories = categoryService.getCategories(division.getAppropriation());
             var allocations = division.getAllocations();
-            var usedCategories = allocations.stream().map(DivisionAllocation::getCategory).toList();
-            return allCategories.stream().filter(c -> !usedCategories.contains(c)).toList();
+            if (allocations == null) {
+                return allCategories;
+            } else {
+                var usedCategories = allocations.stream().map(DivisionAllocation::getCategory).toList();
+                return allCategories.stream().filter(c -> !usedCategories.contains(c)).toList();
+            }
         } else {
             return null;
         }

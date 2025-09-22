@@ -109,30 +109,42 @@
                     </tab>
                     <tab id="auditTab" label="Allocations History">
                         <vbox>
-                            <dataGrid id="auditDataGrid" dataContainer="auditDc" width="900px"
-                                      minHeight="20em"
-                                      themeNames="column-borders compact row-stripes">
-                                <actions>
-                                    <action id="viewAuditAction" type="list_read">
-                                        <properties>
-                                            <property name="openMode" value="DIALOG"/>
-                                        </properties>
-                                    </action>
-                                </actions>
-                                <columns>
-                                    <column property="auditDate" header="Date" width="150px">
-                                        <localDateTimeRenderer format="MM/dd/yyyy HH:mm"/>
-                                    </column>
-                                    <column property="changeType" header="Type" width="100px"/>
-                                    <column property="category.masterObjectClass" header="MOC" width="70px"
-                                            textAlign="CENTER"/>
-                                    <column property="oneYearChangeAmount" header="One Year change" textAlign="END"
-                                            width="150px"/>
-                                    <column property="twoYearChangeAmount" header="Two Year Change" textAlign="END"
-                                            width="150px"/>
-                                    <column property="updatedAttributes" header="Updated Attributes" width="280px"/>
-                                </columns>
-                            </dataGrid>
+                            <hbox id="auditButtonsPanel" classNames="buttons-panel">
+                                <button id="excelExportBtn" action="auditDataGrid.excelExport"
+                                        text="Export allocation audit"/>
+                            </hbox>
+                            <vbox>
+                                <dataGrid id="auditDataGrid" dataContainer="auditDc" width="900px"
+                                          minHeight="20em"
+                                          themeNames="column-borders compact row-stripes">
+                                    <actions>
+                                        <action id="viewAuditAction" type="list_read">
+                                            <properties>
+                                                <property name="openMode" value="DIALOG"/>
+                                            </properties>
+                                        </action>
+                                        <action id="excelExport" type="grdexp_excelExport"/>
+                                    </actions>
+                                    <columns>
+                                        <column property="auditDate" header="Date" width="150px">
+                                            <localDateTimeRenderer format="MM/dd/yyyy HH:mm"/>
+                                        </column>
+                                        <column property="createdBy" visible="false"/>
+                                        <column property="changeType" header="Type" width="100px"/>
+                                        <column property="category.masterObjectClass" header="MOC" width="70px"
+                                                textAlign="CENTER"/>
+                                        <column property="oldOneYearAmount" textAlign="END" header="Old One Year Amount" visible="false"/>
+                                        <column property="newOneYearAmount" textAlign="END" header="New One Year Amount" visible="false"/>
+                                        <column property="oneYearChangeAmount" header="One Year change" textAlign="END"
+                                                width="150px"/>
+                                        <column property="oldTwoYearAmount" textAlign="END" header="Old Two Year Amount" visible="false"/>
+                                        <column property="newTwoYearAmount" textAlign="END" header="New Two Year Amount" visible="false"/>
+                                        <column property="twoYearChangeAmount" header="Two Year Change" textAlign="END"
+                                                width="150px"/>
+                                        <column property="updatedAttributes" header="Updated Attributes" width="280px"/>
+                                    </columns>
+                                </dataGrid>
+                            </vbox>
                         </vbox>
                     </tab>
                 </tabSheet>
