@@ -19,29 +19,29 @@ public class DocumentException {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "FUND", nullable = false, length = 6)
+    @Column(name = "FUND_CODE", nullable = false, length = 6)
     @NotNull
-    private String fund;
+    private String fundCode;
 
     @NotNull
     @Column(name = "BBFY", nullable = false, length = 4)
     private String bbfy;
 
+    @Column(name = "BUDGET_ORG", nullable = false, length = 7)
     @NotNull
-    @Column(name = "BUDGETORG", nullable = false, length = 7)
-    private String budgetorg;
+    private String budgetOrg;
 
     @Column(name = "BOC", nullable = false, length = 7)
     @NotNull
-    private String boc;
+    private String budgetObjectClass;
 
-    @Column(name = "DOCTYPE", nullable = false, length = 5)
+    @Column(name = "DOCUMENT_TYPE", nullable = false, length = 5)
     @NotNull
-    private String doctype;
+    private String documentType;
 
-    @Column(name = "DOCNUMBER", nullable = false, length = 50)
+    @Column(name = "DOCUMENT_NUMBER", nullable = false, length = 50)
     @NotNull
-    private String docnumber;
+    private String documentNumber;
 
     @Column(name = "VERSION", nullable = false)
     @Version
@@ -63,28 +63,52 @@ public class DocumentException {
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
 
-    public String getDocnumber() {
-        return docnumber;
+    public String getBudgetOrg() {
+        return budgetOrg;
     }
 
-    public String getDoctype() {
-        return doctype;
+    public void setBudgetOrg(String budgetOrg) {
+        this.budgetOrg = budgetOrg;
     }
 
-    public String getBoc() {
-        return boc;
+    public String getFundCode() {
+        return fundCode;
     }
 
-    public String getBudgetorg() {
-        return budgetorg;
+    public void setFundCode(String fundCode) {
+        this.fundCode = fundCode;
+    }
+
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
+    }
+
+    public String getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(String documentType) {
+        this.documentType = documentType;
+    }
+
+    public String getBudgetObjectClass() {
+        return budgetObjectClass;
+    }
+
+    public void setBudgetObjectClass(String budgetObjectClass) {
+        this.budgetObjectClass = budgetObjectClass;
+    }
+
+    public void setBbfy(String bbfy) {
+        this.bbfy = bbfy;
     }
 
     public String getBbfy() {
         return bbfy;
-    }
-
-    public String getFund() {
-        return fund;
     }
 
     public OffsetDateTime getLastModifiedDate() {

@@ -17,16 +17,19 @@ import java.util.Date;
 import static gov.fjc.fis.FisUtilities.getLoadedByString;
 
 @JmixEntity
-@Table(name = "FIS_DOCUMENT")
+@Table(name = "FIS_DOCUMENT", indexes = {
+        @Index(name = "IDX_FIS_DOCUMENT", columnList = "BBFY")
+})
 @Entity(name = "fis_Document")
 public class Document {
     @Column(name = "ID", nullable = false)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "FUND", nullable = false, length = 6)
+    @Column(name = "FUND_CODE", nullable = false, length = 6)
     @NotNull
-    private String fund;
+    private String fundCode;
 
     @Column(name = "BBFY", nullable = false, length = 4)
     @NotNull
@@ -35,38 +38,41 @@ public class Document {
     @Column(name = "EBFY", length = 4)
     private String ebfy;
 
-    @Column(name = "BUDGETORG", nullable = false, length = 7)
+    @Column(name = "BUDGET_ORG", nullable = false, length = 7)
     @NotNull
-    private String budgetorg;
+    private String budgetOrg;
 
-    @Column(name = "COSTORG", nullable = false, length = 7)
+    @Column(name = "COST_ORG", nullable = false, length = 7)
     @NotNull
-    private String costorg;
+    private String costOrg;
 
-    @Column(name = "DOCTYPE", nullable = false, length = 5)
+    @Column(name = "DOCUMENT_TYPE", nullable = false, length = 5)
     @NotNull
-    private String doctype;
+    private String documentType;
 
-    @Column(name = "DOCNUMBER", nullable = false, length = 50)
+    @Column(name = "DOCUMENT_NUMBER", nullable = false, length = 50)
     @NotNull
-    private String docnumber;
+    private String documentNumber;
 
-    @Column(name = "DOCDATE", nullable = false)
     @Temporal(TemporalType.DATE)
+    @Column(name = "DOCUMENT_DATE", nullable = false)
     @NotNull
-    private Date docdate;
+    private Date documentDate;
 
-    @Column(name = "CREATEDATE", nullable = false)
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "DOCUMENT_CREATION_DATE", nullable = false)
     @NotNull
-    private Date createdate;
+    private Date documentCreationDate;
 
     @Column(name = "TITLE", length = 70)
     private String title;
 
+    @Column(name = "MOC", length = 2)
+    private String masterObjectClass;
+
     @Column(name = "BOC", nullable = false, length = 7)
     @NotNull
-    private String boc;
+    private String budgetObjectClass;
 
     @Column(name = "PROJECT", length = 4)
     private String project;
@@ -75,15 +81,15 @@ public class Document {
     @NotNull
     private BigDecimal amount;
 
-    @Column(name = "LINENUMBER", nullable = false)
+    @Column(name = "LINE_NUMBER", nullable = false)
     @NotNull
-    private Integer linenumber;
+    private Integer lineNumber;
 
-    @Column(name = "TAXID", length = 9)
-    private String taxid;
+    @Column(name = "TAX_ID", length = 9)
+    private String taxId;
 
-    @Column(name = "TAXID_TYPE", length = 1)
-    private String taxidType;
+    @Column(name = "TAX_ID_TYPE", length = 1)
+    private String taxIdType;
 
     @Column(name = "ADDRESS_CODE", length = 15)
     private String addressCode;
@@ -112,12 +118,9 @@ public class Document {
     @Temporal(TemporalType.DATE)
     private Date closedDate;
 
-    @Column(name = "MODUSER", nullable = false, length = 45)
+    @Column(name = "LAST_MODIFIED_BY", nullable = false, length = 45)
     @NotNull
-    private String moduser;
-
-    @Column(name = "MOC", length = 2)
-    private String moc;
+    private String lastModifiedBy;
 
     @Column(name = "FJC", length = 20)
     private String fjc;
@@ -142,6 +145,110 @@ public class Document {
     @Column(name = "CREATED_DATE")
     private OffsetDateTime createdDate;
 
+    public Date getDocumentCreationDate() {
+        return documentCreationDate;
+    }
+
+    public void setDocumentCreationDate(Date documentCreationDate) {
+        this.documentCreationDate = documentCreationDate;
+    }
+
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public String getMasterObjectClass() {
+        return masterObjectClass;
+    }
+
+    public void setMasterObjectClass(String masterObjectClass) {
+        this.masterObjectClass = masterObjectClass;
+    }
+
+    public String getBudgetObjectClass() {
+        return budgetObjectClass;
+    }
+
+    public void setBudgetObjectClass(String budgetObjectClass) {
+        this.budgetObjectClass = budgetObjectClass;
+    }
+
+    public String getTaxIdType() {
+        return taxIdType;
+    }
+
+    public void setTaxIdType(String taxIdType) {
+        this.taxIdType = taxIdType;
+    }
+
+    public String getTaxId() {
+        return taxId;
+    }
+
+    public void setTaxId(String taxId) {
+        this.taxId = taxId;
+    }
+
+    public Integer getLineNumber() {
+        return lineNumber;
+    }
+
+    public void setLineNumber(Integer lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+    public Date getDocumentDate() {
+        return documentDate;
+    }
+
+    public void setDocumentDate(Date documentDate) {
+        this.documentDate = documentDate;
+    }
+
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
+    }
+
+    public String getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(String documentType) {
+        this.documentType = documentType;
+    }
+
+    public String getCostOrg() {
+        return costOrg;
+    }
+
+    public void setCostOrg(String costOrg) {
+        this.costOrg = costOrg;
+    }
+
+    public String getBudgetOrg() {
+        return budgetOrg;
+    }
+
+    public void setBudgetOrg(String budgetOrg) {
+        this.budgetOrg = budgetOrg;
+    }
+
+    public String getFundCode() {
+        return fundCode;
+    }
+
+    public void setFundCode(String fundCode) {
+        this.fundCode = fundCode;
+    }
+
     @DependsOnProperties({"createdBy", "createdDate"})
     @JmixProperty
     public String getCreatedByString() {
@@ -152,14 +259,6 @@ public class Document {
     @JmixProperty
     public String getBfyString() {
         return ebfy == null ? bbfy : bbfy.concat(" / ").concat(ebfy);
-    }
-
-    public String getBudgetorg() {
-        return budgetorg;
-    }
-
-    public void setBudgetorg(String budgetorg) {
-        this.budgetorg = budgetorg;
     }
 
     public BigDecimal getRefundedAmount() {
@@ -200,22 +299,6 @@ public class Document {
 
     public void setFjc(String fjc) {
         this.fjc = fjc;
-    }
-
-    public String getMoc() {
-        return moc;
-    }
-
-    public void setMoc(String moc) {
-        this.moc = moc;
-    }
-
-    public String getModuser() {
-        return moduser;
-    }
-
-    public void setModuser(String moduser) {
-        this.moduser = moduser;
     }
 
     public Date getClosedDate() {
@@ -282,30 +365,6 @@ public class Document {
         this.addressCode = addressCode;
     }
 
-    public String getTaxidType() {
-        return taxidType;
-    }
-
-    public void setTaxidType(String taxidType) {
-        this.taxidType = taxidType;
-    }
-
-    public String getTaxid() {
-        return taxid;
-    }
-
-    public void setTaxid(String taxid) {
-        this.taxid = taxid;
-    }
-
-    public Integer getLinenumber() {
-        return linenumber;
-    }
-
-    public void setLinenumber(Integer linenumber) {
-        this.linenumber = linenumber;
-    }
-
     public BigDecimal getAmount() {
         return amount;
     }
@@ -322,60 +381,12 @@ public class Document {
         this.project = project;
     }
 
-    public String getBoc() {
-        return boc;
-    }
-
-    public void setBoc(String boc) {
-        this.boc = boc;
-    }
-
     public String getTitle() {
         return title;
     }
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public Date getCreatedate() {
-        return createdate;
-    }
-
-    public void setCreatedate(Date createdate) {
-        this.createdate = createdate;
-    }
-
-    public Date getDocdate() {
-        return docdate;
-    }
-
-    public void setDocdate(Date docdate) {
-        this.docdate = docdate;
-    }
-
-    public String getDocnumber() {
-        return docnumber;
-    }
-
-    public void setDocnumber(String docnumber) {
-        this.docnumber = docnumber;
-    }
-
-    public String getDoctype() {
-        return doctype;
-    }
-
-    public void setDoctype(String doctype) {
-        this.doctype = doctype;
-    }
-
-    public String getCostorg() {
-        return costorg;
-    }
-
-    public void setCostorg(String costorg) {
-        this.costorg = costorg;
     }
 
     public String getEbfy() {
@@ -392,14 +403,6 @@ public class Document {
 
     public void setBbfy(String bbfy) {
         this.bbfy = bbfy;
-    }
-
-    public String getFund() {
-        return fund;
-    }
-
-    public void setFund(String fund) {
-        this.fund = fund;
     }
 
     public OffsetDateTime getCreatedDate() {
@@ -427,10 +430,10 @@ public class Document {
     }
 
     @InstanceName
-    @DependsOnProperties({"fund", "docnumber"})
+    @DependsOnProperties({"fundCode", "documentNumber"})
     public String getInstanceName(MetadataTools metadataTools) {
         return String.format("%s-%s",
-                metadataTools.format(fund),
-                metadataTools.format(docnumber));
+                metadataTools.format(fundCode),
+                metadataTools.format(documentNumber));
     }
 }

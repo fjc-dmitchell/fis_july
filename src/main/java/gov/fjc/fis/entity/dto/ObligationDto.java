@@ -37,6 +37,9 @@ public class ObligationDto {
 
     private String activityTitle;
 
+    @Temporal(TemporalType.DATE)
+    private Date activityEndDate;
+
     private Integer branchId;
 
     private String branchCode;
@@ -99,6 +102,14 @@ public class ObligationDto {
     private BigDecimal priorTwoYearObligated = BigDecimal.ZERO;
 
     private BigDecimal priorTwoYearDisbursed = BigDecimal.ZERO;
+
+    public Date getActivityEndDate() {
+        return activityEndDate;
+    }
+
+    public void setActivityEndDate(Date activityEndDate) {
+        this.activityEndDate = activityEndDate;
+    }
 
     public String getLocation() {
         return location;

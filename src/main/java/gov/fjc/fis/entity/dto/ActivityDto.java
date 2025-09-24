@@ -55,6 +55,8 @@ public class ActivityDto {
 
     private String groupTitle;
 
+    private Integer groupSortCode;
+
     private Fund fund;
 
     private Integer fundingType;
@@ -118,6 +120,14 @@ public class ActivityDto {
     private BigDecimal currentTwoYearObligations = BigDecimal.ZERO;
 
     private BigDecimal currentTwoYearDisbursements = BigDecimal.ZERO;
+
+    public Integer getGroupSortCode() {
+        return groupSortCode;
+    }
+
+    public void setGroupSortCode(Integer groupSortCode) {
+        this.groupSortCode = groupSortCode;
+    }
 
     public String getMemo() {
         return memo;

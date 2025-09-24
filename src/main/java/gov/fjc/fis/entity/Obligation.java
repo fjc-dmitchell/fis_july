@@ -27,7 +27,8 @@ import static java.util.Objects.requireNonNullElse;
         @Index(name = "IDX_FIS_OBLIGATION", columnList = "ACTIVITY_ID, STATUS"),
         @Index(name = "IDX_FIS_OBLIGATION_ACTIVITY_OBJCLASS", columnList = "ACTIVITY_ID, OBJECT_CLASS_ID")
 }, uniqueConstraints = {
-        @UniqueConstraint(name = "IDX_FIS_OBLIGATION_UNQ", columnNames = {"DOCID", "OBJECT_CLASS_ID"})
+        @UniqueConstraint(name = "IDX_FIS_OBLIGATION_UNQ", columnNames = {"DOCID", "OBJECT_CLASS_ID"}),
+        @UniqueConstraint(name = "IDX_FIS_OBLIGATION_UNQ_2", columnNames = {"DOCID", "LINE_NUMBER"})
 })
 @Entity(name = "fis_Obligation")
 public class Obligation {
@@ -173,6 +174,12 @@ public class Obligation {
 
     public DocumentType getDocumentType() {
         return documentType == null ? null : DocumentType.fromId(documentType);
+    }
+
+    @DependsOnProperties({"documentType"})
+    @JmixProperty
+    public String getDocumentTypeId() {
+        return documentType;
     }
 
     public String getVendorCode() {

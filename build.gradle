@@ -13,7 +13,7 @@ jmix {
 }
 
 group = 'gov.fjc'
-version = '2.1.9-SNAPSHOT'
+version = '2.1.13-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -30,6 +30,12 @@ repositories {
 }
 
 dependencies {
+    implementation 'io.jmix.email:jmix-email-starter'
+    implementation 'io.jmix.email:jmix-email-flowui-starter'
+
+    implementation 'io.jmix.quartz:jmix-quartz-starter'
+    implementation 'io.jmix.quartz:jmix-quartz-flowui-starter'
+
     implementation 'io.jmix.tabbedmode:jmix-tabbedmode-flowui-starter'
 
     // 2024-12-13 DEM added liquibase dependencey due to bug:
@@ -86,4 +92,5 @@ idea {
 
 vaadin {
     optimizeBundle = false
+//    productionMode=true
 }

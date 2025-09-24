@@ -30,9 +30,9 @@ public class DocumentAudit {
     @Column(name = "PROCESS_DATE", nullable = false)
     private Date processDate;
 
-    @Column(name = "DOCUMENT_FUND", nullable = false, length = 6)
+    @Column(name = "DOCUMENT_FUND_CODE", nullable = false, length = 6)
     @NotNull
-    private String documentFund;
+    private String documentFundCode;
 
     @Column(name = "DOCUMENT_BBFY", nullable = false, length = 4)
     @NotNull
@@ -41,38 +41,38 @@ public class DocumentAudit {
     @Column(name = "DOCUMENT_EBFY", length = 4)
     private String documentEbfy;
 
-    @Column(name = "DOCUMENT_BUDGETORG", nullable = false, length = 7)
+    @Column(name = "DOCUMENT_BUDGET_ORG", nullable = false, length = 7)
     @NotNull
-    private String documentBudgetorg;
+    private String documentBudgetOrg;
 
-    @Column(name = "DOCUMENT_COSTORG", nullable = false, length = 7)
+    @Column(name = "DOCUMENT_COST_ORG", nullable = false, length = 7)
     @NotNull
-    private String documentCostorg;
+    private String documentCostOrg;
 
-    @Column(name = "DOCUMENT_DOCTYPE", nullable = false, length = 5)
+    @Column(name = "DOCUMENT_DOCUMENT_TYPE", nullable = false, length = 5)
     @NotNull
-    private String documentDoctype;
+    private String documentDocumentType;
 
-    @Column(name = "DOCUMENT_DOCNUMBER", nullable = false, length = 50)
+    @Column(name = "DOCUMENT_DOCUMENT_NUMBER", nullable = false, length = 50)
     @NotNull
-    private String documentDocnumber;
-
-    @Temporal(TemporalType.DATE)
-    @Column(name = "DOCUMENT_DOCDATE", nullable = false)
-    @NotNull
-    private Date documentDocdate;
+    private String documentDocumentNumber;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "DOCUMENT_CREATEDATE", nullable = false)
+    @Column(name = "DOCUMENT_DOCUMENT_DATE", nullable = false)
     @NotNull
-    private Date documentCreatedate;
+    private Date documentDocumentDate;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "DOCUMENT_DOCUMENT_CREATION_DATE", nullable = false)
+    @NotNull
+    private Date documentDocumentCreationDate;
 
     @Column(name = "DOCUMENT_TITLE", length = 70)
     private String documentTitle;
 
     @Column(name = "DOCUMENT_BOC", nullable = false, length = 7)
     @NotNull
-    private String documentBoc;
+    private String documentBudgetObjectClass;
 
     @Column(name = "DOCUMENT_PROJECT", length = 4)
     private String documentProject;
@@ -81,15 +81,15 @@ public class DocumentAudit {
     @NotNull
     private BigDecimal documentAmount;
 
-    @Column(name = "DOCUMENT_LINENUMBER", nullable = false)
+    @Column(name = "DOCUMENT_LINE_NUMBER", nullable = false)
     @NotNull
-    private Integer documentLinenumber;
+    private Integer documentLineNumber;
 
-    @Column(name = "DOCUMENT_TAXID", length = 9)
-    private String documentTaxid;
+    @Column(name = "DOCUMENT_TAX_ID", length = 9)
+    private String documentTaxId;
 
-    @Column(name = "DOCUMENT_TAXID_TYPE", length = 1)
-    private String documentTaxidType;
+    @Column(name = "DOCUMENT_TAX_ID_TYPE", length = 1)
+    private String documentTaxIdType;
 
     @Column(name = "DOCUMENT_ADDRESS_CODE", length = 15)
     private String documentAddressCode;
@@ -101,12 +101,12 @@ public class DocumentAudit {
     private String documentVendorName;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "DOCUMENT_START_DATE")
-    private Date documentStartDate;
+    @Column(name = "DOCUMENT_TRAVEL_START_DATE")
+    private Date documentTravelStartDate;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "DOCUMENT_END_DATE")
-    private Date documentEndDate;
+    @Column(name = "DOCUMENT_TRAVEL_END_DATE")
+    private Date documentTravelEndDate;
 
     @Column(name = "DOCUMENT_EXPENDED_AMOUNT", precision = 19, scale = 2)
     private BigDecimal documentExpendedAmount;
@@ -118,12 +118,12 @@ public class DocumentAudit {
     @Column(name = "DOCUMENT_CLOSED_DATE")
     private Date documentClosedDate;
 
-    @Column(name = "DOCUMENT_MODUSER", nullable = false, length = 45)
+    @Column(name = "DOCUMENT_LAST_MODIFIED_BY", nullable = false, length = 45)
     @NotNull
-    private String documentModuser;
+    private String documentLastModifiedBy;
 
     @Column(name = "DOCUMENT_MOC", length = 2)
-    private String documentMoc;
+    private String documentMasterObjectClass;
 
     @Column(name = "DOCUMENT_FJC", length = 20)
     private String documentFjc;
@@ -155,12 +155,12 @@ public class DocumentAudit {
     private String obligationEin;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "OBLIGATION_START_DATE")
-    private Date obligationStartDate;
+    @Column(name = "OBLIGATION_TRAVEL_START_DATE")
+    private Date obligationTravelStartDate;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "OBLIGATION_END_DATE")
-    private Date obligationEndDate;
+    @Column(name = "OBLIGATION_TRAVEL_END_DATE")
+    private Date obligationTravelEndDate;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "OBLIGATION_MODIFIED_DATE")
@@ -170,13 +170,13 @@ public class DocumentAudit {
     private String obligationActivityNumber;
 
     @Column(name = "OBLIGATION_BOC", length = 4)
-    private String obligationObjectClass;
+    private String obligationBudgetObjectClass;
 
     @Column(name = "OBLIGATION_DIVISION_CODE", length = 2)
     private String obligationDivisionCode;
 
     @Column(name = "OBLIGATION_MOC", length = 2)
-    private String obligationCategory;
+    private String obligationMasterObjectClass;
 
     @Column(name = "OBLIGATION_ADDRESS_CODE", length = 15)
     private String obligationAddressCode;
@@ -210,6 +210,290 @@ public class DocumentAudit {
 
     @Column(name = "LOGGED_CHANGES")
     private String loggedChanges;
+
+    public String getObligationBudgetObjectClass() {
+        return obligationBudgetObjectClass;
+    }
+
+    public void setObligationBudgetObjectClass(String obligationBudgetObjectClass) {
+        this.obligationBudgetObjectClass = obligationBudgetObjectClass;
+    }
+
+    public void setObligationMasterObjectClass(String obligationMasterObjectClass) {
+        this.obligationMasterObjectClass = obligationMasterObjectClass;
+    }
+
+    public Date getObligationTravelEndDate() {
+        return obligationTravelEndDate;
+    }
+
+    public void setObligationTravelEndDate(Date obligationTravelEndDate) {
+        this.obligationTravelEndDate = obligationTravelEndDate;
+    }
+
+    public Date getObligationTravelStartDate() {
+        return obligationTravelStartDate;
+    }
+
+    public void setObligationTravelStartDate(Date obligationTravelStartDate) {
+        this.obligationTravelStartDate = obligationTravelStartDate;
+    }
+
+    public void setLoggedChanges(String loggedChanges) {
+        this.loggedChanges = loggedChanges;
+    }
+
+    public void setPreviousProjectionAmountAfter(BigDecimal previousProjectionAmountAfter) {
+        this.previousProjectionAmountAfter = previousProjectionAmountAfter;
+    }
+
+    public void setPreviousProjectionAmountBefore(BigDecimal previousProjectionAmountBefore) {
+        this.previousProjectionAmountBefore = previousProjectionAmountBefore;
+    }
+
+    public void setPreviousProjectionBoc(String previousProjectionBoc) {
+        this.previousProjectionBoc = previousProjectionBoc;
+    }
+
+    public void setPreviousActivityNumber(String previousActivityNumber) {
+        this.previousActivityNumber = previousActivityNumber;
+    }
+
+    public void setCurrentProjectionAmountAfter(BigDecimal currentProjectionAmountAfter) {
+        this.currentProjectionAmountAfter = currentProjectionAmountAfter;
+    }
+
+    public void setCurrentProjectionAmountBefore(BigDecimal currentProjectionAmountBefore) {
+        this.currentProjectionAmountBefore = currentProjectionAmountBefore;
+    }
+
+    public void setCurrentProjectionBoc(String currentProjectionBoc) {
+        this.currentProjectionBoc = currentProjectionBoc;
+    }
+
+    public void setCurrentActivityNumber(String currentActivityNumber) {
+        this.currentActivityNumber = currentActivityNumber;
+    }
+
+    public void setObligationVendorCode(String obligationVendorCode) {
+        this.obligationVendorCode = obligationVendorCode;
+    }
+
+    public void setObligationAddressCode(String obligationAddressCode) {
+        this.obligationAddressCode = obligationAddressCode;
+    }
+
+    public void setObligationCategory(String obligationMasterObjectClass) {
+        this.obligationMasterObjectClass = obligationMasterObjectClass;
+    }
+
+    public void setObligationDivisionCode(String obligationDivisionCode) {
+        this.obligationDivisionCode = obligationDivisionCode;
+    }
+
+    public void setObligationActivityNumber(String obligationActivityNumber) {
+        this.obligationActivityNumber = obligationActivityNumber;
+    }
+
+    public void setObligationModifiedDate(Date obligationModifiedDate) {
+        this.obligationModifiedDate = obligationModifiedDate;
+    }
+
+    public void setObligationEin(String obligationEin) {
+        this.obligationEin = obligationEin;
+    }
+
+    public void setObligationStatus(Boolean obligationStatus) {
+        this.obligationStatus = obligationStatus;
+    }
+
+    public void setObligationVendor(String obligationVendor) {
+        this.obligationVendor = obligationVendor;
+    }
+
+    public void setObligationProcessDate(Date obligationProcessDate) {
+        this.obligationProcessDate = obligationProcessDate;
+    }
+
+    public void setObligationDocumentDate(Date obligationDocumentDate) {
+        this.obligationDocumentDate = obligationDocumentDate;
+    }
+
+    public void setObligationAmount(BigDecimal obligationAmount) {
+        this.obligationAmount = obligationAmount;
+    }
+
+    public void setObligationDocumentNumber(String obligationDocumentNumber) {
+        this.obligationDocumentNumber = obligationDocumentNumber;
+    }
+
+    public void setDocumentFjc(String documentFjc) {
+        this.documentFjc = documentFjc;
+    }
+
+    public void setDocumentMasterObjectClass(String documentMasterObjectClass) {
+        this.documentMasterObjectClass = documentMasterObjectClass;
+    }
+
+    public void setDocumentLastModifiedBy(String documentLastModifiedBy) {
+        this.documentLastModifiedBy = documentLastModifiedBy;
+    }
+
+    public void setDocumentClosedDate(Date documentClosedDate) {
+        this.documentClosedDate = documentClosedDate;
+    }
+
+    public void setDocumentClosedAmount(BigDecimal documentClosedAmount) {
+        this.documentClosedAmount = documentClosedAmount;
+    }
+
+    public void setDocumentExpendedAmount(BigDecimal documentExpendedAmount) {
+        this.documentExpendedAmount = documentExpendedAmount;
+    }
+
+    public void setDocumentTravelEndDate(Date documentTravelEndDate) {
+        this.documentTravelEndDate = documentTravelEndDate;
+    }
+
+    public void setDocumentTravelStartDate(Date documentTravelStartDate) {
+        this.documentTravelStartDate = documentTravelStartDate;
+    }
+
+    public void setDocumentVendorName(String documentVendorName) {
+        this.documentVendorName = documentVendorName;
+    }
+
+    public void setDocumentVendorCode(String documentVendorCode) {
+        this.documentVendorCode = documentVendorCode;
+    }
+
+    public void setDocumentAddressCode(String documentAddressCode) {
+        this.documentAddressCode = documentAddressCode;
+    }
+
+    public void setDocumentTaxIdType(String documentTaxIdType) {
+        this.documentTaxIdType = documentTaxIdType;
+    }
+
+    public void setDocumentTaxId(String documentTaxId) {
+        this.documentTaxId = documentTaxId;
+    }
+
+    public void setDocumentLineNumber(Integer documentLineNumber) {
+        this.documentLineNumber = documentLineNumber;
+    }
+
+    public void setDocumentAmount(BigDecimal documentAmount) {
+        this.documentAmount = documentAmount;
+    }
+
+    public void setDocumentProject(String documentProject) {
+        this.documentProject = documentProject;
+    }
+
+    public void setDocumentBudgetObjectClass(String documentBudgetObjectClass) {
+        this.documentBudgetObjectClass = documentBudgetObjectClass;
+    }
+
+    public void setDocumentTitle(String documentTitle) {
+        this.documentTitle = documentTitle;
+    }
+
+    public void setDocumentDocumentCreationDate(Date documentDocumentCreationDate) {
+        this.documentDocumentCreationDate = documentDocumentCreationDate;
+    }
+
+    public void setDocumentDocumentDate(Date documentDocumentDate) {
+        this.documentDocumentDate = documentDocumentDate;
+    }
+
+    public void setDocumentDocumentNumber(String documentDocumentNumber) {
+        this.documentDocumentNumber = documentDocumentNumber;
+    }
+
+    public void setDocumentDocumentType(String documentDocumentType) {
+        this.documentDocumentType = documentDocumentType;
+    }
+
+    public void setDocumentCostOrg(String documentCostOrg) {
+        this.documentCostOrg = documentCostOrg;
+    }
+
+    public void setDocumentBudgetOrg(String documentBudgetOrg) {
+        this.documentBudgetOrg = documentBudgetOrg;
+    }
+
+    public void setDocumentEbfy(String documentEbfy) {
+        this.documentEbfy = documentEbfy;
+    }
+
+    public void setDocumentBbfy(String documentBbfy) {
+        this.documentBbfy = documentBbfy;
+    }
+
+    public void setDocumentFundCode(String documentFundCode) {
+        this.documentFundCode = documentFundCode;
+    }
+
+    public void setProcessDate(Date processDate) {
+        this.processDate = processDate;
+    }
+
+    public void setProcessStatus(String processStatus) {
+        this.processStatus = processStatus;
+    }
+
+    public Integer getDocumentLineNumber() {
+        return documentLineNumber;
+    }
+
+    public Date getDocumentDocumentCreationDate() {
+        return documentDocumentCreationDate;
+    }
+
+    public String getDocumentTaxIdType() {
+        return documentTaxIdType;
+    }
+
+    public String getDocumentTaxId() {
+        return documentTaxId;
+    }
+
+    public Date getDocumentTravelStartDate() {
+        return documentTravelStartDate;
+    }
+
+    public Date getDocumentTravelEndDate() {
+        return documentTravelEndDate;
+    }
+
+    public String getDocumentLastModifiedBy() {
+        return documentLastModifiedBy;
+    }
+
+    public Date getDocumentDocumentDate() {
+        return documentDocumentDate;
+    }
+
+    public String getDocumentDocumentNumber() {
+        return documentDocumentNumber;
+    }
+
+    public String getDocumentDocumentType() {
+        return documentDocumentType;
+    }
+
+    public String getDocumentCostOrg() {
+        return documentCostOrg;
+    }
+
+    public String getDocumentBudgetOrg() {
+        return documentBudgetOrg;
+    }
+
+    public String getDocumentFundCode() {
+        return documentFundCode;
+    }
 
     @DependsOnProperties({"id"})
     @JmixProperty
@@ -268,16 +552,12 @@ public class DocumentAudit {
         return obligationAddressCode;
     }
 
-    public String getObligationCategory() {
-        return obligationCategory;
+    public String getObligationMasterObjectClass() {
+        return obligationMasterObjectClass;
     }
 
     public String getObligationDivisionCode() {
         return obligationDivisionCode;
-    }
-
-    public String getObligationObjectClass() {
-        return obligationObjectClass;
     }
 
     public String getObligationActivityNumber() {
@@ -286,14 +566,6 @@ public class DocumentAudit {
 
     public Date getObligationModifiedDate() {
         return obligationModifiedDate;
-    }
-
-    public Date getObligationEndDate() {
-        return obligationEndDate;
-    }
-
-    public Date getObligationStartDate() {
-        return obligationStartDate;
     }
 
     public String getObligationEin() {
@@ -336,24 +608,12 @@ public class DocumentAudit {
         return documentVendorName;
     }
 
-    public Date getDocumentEndDate() {
-        return documentEndDate;
-    }
-
-    public Date getDocumentStartDate() {
-        return documentStartDate;
-    }
-
     public String getDocumentFjc() {
         return documentFjc;
     }
 
-    public String getDocumentMoc() {
-        return documentMoc;
-    }
-
-    public String getDocumentModuser() {
-        return documentModuser;
+    public String getDocumentMasterObjectClass() {
+        return documentMasterObjectClass;
     }
 
     public Date getDocumentClosedDate() {
@@ -376,18 +636,6 @@ public class DocumentAudit {
         return documentAddressCode;
     }
 
-    public String getDocumentTaxidType() {
-        return documentTaxidType;
-    }
-
-    public String getDocumentTaxid() {
-        return documentTaxid;
-    }
-
-    public Integer getDocumentLinenumber() {
-        return documentLinenumber;
-    }
-
     public BigDecimal getDocumentAmount() {
         return documentAmount;
     }
@@ -396,36 +644,12 @@ public class DocumentAudit {
         return documentProject;
     }
 
-    public String getDocumentBoc() {
-        return documentBoc;
+    public String getDocumentBudgetObjectClass() {
+        return documentBudgetObjectClass;
     }
 
     public String getDocumentTitle() {
         return documentTitle;
-    }
-
-    public Date getDocumentCreatedate() {
-        return documentCreatedate;
-    }
-
-    public Date getDocumentDocdate() {
-        return documentDocdate;
-    }
-
-    public String getDocumentDocnumber() {
-        return documentDocnumber;
-    }
-
-    public String getDocumentDoctype() {
-        return documentDoctype;
-    }
-
-    public String getDocumentCostorg() {
-        return documentCostorg;
-    }
-
-    public String getDocumentBudgetorg() {
-        return documentBudgetorg;
     }
 
     public String getDocumentEbfy() {
@@ -434,10 +658,6 @@ public class DocumentAudit {
 
     public String getDocumentBbfy() {
         return documentBbfy;
-    }
-
-    public String getDocumentFund() {
-        return documentFund;
     }
 
     public Date getProcessDate() {
