@@ -6,6 +6,12 @@ import gov.fjc.fis.entity.Document;
 import gov.fjc.fis.entity.dto.PurchaseOrderDto;
 import gov.fjc.fis.entity.dto.TravelAuthorizationDto;
 import io.jmix.core.UnconstrainedDataManager;
+import io.jmix.email.EmailException;
+import io.jmix.email.EmailInfo;
+import io.jmix.email.EmailInfoBuilder;
+import io.jmix.email.Emailer;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -13,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -21,11 +28,17 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class LoadDocuments implements Job {
 
     @Autowired
     UnconstrainedDataManager unconstrainedDataManager;
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired
+    private Emailer emailer;
 
     private static final Logger log = LoggerFactory.getLogger(LoadDocuments.class);
 
@@ -36,6 +49,8 @@ public class LoadDocuments implements Job {
     private String purchaseFilePath;
     @Value("${jifms.travel.file.path}")
     private String travelFilePath;
+    @Value("${jifms.email.error.addresses}")
+    private String emailErrorAddresses;
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -48,9 +63,17 @@ public class LoadDocuments implements Job {
             log.info("Travel file does not exist: ".concat(travelFilePath));
         }
 
+        fileNotFound();
+
+        truncateDocuments(); // only do this if document files exist
         loadPurchaseOrders();
         loadTravelAuthorizations();
 
+    }
+
+    @Transactional
+    public void truncateDocuments() {
+        entityManager.createNativeQuery("TRUNCATE TABLE FIS_DOCUMENT").executeUpdate();
     }
 
     private void loadPurchaseOrders() {
@@ -75,6 +98,41 @@ public class LoadDocuments implements Job {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public String getEmailsByRoleAsDelimitedString(String roleCode) {
+        List<String> emails = unconstrainedDataManager.loadValues(
+                        "SELECT u.email FROM fis_User u JOIN sec_RoleAssignmentEntity r ON u.username = r.username"
+                                + " WHERE u.email IS NOT NULL AND r.roleCode = :roleCode"
+                )
+                .parameter("roleCode", roleCode)
+                .properties("email")
+                .list()
+                .stream()
+                .map(kv -> (String) kv.getValue("email"))
+                .collect(Collectors.toList());
+        return String.join(",", emails);
+    }
+
+
+    private void fileNotFound() {
+        // if addresses not configured, send email to all administrators with email addresses
+        if (emailErrorAddresses == null) {
+            emailErrorAddresses = getEmailsByRoleAsDelimitedString("admin");
+        }
+
+        var ofmUsers = getEmailsByRoleAsDelimitedString("resources-ofm-user");
+        var fullaccess = getEmailsByRoleAsDelimitedString("system-full-access");
+
+        String body = "OFM Users: ".concat(ofmUsers).concat("\nFull access: ").concat(fullaccess);
+        EmailInfo emailInfo = EmailInfoBuilder.create(fullaccess,
+                        "JIFMS feed", body)
+                .build();
+        try {
+            emailer.sendEmail(emailInfo);
+        } catch (EmailException e) {
+            e.printStackTrace();
         }
     }
 
