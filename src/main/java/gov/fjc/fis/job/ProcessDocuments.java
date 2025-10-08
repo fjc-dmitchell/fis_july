@@ -10,12 +10,27 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-
+/**
+ * Job to process JIFMS Documents in FIS 2.1. This will be triggered by cron job.
+ * Uses queries without security constraints for processing. As this job does not
+ * currently rely on other services, certain codes (e.g., Education division,
+ * Two year fund, OBBBA budget Org) are hardcoded.
+ * <p>
+ * The business rules were specified by Mary Greiner and Nanticha Sansung
+ * when JIFMS feeds went into production in September 2019.
+ * <p>
+ * ToDo: revisit thread safety
+ *
+ * @author Doug Mitchell
+ * @version 2.1
+ * @since 2.1
+ */
 @Component("fis_ProcessDocuments")
 public class ProcessDocuments implements Job {
     @Autowired
@@ -54,13 +69,14 @@ public class ProcessDocuments implements Job {
 
                 for (var document : documents) {
 
-                    var validator = new DocumentValidator(educationDivision, twoYearFund);
-                    validator.validateFund(fundMap, document.getFundCode());
-                    validator.validateDivision(divisionList, document.getBudgetOrg());
-                    validator.validateObjectClass(objectClassMap, document.getBudgetObjectClass());
-                    validator.validateObjectClass(objectClassMap, document.getBudgetObjectClass());
-                    validator.validateActivity(document.getProject());
-                    validator.validateObligation(document, document.getDocumentNumber(), document.getBudgetOrg(), document.getLineNumber());
+                    var validator = new DocumentValidator(educationDivision, twoYearFund, document);
+                    validator.validateFund(fundMap);
+                    validator.validateDivision(divisionList);
+                    validator.validateObjectClass(objectClassMap);
+                    validator.validateActivity();
+//                    validator.validDocumentNumber();
+                    validator.validateDocumentNumber();
+                    validator.validateObligation();
 
 
                     if (validator.getAuditState().equals(DocumentAuditState.REJECT)) {
@@ -68,6 +84,8 @@ public class ProcessDocuments implements Job {
                     } else {
 //                        log.info("Processing Document {}", document.getDocumentNumber());
                     }
+
+                    // when inserting audit record, check if an identical row exists. Don't log again if amount is zero
 
                 }
                 offset += documents.size();
@@ -78,10 +96,12 @@ public class ProcessDocuments implements Job {
     class DocumentValidator {
 
         DocumentAuditState auditState = DocumentAuditState.IGNORE;
-        StringBuffer auditMessage = new StringBuffer();
+        //        StringBuffer auditMessage = new StringBuffer();
+        StringBuilder auditMessage = new StringBuilder();
 
         Fund twoYearFund;
         Division educationDivision;
+        Document document;
 
         Fund fund = null;
         Division division = null;
@@ -90,9 +110,14 @@ public class ProcessDocuments implements Job {
         Activity genericActivity = null;
         Obligation obligation = null;
 
-        DocumentValidator(Division educationDivision, Fund twoYearFund) {
+        BigDecimal oldAmount = null;
+        ObjectClass oldObjectClass = null;
+        Activity oldActivity = null;
+
+        DocumentValidator(Division educationDivision, Fund twoYearFund, Document document) {
             this.educationDivision = educationDivision;
             this.twoYearFund = twoYearFund;
+            this.document = document;
         }
 
         String getAuditMessage() {
@@ -103,19 +128,19 @@ public class ProcessDocuments implements Job {
             return auditState;
         }
 
-        Fund validateFund(Map<String, Fund> fundMap, String fundCode) {
+        void validateFund(Map<String, Fund> fundMap) {
             if (!auditState.equals(DocumentAuditState.REJECT)) {
-                fund = fundMap.get(fundCode);
+                fund = fundMap.get(document.getFundCode());
                 if (fund == null) {
                     auditState = DocumentAuditState.REJECT;
-                    auditMessage.append(String.format("Invalid fund %s. ", fundCode));
+                    auditMessage.append(String.format("Invalid fund %s. ", document.getFundCode()));
                 }
             }
-            return fund;
         }
 
-        Division validateDivision(List<Division> divisionList, String budgetOrg) {
+        void validateDivision(List<Division> divisionList) {
             if (!auditState.equals(DocumentAuditState.REJECT)) {
+                var budgetOrg = document.getBudgetOrg();
                 List<Division> foundDivisions = divisionList.stream()
                         .filter(d -> d.getBudgetOrg().equals(budgetOrg)
                                 && (d.getFund().getFundCode().equals(fund.getFundCode())
@@ -133,22 +158,22 @@ public class ProcessDocuments implements Job {
                     division = foundDivisions.getFirst();
                 }
             }
-            return division;
         }
 
-        ObjectClass validateObjectClass(Map<String, ObjectClass> objectClassMap, String budgetObjectClass) {
+        void validateObjectClass(Map<String, ObjectClass> objectClassMap) {
             if (!auditState.equals(DocumentAuditState.REJECT)) {
+                var budgetObjectClass = document.getBudgetObjectClass();
                 objectClass = objectClassMap.get(budgetObjectClass);
                 if (objectClass == null) {
                     auditState = DocumentAuditState.REJECT;
                     auditMessage.append(String.format("Invalid objectClass: %s.", budgetObjectClass));
                 }
             }
-            return objectClass;
         }
 
-        Activity validateActivity(String activityNumber) {
+        void validateActivity() {
             if (!auditState.equals(DocumentAuditState.REJECT)) {
+                var activityNumber = document.getProject();
                 activity = unconstrainedQueries.getActivity(division, activityNumber);
                 if (activity == null) {
                     auditState = DocumentAuditState.REJECT;
@@ -160,14 +185,62 @@ public class ProcessDocuments implements Job {
                     genericActivity = unconstrainedQueries.getGenericActivity(activity);
                 }
             }
-            return activity;
         }
 
-        Obligation validateObligation(Document document, String documentNumber, String budgetOrg, int lineNumber) {
+        // replace with more explicit message
+        void validDocumentNumber() {
             if (!auditState.equals(DocumentAuditState.REJECT)) {
+                var documentNumber = document.getDocumentNumber();
+                if (!(documentNumber != null && documentNumber.length() == 11
+                        && documentNumber.toUpperCase().startsWith("FJC")
+                        && documentNumber.substring(3, 4).equals(document.getBbfy().substring(2, 3))
+                        && documentNumber.charAt(5) == '-'
+                        && (document.getBudgetOrg().equals(obbbaBudgetOrg)
+                        || documentNumber.substring(7, 8).equals(division.getDivisionCode()))
+                        && ((documentNumber.charAt(6) == '7' && travelDocumentTypes.contains(document.getDocumentType()))
+                        || (documentNumber.charAt(6) == '8' && purchaseDocumentTypes.contains(document.getDocumentType()))))) {
+                    auditState = DocumentAuditState.REJECT;
+                    auditMessage.append(String.format("Invalid document number: %s. ", documentNumber));
+                }
+            }
+        }
+
+        void validateDocumentNumber() {
+            if (!auditState.equals(DocumentAuditState.REJECT)) {
+                var documentNumber = document.getDocumentNumber();
+                StringBuilder message = new StringBuilder();
+                if (documentNumber == null) {
+                    message.append("-null");
+                } else if (documentNumber.length() != 11) {
+                    message.append("-length");
+                } else if (!documentNumber.toUpperCase().startsWith("FJC")) {
+                    message.append("-prefix");
+                } else if (!documentNumber.substring(3, 4).equals(document.getBbfy().substring(2, 3))) {
+                    message.append("-BFY");
+                } else if (!(documentNumber.charAt(5) == '-')) {
+                    message.append("-hyphen");
+                } else if (!document.getBudgetOrg().equals(obbbaBudgetOrg)
+                        && !documentNumber.substring(7, 8).equals(division.getDivisionCode())) {
+                    message.append("-division");
+                } else if (!(documentNumber.charAt(6) == '7' && travelDocumentTypes.contains(document.getDocumentType()))
+                        && !(documentNumber.charAt(6) == '8' && purchaseDocumentTypes.contains(document.getDocumentType()))) {
+                    message.append("-docType");
+                }
+                if (!message.isEmpty()) {
+                    auditState = DocumentAuditState.REJECT;
+                    auditMessage.append(String.format("Invalid document number: %s. %s", documentNumber, message));
+                }
+            }
+        }
+
+        void validateObligation() {
+            if (!auditState.equals(DocumentAuditState.REJECT)) {
+                var documentNumber = document.getDocumentNumber();
+                var budgetOrg = document.getBudgetOrg();
+                var lineNumber = document.getLineNumber();
                 obligation = unconstrainedQueries.getObligation(objectClass, documentNumber, null, null);
                 if (obligation != null) {
-                    if (obligation.getLineNumber() == lineNumber) {
+                    if (Objects.equals(obligation.getLineNumber(), lineNumber)) {
                         hasObligationChanged(document, obligation);
 //                        if (obligation.getActivity() == activity) {
 //                            System.out.println("if projection exists, update and log changes");
@@ -192,11 +265,10 @@ public class ProcessDocuments implements Job {
 //                    }
 //                }
             }
-            return obligation;
         }
 
         boolean hasObligationChanged(Document document, Obligation obligation) {
-            StringBuffer changes = new StringBuffer();
+            StringBuilder changes = new StringBuilder();
             if ((document.getClosedDate() == null) ^ obligation.getStatus()) {
                 // business rule per 2019 meeting, only change if FIS is open
                 if (obligation.getStatus()) {
@@ -205,12 +277,11 @@ public class ProcessDocuments implements Job {
                 }
             }
 
+            // if Court-Activity is ever used for other values, it will be necessary to parse for BPO
             if (document.getFjc() == null) {
-                // should we unset FIS bpo starting in 2026?
-//                if (obligation.getBlanketPurchaseOrder()) {
-//                    obligation.setBlanketPurchaseOrder(false);
-//                    changes.append(" -BPO");
-//                }
+                if (obligation.getBlanketPurchaseOrder() && document.getBbfy().compareTo("2026") >= 0) {
+                    obligation.setBlanketPurchaseOrder(false); // keep in sync starting in 2026
+                }
             } else {
                 if (obligation.getBlanketPurchaseOrder() ^ document.getFjc().equalsIgnoreCase("bpo")) {
                     obligation.setBlanketPurchaseOrder(document.getFjc().equalsIgnoreCase("bpo"));
@@ -219,6 +290,7 @@ public class ProcessDocuments implements Job {
             }
 
             if (!Objects.equals(document.getAmount(), obligation.getAmount())) {
+                oldAmount = obligation.getAmount();
                 obligation.setAmount(document.getAmount());
                 changes.append(" -amount");
             }
@@ -226,7 +298,8 @@ public class ProcessDocuments implements Job {
                 obligation.setVendor(document.getTitle());
                 changes.append(" -vendor");
             }
-            if(!activity.equals(obligation.getActivity())) {
+            if (!activity.equals(obligation.getActivity())) {
+                oldActivity = obligation.getActivity();
                 obligation.setActivity(activity);
                 changes.append(" -activity");
             }
@@ -240,6 +313,7 @@ public class ProcessDocuments implements Job {
                 changes.append(" -travelEndDate");
             }
             if (!Objects.equals(objectClass, obligation.getObjectClass())) {
+                oldObjectClass = obligation.getObjectClass();
                 obligation.setObjectClass(objectClass);
                 changes.append(" -objectClass");
             }
