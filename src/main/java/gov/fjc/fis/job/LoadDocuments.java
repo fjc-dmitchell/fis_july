@@ -25,6 +25,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gov.fjc.fis.FisUtilities.cleanText;
+
 /**
  * Job to load Document files (purchase and travel) into FIS 2.1 and trigger processing job.
  * Both the file directory and archive directory must exist with proper permissions and
@@ -232,7 +234,7 @@ public class LoadDocuments implements Job {
         purchaseDocument.setDocumentNumber(dto.getDocumentNumber());
         purchaseDocument.setDocumentDate(dto.getDocumentDate());
         purchaseDocument.setDocumentCreationDate(dto.getDocumentCreationDate());
-        purchaseDocument.setTitle(dto.getTitle());
+        purchaseDocument.setTitle(cleanText(dto.getTitle()));
         purchaseDocument.setBudgetObjectClass(dto.getBudgetObjectClass());
         purchaseDocument.setMasterObjectClass(dto.getMasterObjectClass());
         purchaseDocument.setProject(dto.getProject());
@@ -242,7 +244,7 @@ public class LoadDocuments implements Job {
         purchaseDocument.setTaxIdType(dto.getTaxIdType());
         purchaseDocument.setAddressCode(dto.getAddressCode());
         purchaseDocument.setVendorCode(dto.getVendorCode());
-        purchaseDocument.setVendorName(dto.getVendorName());
+        purchaseDocument.setVendorName(cleanText(dto.getVendorName()));
         purchaseDocument.setExpendedAmount(dto.getExpendedAmount());
         purchaseDocument.setClosedAmount(dto.getClosedAmount());
         purchaseDocument.setClosedDate(dto.getClosedDate());
@@ -268,14 +270,14 @@ public class LoadDocuments implements Job {
         travelDocument.setDocumentNumber(dto.getDocumentNumber());
         travelDocument.setDocumentDate(dto.getDocumentDate());
         travelDocument.setDocumentCreationDate(dto.getDocumentCreationDate());
-        travelDocument.setTitle(dto.getTitle());
+        travelDocument.setTitle(cleanText(dto.getTitle()));
         travelDocument.setBudgetObjectClass(dto.getBudgetObjectClass());
         travelDocument.setMasterObjectClass(dto.getMasterObjectClass());
         travelDocument.setProject(dto.getProject());
         travelDocument.setAmount(dto.getAmount());
         travelDocument.setLineNumber(dto.getLineNumber());
         travelDocument.setVendorCode(dto.getVendorCode());
-        travelDocument.setVendorName(dto.getVendorName());
+        travelDocument.setVendorName(cleanText(dto.getVendorName()));
         travelDocument.setTravelStartDate(dto.getTravelStartDate());
         travelDocument.setTravelEndDate(dto.getTravelEndDate());
         travelDocument.setExpendedAmount(dto.getExpendedAmount());

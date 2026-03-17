@@ -222,4 +222,22 @@ public final class FisUtilities {
 
         return allButLast + " and " + items.getLast();
     }
+
+    public static String cleanText(String str) {
+        if (str == null) return null;
+        String text = str.trim();
+        if (text.isEmpty()) {
+            return null;
+        }
+        // strips off all non-ASCII characters
+        text = text.replaceAll("[^\\x00-\\x7F]", "");
+
+        // erases all the ASCII control characters
+        text = text.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
+
+        // removes non-printable characters from Unicode
+        text = text.replaceAll("\\p{C}", "");
+
+        return text;
+    }
 }
