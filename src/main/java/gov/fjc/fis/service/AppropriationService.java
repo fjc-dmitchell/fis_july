@@ -4,7 +4,6 @@ import gov.fjc.fis.entity.*;
 import io.jmix.core.DataManager;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.session.SessionData;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -15,8 +14,12 @@ import java.util.*;
 
 @Component("fis_AppropriationService")
 public class AppropriationService {
-    @Autowired
-    private DataManager dataManager;
+
+    private final DataManager dataManager;
+
+    public AppropriationService(DataManager dataManager) {
+        this.dataManager = dataManager;
+    }
 
     public List<Appropriation> getAppropriations() {
         return dataManager.load(Appropriation.class)
@@ -40,13 +43,13 @@ public class AppropriationService {
     }
 
     public Appropriation getAppropriation(Activity activity) {
-       return dataManager.load(Appropriation.class)
-               .query("SELECT a FROM fis_Appropriation a"
-               +" INNER JOIN fis_Division dv ON dv.appropriation = a"
-               +" INNER JOIN fis_Activity act ON act.division = dv"
-               +" WHERE act=:activity")
-               .parameter("activity", activity)
-               .one();
+        return dataManager.load(Appropriation.class)
+                .query("SELECT a FROM fis_Appropriation a"
+                        + " INNER JOIN fis_Division dv ON dv.appropriation = a"
+                        + " INNER JOIN fis_Activity act ON act.division = dv"
+                        + " WHERE act=:activity")
+                .parameter("activity", activity)
+                .one();
     }
 
     /**
@@ -170,6 +173,7 @@ public class AppropriationService {
 
     /**
      * used by main view. Returns null if there are no open Appropriations. Don't let this happen!
+     *
      * @return Appropriation for the entryBfy selector
      */
     public Appropriation getCurrentOrLatestOpenBudgetFiscalYear() {

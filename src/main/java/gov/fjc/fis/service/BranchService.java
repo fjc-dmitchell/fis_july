@@ -4,7 +4,6 @@ import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.entity.Branch;
 import gov.fjc.fis.entity.Division;
 import io.jmix.core.DataManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -15,14 +14,12 @@ import java.util.stream.Collectors;
 
 @Component("fis_BranchService")
 public class BranchService {
-    @Autowired
-    private DataManager dataManager;
 
-    public BranchService(DivisionService divisionService) {
-        this.divisionService = divisionService;
+    private final DataManager dataManager;
+
+    public BranchService(DataManager dataManager) {
+        this.dataManager = dataManager;
     }
-
-    private final DivisionService divisionService;
 
     public List<Branch> getBranchSearchList(List<Appropriation> fiscalYears, String divCode) {
         fiscalYears = fiscalYears.stream().sorted(Comparator.comparing(Appropriation::getBudgetFiscalYear).reversed()).toList();

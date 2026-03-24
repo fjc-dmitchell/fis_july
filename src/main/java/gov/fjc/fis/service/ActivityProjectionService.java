@@ -18,14 +18,16 @@ import java.util.Optional;
 @Component("fis_ActivityProjectionService")
 public class ActivityProjectionService {
 
-    @Autowired
-    private DataManager dataManager;
+    private final DataManager dataManager;
+    private final FundService fundService;
+    private final AppropriationService appropriationService;
 
-    @Autowired
-    private FundService fundService;
-
-    @Autowired
-    private AppropriationService appropriationService;
+    public ActivityProjectionService(DataManager dataManager, FundService fundService,
+                                     AppropriationService appropriationService) {
+        this.dataManager = dataManager;
+        this.fundService = fundService;
+        this.appropriationService = appropriationService;
+    }
 
     public ActivityProjection getActivityProjection(Activity activity, ObjectClass objectClass) {
         // try specific projection
@@ -146,9 +148,6 @@ public class ActivityProjectionService {
 //                .parameter("objc", objectClass)
 //                .list();
     }
-
-    @Autowired
-    private FetchPlanRepository fetchPlanRepository;
 
 //    public List<ActivityProjection> getActivityProjections(Appropriation currentBfy, ActivityFundingType activityFundingType) {
 //        if (!(activityFundingType.equals(ActivityFundingType.CURRENT_YEAR_1YR_FUND)
@@ -487,7 +486,7 @@ public class ActivityProjectionService {
      * sum projections for activity, either travel or non-travel
      * quick and dirty for Nancy (Mike) 6/25/2025
      *
-     * @param activity
+     * @param activityDto
      * @param travel
      * @return
      */

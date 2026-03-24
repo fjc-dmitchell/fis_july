@@ -4,7 +4,6 @@ import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.entity.Fund;
 import gov.fjc.fis.entity.dto.AmountsDto;
 import io.jmix.core.DataManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -15,10 +14,14 @@ import static gov.fjc.fis.FisUtilities.getTotalNullAllowed;
 
 @Component("fis_AppropriationAdjustmentService")
 public class AppropriationAdjustmentService {
-    @Autowired
-    private DataManager dataManager;
-    @Autowired
-    private FundService fundService;
+
+    private final DataManager dataManager;
+    private final FundService fundService;
+
+    public AppropriationAdjustmentService(DataManager dataManager, FundService fundService) {
+        this.dataManager = dataManager;
+        this.fundService = fundService;
+    }
 
     // why is this here rather than reimbursement service?
     BigDecimal sumReimbursements(Appropriation appropriation, Fund fund) {

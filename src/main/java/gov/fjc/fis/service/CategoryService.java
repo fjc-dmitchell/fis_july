@@ -6,7 +6,6 @@ import gov.fjc.fis.entity.Category;
 import gov.fjc.fis.entity.Division;
 import gov.fjc.fis.entity.dto.CategoryDto;
 import io.jmix.core.DataManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -14,12 +13,16 @@ import java.util.stream.Collectors;
 
 @Component("fis_CategoryService")
 public class CategoryService {
-    @Autowired
-    private DataManager dataManager;
+
+    private final DataManager dataManager;
 
     final private List<String> compensationAndBenefits = Arrays.asList("11", "12", "13");
 
     final private String travel = "21";
+
+    public CategoryService(DataManager dataManager) {
+        this.dataManager = dataManager;
+    }
 
     public String getTravel() {
         return travel;
@@ -184,6 +187,4 @@ public class CategoryService {
                 .parameter("foundation", foundation)
                 .list();
     }
-
-
 }

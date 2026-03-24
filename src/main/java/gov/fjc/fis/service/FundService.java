@@ -3,7 +3,6 @@ package gov.fjc.fis.service;
 import gov.fjc.fis.entity.Division;
 import gov.fjc.fis.entity.Fund;
 import io.jmix.core.DataManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -13,16 +12,19 @@ import java.util.List;
 @Component("fis_FundService")
 public class FundService {
 
-    @Autowired
-    private DataManager dataManager;
-    @Autowired
-    private DivisionService divisionService;
+    private final DataManager dataManager;
+    private final DivisionService divisionService;
 
     // this is the only place in FIS that references fund codes
     private final String oneYearFund = "092800";
     private final String twoYearFund = "09280M";
     private final String foundationFund = "812300";
     private final String jitfFund = "51140X";
+
+    public FundService(DataManager dataManager, DivisionService divisionService) {
+        this.dataManager = dataManager;
+        this.divisionService = divisionService;
+    }
 
     private Fund getFundByCode(String fundCode) {
         return dataManager.load(Fund.class)

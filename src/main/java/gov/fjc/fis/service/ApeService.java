@@ -4,24 +4,20 @@ import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.entity.Branch;
 import gov.fjc.fis.entity.form.Ape;
 import io.jmix.core.DataManager;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlans;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component("fis_ApeService")
 public class ApeService {
-    public ApeService(FetchPlans fetchPlans) {
-        this.fetchPlans = fetchPlans;
+
+    private final DataManager dataManager;
+
+    public ApeService(DataManager dataManager) {
+        this.dataManager = dataManager;
     }
 
-    @Autowired
-    private DataManager dataManager;
-    private final FetchPlans fetchPlans;
-
-    //                    .query("SELECT e FROM fis_Ape e"
+//                    .query("SELECT e FROM fis_Ape e"
 //                        + " LEFT JOIN fis_Branch bch ON bch=e.branch"
 //                        + " INNER JOIN fis_Division dv ON dv = e.division"
 //                        + " INNER JOIN fis_Appropriation app ON app = dv.appropriation"

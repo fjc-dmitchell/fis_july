@@ -4,7 +4,6 @@ import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.entity.Division;
 import gov.fjc.fis.entity.Group;
 import io.jmix.core.DataManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -15,8 +14,12 @@ import java.util.stream.Collectors;
 
 @Component("fis_GroupService")
 public class GroupService {
-    @Autowired
-    private DataManager dataManager;
+
+    private final DataManager dataManager;
+
+    public GroupService(DataManager dataManager) {
+        this.dataManager = dataManager;
+    }
 
     public List<Group> getGroups(Division division) {
         return dataManager.load(Group.class)

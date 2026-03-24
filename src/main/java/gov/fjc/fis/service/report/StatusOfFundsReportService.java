@@ -4,12 +4,10 @@ import gov.fjc.fis.entity.Appropriation;
 import gov.fjc.fis.entity.Fund;
 import gov.fjc.fis.entity.dto.CategoryDto;
 import gov.fjc.fis.entity.dto.DivisionDto;
-import gov.fjc.fis.entity.dto.ObligationDto;
 import gov.fjc.fis.reportdata.StatusOfFundsReportData;
 import gov.fjc.fis.service.*;
 import io.jmix.core.DataManager;
 import io.jmix.core.entity.KeyValueEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -19,22 +17,30 @@ import java.util.*;
 @Component("fis_StatusOfFundsReportService")
 public class StatusOfFundsReportService {
 
-    @Autowired
-    protected DataManager dataManager;
-    @Autowired
-    private FundService fundService;
-    @Autowired
-    private CategoryService categoryService;
-    @Autowired
-    private DivisionService divisionService;
-    @Autowired
-    private DivisionAllocationService divisionAllocationService;
-    @Autowired
-    private ActivityProjectionService activityProjectionService;
-    @Autowired
-    private ActivityReimbursementService activityReimbursementService;
-    @Autowired
-    private ObligationService obligationService;
+    private final DataManager dataManager;
+    private final ObligationService obligationService;
+    private final ActivityReimbursementService activityReimbursementService;
+    private final ActivityProjectionService activityProjectionService;
+    private final DivisionAllocationService divisionAllocationService;
+    private final DivisionService divisionService;
+    private final CategoryService categoryService;
+    private final FundService fundService;
+
+    public StatusOfFundsReportService(DataManager dataManager, FundService fundService,
+                                      CategoryService categoryService, DivisionService divisionService,
+                                      DivisionAllocationService divisionAllocationService,
+                                      ActivityProjectionService activityProjectionService,
+                                      ActivityReimbursementService activityReimbursementService,
+                                      ObligationService obligationService) {
+        this.dataManager = dataManager;
+        this.fundService = fundService;
+        this.categoryService = categoryService;
+        this.divisionService = divisionService;
+        this.divisionAllocationService = divisionAllocationService;
+        this.activityProjectionService = activityProjectionService;
+        this.activityReimbursementService = activityReimbursementService;
+        this.obligationService = obligationService;
+    }
 
     public StatusOfFundsReportData generateReportData(Appropriation appropriation, int scale) {
         var reportData = new StatusOfFundsReportData(appropriation);

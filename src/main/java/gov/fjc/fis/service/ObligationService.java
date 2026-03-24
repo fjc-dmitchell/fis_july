@@ -21,16 +21,20 @@ import static gov.fjc.fis.FisUtilities.getCurrentDateMinusDays;
 @Component("fis_ObligationService")
 public class ObligationService {
 
-    @Autowired
-    private DataManager dataManager;
-    @Autowired
-    private FundService fundService;
-    @Autowired
-    private AppropriationService appropriationService;
-    @Autowired
-    private CategoryService categoryService;
+    private final DataManager dataManager;
+    private final FundService fundService;
+    private final AppropriationService appropriationService;
+    private final CategoryService categoryService;
 
-    // Todo: refactor as getObligationsByEntity(Entity entity)
+    public ObligationService(DataManager dataManager, FundService fundService,
+                             AppropriationService appropriationService, CategoryService categoryService) {
+        this.dataManager = dataManager;
+        this.fundService = fundService;
+        this.appropriationService = appropriationService;
+        this.categoryService = categoryService;
+    }
+
+// Todo: refactor as getObligationsByEntity(Entity entity)
 
     /**
      * reconcilation pivot table 3/9/20205
@@ -135,6 +139,14 @@ public class ObligationService {
                         + "inner join o.activity a "
                         + "where a.group = :groupId order by o.documentNumber")
                 .parameter("groupId", group)
+                .list();
+    }
+
+    public List<Obligation> getObligationsbyVendorCode(String vendorCode) {
+        return dataManager.load(Obligation.class)
+                .query("SELECT o FROM fis_Obligation o"
+                        + " WHERE o.vendorCode = :vendorCode")
+                .parameter("vendorCode", vendorCode)
                 .list();
     }
 
@@ -537,7 +549,7 @@ public class ObligationService {
      * sum obligations for activity, either travel or non-travel
      * quick and dirty for Nancy (Mike) 6/25/2025
      *
-     * @param activity
+     * @param activityDto
      * @param travel
      * @return
      */

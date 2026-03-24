@@ -2,7 +2,6 @@ package gov.fjc.fis.service;
 
 import gov.fjc.fis.entity.*;
 import io.jmix.core.DataManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,16 +21,20 @@ import java.math.BigDecimal;
  */
 @Component("fis_NewFiscalYearService")
 public class NewFiscalYearService {
-    @Autowired
-    private DataManager dataManager;
-    @Autowired
-    private FundService fundService;
-    @Autowired
-    private DivisionService divisionService;
-    @Autowired
-    private BranchService branchService;
-    @Autowired
-    private GroupService groupService;
+
+    private final DataManager dataManager;
+    private final GroupService groupService;
+    private final BranchService branchService;
+    private final DivisionService divisionService;
+    private final FundService fundService;
+
+    public NewFiscalYearService(DataManager dataManager, FundService fundService, DivisionService divisionService, BranchService branchService, GroupService groupService) {
+        this.dataManager = dataManager;
+        this.fundService = fundService;
+        this.divisionService = divisionService;
+        this.branchService = branchService;
+        this.groupService = groupService;
+    }
 
     /**
      * Creates new Appropriation and associated entities. If unsuccessful, rollback entire
@@ -83,7 +86,7 @@ public class NewFiscalYearService {
      * Fetches the most recent Appropriation in FIS.
      *
      * @return Appropriation entity
-     * @throws NoResultException if Appropriation not found
+//     * @throws NoResultException if Appropriation not found
      */
     private Appropriation getMaxAppropriation() {
         return dataManager.load(Appropriation.class)

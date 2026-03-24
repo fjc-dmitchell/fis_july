@@ -2,7 +2,6 @@ package gov.fjc.fis.service;
 
 import gov.fjc.fis.entity.*;
 import io.jmix.core.DataManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -14,15 +13,18 @@ import java.util.stream.Collectors;
 @Component("fis_ObjectClassService")
 public class ObjectClassService {
 
-    @Autowired
-    private DataManager dataManager;
-    @Autowired
-    private FundService fundService;
+    private final DataManager dataManager;
+    private final FundService fundService;
+
+    public ObjectClassService(DataManager dataManager, FundService fundService) {
+        this.dataManager = dataManager;
+        this.fundService = fundService;
+    }
 
     public List<ObjectClass> getProjectionObjectClasses(Activity activity, Category category) {
         Appropriation appropriation = activity == null ? null : activity.getDivision().getAppropriation();
         List<ObjectClass> exclusions = new ArrayList<>();
-        if(activity!=null && activity.getProjections()!=null) {
+        if (activity != null && activity.getProjections() != null) {
             exclusions = activity.getProjections().stream().map(ActivityProjection::getObjectClass).toList();
         }
         boolean genericProjection = activity == null ? false : activity.getGenericProjection();

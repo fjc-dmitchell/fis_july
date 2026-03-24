@@ -1,24 +1,19 @@
 package gov.fjc.fis.service;
 
 import gov.fjc.fis.entity.*;
-import gov.fjc.fis.entity.dto.DivisionDto;
 import io.jmix.core.DataManager;
 import io.jmix.core.entity.KeyValueEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component("fis_DivisionAllocationService")
 public class DivisionAllocationService {
-    private final DivisionService divisionService;
-    private final FundService fundService;
-    @Autowired
-    private DataManager dataManager;
 
-    public DivisionAllocationService(DivisionService divisionService, FundService fundService) {
-        this.divisionService = divisionService;
-        this.fundService = fundService;
+    private final DataManager dataManager;
+
+    public DivisionAllocationService(DataManager dataManager) {
+        this.dataManager = dataManager;
     }
 
     /**

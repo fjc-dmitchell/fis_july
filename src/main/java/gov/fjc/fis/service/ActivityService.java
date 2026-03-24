@@ -8,7 +8,6 @@ import gov.fjc.fis.entity.dto.ObligationDto;
 import io.jmix.core.DataManager;
 import io.jmix.core.entity.KeyValueEntity;
 import jakarta.persistence.TemporalType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -23,16 +22,20 @@ import static gov.fjc.fis.entity.ActivityFundingType.*;
 
 @Component("fis_ActivityService")
 public class ActivityService {
-    @Autowired
-    private DataManager dataManager;
-    @Autowired
-    private FundService fundService;
-    @Autowired
-    private AppropriationService appropriationService;
-    @Autowired
-    private DivisionService divisionService;
-    @Autowired
-    private ObligationService obligationService;
+
+    private final DataManager dataManager;
+    private final FundService fundService;
+    private final AppropriationService appropriationService;
+    private final DivisionService divisionService;
+
+    public ActivityService(DataManager dataManager, FundService fundService,
+                           AppropriationService appropriationService,
+                           DivisionService divisionService) {
+        this.dataManager = dataManager;
+        this.fundService = fundService;
+        this.appropriationService = appropriationService;
+        this.divisionService = divisionService;
+    }
 
     /**
      * Determines whether a generic activity exists for the supplied activity. Generic activities are only used

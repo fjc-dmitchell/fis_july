@@ -4,9 +4,7 @@ import gov.fjc.fis.entity.*;
 import gov.fjc.fis.entity.dto.ActivityDto;
 import gov.fjc.fis.entity.dto.ActivityReimbursementDto;
 import io.jmix.core.DataManager;
-import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.entity.KeyValueEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -17,15 +15,16 @@ import java.util.List;
 @Component("fis_ActivityReimbursementService")
 public class ActivityReimbursementService {
 
-    @Autowired
-    private DataManager dataManager;
-    @Autowired
-    private FundService fundService;
+    private final DataManager dataManager;
+    private final AppropriationService appropriationService;
+    private final FundService fundService;
 
-    @Autowired
-    private AppropriationService appropriationService;
-    @Autowired
-    private FetchPlanRepository fetchPlanRepository;
+    public ActivityReimbursementService(DataManager dataManager, FundService fundService,
+                                        AppropriationService appropriationService) {
+        this.dataManager = dataManager;
+        this.fundService = fundService;
+        this.appropriationService = appropriationService;
+    }
 
     public BigDecimal sumReimbursements(Activity activity) {
         return dataManager.loadValue("SELECT coalesce(sum(r.amount),0)"
