@@ -3,27 +3,34 @@ package gov.fjc.fis.service.report;
 import gov.fjc.fis.entity.*;
 import gov.fjc.fis.reportdata.EducationProgramsReportData;
 import gov.fjc.fis.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("fis_EducationProgramReportService")
 public class EducationProgramsReportService {
-    @Autowired
-    private AppropriationService appropriationService;
-    @Autowired
-    private ActivityService activityService;
-    @Autowired
-    private ActivityProjectionService activityProjectionService;
-    @Autowired
-    private ActivityReimbursementService activityReimbursementService;
-    @Autowired
-    private ObligationService obligationService;
+
+    private final AppropriationService appropriationService;
+    private final ActivityService activityService;
+    private final ActivityProjectionService activityProjectionService;
+    private final ActivityReimbursementService activityReimbursementService;
+    private final ObligationService obligationService;
+
+    public EducationProgramsReportService(AppropriationService appropriationService,
+                                          ActivityService activityService,
+                                          ActivityProjectionService activityProjectionService,
+                                          ActivityReimbursementService activityReimbursementService,
+                                          ObligationService obligationService) {
+        this.appropriationService = appropriationService;
+        this.activityService = activityService;
+        this.activityProjectionService = activityProjectionService;
+        this.activityReimbursementService = activityReimbursementService;
+        this.obligationService = obligationService;
+    }
 
     /**
      * Generate education programs report data. Requires a valid Branch or Division.
      *
      * @param division Division entity
-     * @param branch Branch entity, may be null
+     * @param branch   Branch entity, may be null
      * @return EducationProgramsReportData
      */
     public EducationProgramsReportData generateReportData(Division division,

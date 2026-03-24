@@ -18,20 +18,28 @@ import static gov.fjc.fis.FisUtilities.add;
 @Component("fis_DivisionBalancesReportService")
 public class DivisionBalancesReportService {
 
-    @Autowired
-    protected DataManager dataManager;
-    @Autowired
-    private FundService fundService;
-    @Autowired
-    private DivisionService divisionService;
-    @Autowired
-    private DivisionAllocationService divisionAllocationService;
-    @Autowired
-    private ActivityProjectionService activityProjectionService;
-    @Autowired
-    private ActivityReimbursementService activityReimbursementService;
-    @Autowired
-    private ObligationService obligationService;
+    private final DataManager dataManager;
+    private final FundService fundService;
+    private final DivisionService divisionService;
+    private final DivisionAllocationService divisionAllocationService;
+    private final ActivityProjectionService activityProjectionService;
+    private final ActivityReimbursementService activityReimbursementService;
+    private final ObligationService obligationService;
+
+    public DivisionBalancesReportService(DataManager dataManager, FundService fundService,
+                                         DivisionService divisionService,
+                                         DivisionAllocationService divisionAllocationService,
+                                         ActivityProjectionService activityProjectionService,
+                                         ActivityReimbursementService activityReimbursementService,
+                                         ObligationService obligationService) {
+        this.dataManager = dataManager;
+        this.fundService = fundService;
+        this.divisionService = divisionService;
+        this.divisionAllocationService = divisionAllocationService;
+        this.activityProjectionService = activityProjectionService;
+        this.activityReimbursementService = activityReimbursementService;
+        this.obligationService = obligationService;
+    }
 
     public List<DivisionDto> getDivisionBalances(Appropriation appropriation) {
 

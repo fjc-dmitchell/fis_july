@@ -9,8 +9,12 @@ import java.util.List;
 
 @Component("fis_UserMessageService")
 public class UserMessageService {
-    @Autowired
-    private DataManager dataManager;
+
+    private final DataManager dataManager;
+
+    public UserMessageService(DataManager dataManager) {
+        this.dataManager = dataManager;
+    }
 
     public UserMessage getCurrentMessage() {
         return dataManager.load(UserMessage.class)

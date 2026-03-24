@@ -1,10 +1,8 @@
 package gov.fjc.fis.service;
 
 import gov.fjc.fis.entity.Appropriation;
-import gov.fjc.fis.entity.JitfTransfer;
 import gov.fjc.fis.entity.dto.JitfTransferDto;
 import io.jmix.core.DataManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -13,10 +11,14 @@ import java.util.List;
 
 @Component("fis_JitfTransferService")
 public class JitfTransferService {
-    @Autowired
-    private DataManager dataManager;
-    @Autowired
-    private FundService fundService;
+
+    private final DataManager dataManager;
+    private final FundService fundService;
+
+    public JitfTransferService(DataManager dataManager, FundService fundService) {
+        this.dataManager = dataManager;
+        this.fundService = fundService;
+    }
 
     public List<Appropriation> getAppropriations() {
         // EclipseLink has "IN" issues! Do this in 3 steps...
