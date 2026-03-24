@@ -3,13 +3,10 @@ package gov.fjc.fis.job;
 import io.jmix.email.*;
 import org.quartz.*;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-import gov.fjc.fis.entity.Document;
 import gov.fjc.fis.entity.dto.PurchaseOrderDto;
 import gov.fjc.fis.entity.dto.TravelAuthorizationDto;
-import io.jmix.core.UnconstrainedDataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +17,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static gov.fjc.fis.FisUtilities.cleanText;
 
 /**
  * Job to load Document files (purchase and travel) into FIS 2.1 and trigger processing job.
@@ -38,10 +31,9 @@ import static gov.fjc.fis.FisUtilities.cleanText;
  * @version 2.1
  * @since 2.1
  */
-@Component("fis_LoadDocuments")
 public class LoadDocuments implements Job {
     @Autowired
-    UnconstrainedDataManager unconstrainedDataManager;
+    UnconstrainedQueries unconstrainedQueries;
     @Autowired
     JdbcTemplate jdbcTemplate;
     @Autowired
@@ -49,7 +41,7 @@ public class LoadDocuments implements Job {
     @Autowired
     Scheduler scheduler;
 
-    private static final Logger log = LoggerFactory.getLogger(gov.fjc.fis.job.LoadDocuments.class);
+    private static final Logger log = LoggerFactory.getLogger(LoadDocuments.class);
 
     // ToDo: request to AO to limit feeds to five years
     private final String startingYear = "2021";
@@ -153,7 +145,7 @@ public class LoadDocuments implements Job {
                     continue;
                 }
                 if (dto.getBbfy().compareTo(startingYear) >= 0) {
-                    createPurchaseDocument(dto);
+                    unconstrainedQueries.createPurchaseDocument(dto);
                 }
             }
 
@@ -177,7 +169,7 @@ public class LoadDocuments implements Job {
                     continue;
                 }
                 if (dto.getBbfy().compareTo(startingYear) >= 0) {
-                    createTravelDocument(dto);
+                    unconstrainedQueries.createTravelDocument(dto);
                 }
             }
 
@@ -188,24 +180,10 @@ public class LoadDocuments implements Job {
         }
     }
 
-    public String getEmailsByRoleAsDelimitedString(String roleCode) {
-        List<String> emails = unconstrainedDataManager.loadValues(
-                        "SELECT u.email FROM fis_User u"
-                                + " JOIN sec_RoleAssignmentEntity r ON u.username = r.username"
-                                + " WHERE u.email IS NOT NULL AND r.roleCode = :roleCode")
-                .parameter("roleCode", roleCode)
-                .properties("email")
-                .list()
-                .stream()
-                .map(kv -> (String) kv.getValue("email"))
-                .collect(Collectors.toList());
-        return String.join(",", emails);
-    }
-
     private void sendAdminEmail(String subject, String body, List<EmailAttachment> emailAttachment) {
         // if addresses not configured, send email to all administrators
         if (jobStatusEmailAddresses == null) {
-            jobStatusEmailAddresses = getEmailsByRoleAsDelimitedString("system-full-access");
+            jobStatusEmailAddresses = unconstrainedQueries.getEmailsByRoleAsDelimitedString("system-full-access");
         }
         if (jobStatusEmailAddresses != null) {
             EmailInfo emailInfo = EmailInfoBuilder.create()
@@ -221,76 +199,5 @@ public class LoadDocuments implements Job {
                 log.info("Email exception occurred:".concat(e.getMessage()));
             }
         }
-    }
-
-    private void createPurchaseDocument(PurchaseOrderDto dto) {
-        Document purchaseDocument = unconstrainedDataManager.create(Document.class);
-        purchaseDocument.setFundCode(dto.getFundCode());
-        purchaseDocument.setBbfy(dto.getBbfy());
-        purchaseDocument.setEbfy(dto.getEbfy());
-        purchaseDocument.setBudgetOrg(dto.getBudgetOrg());
-        purchaseDocument.setCostOrg(dto.getCostOrg());
-        purchaseDocument.setDocumentType(dto.getDocumentType());
-        purchaseDocument.setDocumentNumber(dto.getDocumentNumber());
-        purchaseDocument.setDocumentDate(dto.getDocumentDate());
-        purchaseDocument.setDocumentCreationDate(dto.getDocumentCreationDate());
-        purchaseDocument.setTitle(cleanText(dto.getTitle()));
-        purchaseDocument.setBudgetObjectClass(dto.getBudgetObjectClass());
-        purchaseDocument.setMasterObjectClass(dto.getMasterObjectClass());
-        purchaseDocument.setProject(dto.getProject());
-        purchaseDocument.setAmount(dto.getAmount());
-        purchaseDocument.setLineNumber(dto.getLineNumber());
-        purchaseDocument.setTaxId(dto.getTaxId());
-        purchaseDocument.setTaxIdType(dto.getTaxIdType());
-        purchaseDocument.setAddressCode(dto.getAddressCode());
-        purchaseDocument.setVendorCode(dto.getVendorCode());
-        purchaseDocument.setVendorName(cleanText(dto.getVendorName()));
-        purchaseDocument.setExpendedAmount(dto.getExpendedAmount());
-        purchaseDocument.setClosedAmount(dto.getClosedAmount());
-        purchaseDocument.setClosedDate(dto.getClosedDate());
-        purchaseDocument.setLastModifiedBy(dto.getLastModifiedBy());
-        purchaseDocument.setFjc(dto.getFjc());
-        purchaseDocument.setOrderedAmount(dto.getOrderedAmount());
-        purchaseDocument.setOutstandingAmount(dto.getOutstandingAmount());
-        purchaseDocument.setPrepaidAmount(dto.getPrepaidAmount());
-        purchaseDocument.setRefundedAmount(dto.getRefundedAmount());
-        purchaseDocument.setCreatedBy("dmitchell");
-        purchaseDocument.setCreatedDate(OffsetDateTime.now());
-        unconstrainedDataManager.save(purchaseDocument);
-    }
-
-    private void createTravelDocument(TravelAuthorizationDto dto) {
-        Document travelDocument = unconstrainedDataManager.create(Document.class);
-        travelDocument.setFundCode(dto.getFundCode());
-        travelDocument.setBbfy(dto.getBbfy());
-        travelDocument.setEbfy(dto.getEbfy());
-        travelDocument.setBudgetOrg(dto.getBudgetOrg());
-        travelDocument.setCostOrg(dto.getCostOrg());
-        travelDocument.setDocumentType(dto.getDocumentType());
-        travelDocument.setDocumentNumber(dto.getDocumentNumber());
-        travelDocument.setDocumentDate(dto.getDocumentDate());
-        travelDocument.setDocumentCreationDate(dto.getDocumentCreationDate());
-        travelDocument.setTitle(cleanText(dto.getTitle()));
-        travelDocument.setBudgetObjectClass(dto.getBudgetObjectClass());
-        travelDocument.setMasterObjectClass(dto.getMasterObjectClass());
-        travelDocument.setProject(dto.getProject());
-        travelDocument.setAmount(dto.getAmount());
-        travelDocument.setLineNumber(dto.getLineNumber());
-        travelDocument.setVendorCode(dto.getVendorCode());
-        travelDocument.setVendorName(cleanText(dto.getVendorName()));
-        travelDocument.setTravelStartDate(dto.getTravelStartDate());
-        travelDocument.setTravelEndDate(dto.getTravelEndDate());
-        travelDocument.setExpendedAmount(dto.getExpendedAmount());
-        travelDocument.setClosedAmount(dto.getClosedAmount());
-        travelDocument.setClosedDate(dto.getClosedDate());
-        travelDocument.setLastModifiedBy(dto.getLastModifiedBy());
-        travelDocument.setFjc(dto.getFjc());
-        travelDocument.setOrderedAmount(dto.getOrderedAmount());
-        travelDocument.setOutstandingAmount(dto.getOutstandingAmount());
-        travelDocument.setPrepaidAmount(dto.getPrepaidAmount());
-        travelDocument.setRefundedAmount(dto.getRefundedAmount());
-        travelDocument.setCreatedBy("dmitchell");
-        travelDocument.setCreatedDate(OffsetDateTime.now());
-        unconstrainedDataManager.save(travelDocument);
     }
 }
