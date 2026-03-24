@@ -25,7 +25,8 @@ import static java.util.Objects.requireNonNullElse;
         @Index(name = "IDX_FIS_OBLIGATION_OBJECT_CLASS", columnList = "OBJECT_CLASS_ID"),
         @Index(name = "IDX_FIS_OBLIGATION_COST_ORG", columnList = "COST_ORG_ID"),
         @Index(name = "IDX_FIS_OBLIGATION", columnList = "ACTIVITY_ID, STATUS"),
-        @Index(name = "IDX_FIS_OBLIGATION_ACTIVITY_OBJCLASS", columnList = "ACTIVITY_ID, OBJECT_CLASS_ID")
+        @Index(name = "IDX_FIS_OBLIGATION_ACTIVITY_OBJCLASS", columnList = "ACTIVITY_ID, OBJECT_CLASS_ID"),
+        @Index(name = "IDX_FIS_OBLIGATION_VENDOR_CODE", columnList = "VENDOR_CODE")
 }, uniqueConstraints = {
         @UniqueConstraint(name = "IDX_FIS_OBLIGATION_UNQ", columnNames = {"DOCID", "OBJECT_CLASS_ID"}),
         @UniqueConstraint(name = "IDX_FIS_OBLIGATION_UNQ_2", columnNames = {"DOCID", "LINE_NUMBER"})
